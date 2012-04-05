@@ -1,0 +1,185 @@
+TAirPushNotification
+v3
+r1
+cCheck dependencies
+cProcessPCH /var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-gmnuulkbewaqphfehathrfrhhwxr/AirPushNotification-Prefix.pch.gch AirPushNotification/AirPushNotification-Prefix.pch normal armv7 objective-c com.apple.compilers.llvmgcc42
+cProcessPCH /var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-bvyspfldchstczdtzjfupqenqpzd/AirPushNotification-Prefix.pch.gch AirPushNotification/AirPushNotification-Prefix.pch normal armv6 objective-c com.apple.compilers.llvmgcc42
+cCompileC build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv6/AirPushNotification.o /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m normal armv6 objective-c com.apple.compilers.llvmgcc42
+cCompileC build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv7/AirPushNotification.o /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m normal armv7 objective-c com.apple.compilers.llvmgcc42
+cLibtool /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv6/libAirPushNotification.a normal armv6
+cLibtool /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv7/libAirPushNotification.a normal armv7
+cCreateUniversalBinary /Users/titi/Projects/AirPushNotification/NativeIOS/build/Debug-iphoneos/libAirPushNotification.a normal "armv6 armv7"
+
+N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk
+c000000004D9A119B0000000000000110
+t1301942683
+s272
+
+N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk/System/Library/Frameworks/CoreMotion.framework/CoreMotion
+c000000004D99FB5E0000000000122AE0
+t1301936990
+s1190624
+
+N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk/System/Library/Frameworks/Foundation.framework/Foundation
+c000000004D93E1FD00000000003E22F0
+t1301537277
+s4072176
+
+N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.h
+c000000004D93E1E60000000000001466
+t1301537254
+s5222
+
+N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIApplication.h
+c000000004D99FA7C00000000000045C1
+t1301936764
+s17857
+
+N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk/System/Library/Frameworks/UIKit.framework/UIKit
+c000000004D99FAFA0000000000CA2AE0
+t1301936890
+s13249248
+
+N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk/usr/include/stdint.h
+c000000004D4F6E9000000000000018EF
+t1297051280
+s6383
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/../../../../../../../Applications/Adobe Flash Builder 4.6/sdks/4.6.0/include/FlashRuntimeExtensions.h
+c000000004F5FD2CD0000000000004FCB
+t1331679949
+s20427
+i<stdint.h>
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification-Prefix.pch
+c000000004F6A017300000000000000B3
+t1332347251
+s179
+i<Foundation/Foundation.h>
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m
+c000000004F6A4A080000000000002948
+t1332365832
+s10568
+i"FlashRuntimeExtensions.h"
+i<UIKit/UIApplication.h>
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv6/AirPushNotification.LinkFileList
+c000000004F6A4D6100000000000000A7
+t1332366689
+s167
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv6/AirPushNotification.o
+t2
+s0
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv6/libAirPushNotification.a
+t2
+s0
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv7/AirPushNotification.LinkFileList
+c000000004F6A4D6100000000000000A7
+t1332366689
+s167
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv7/AirPushNotification.o
+t2
+s0
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv7/libAirPushNotification.a
+t2
+s0
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/build/Debug-iphoneos/libAirPushNotification.a
+t2
+s0
+
+N/var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-bvyspfldchstczdtzjfupqenqpzd/AirPushNotification-Prefix.pch.gch
+t1332366087
+s5585672
+
+N/var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-gmnuulkbewaqphfehathrfrhhwxr/AirPushNotification-Prefix.pch.gch
+t1332366087
+s6073096
+
+CBuild AST from /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m
+r0
+
+CCheck dependencies
+r0
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies3d7d24e1841ab541^5cab2de1841ab541^---0#1#0#--18"Check dependencies
+
+CCompileC build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv6/AirPushNotification.o /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m normal armv6 objective-c com.apple.compilers.llvmgcc42
+s354059489.191864
+e354059489.270092
+r1
+xCompileC
+xbuild/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv6/AirPushNotification.o
+x/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m
+xnormal
+xarmv6
+xobjective-c
+xcom.apple.compilers.llvmgcc42
+o/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m: In function 'registerPush':
+o/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m:50: warning: control reaches end of non-void function
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection100"Compile /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m3a3b31e1841ab541^f62345e1841ab541^-269"/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m: In function 'registerPush':/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m:50: warning: control reaches end of non-void function1(21%IDEActivityLogMessage2@40"Control reaches end of non-void function-354059489#122#147#-1#-23%DVTTextDocumentLocation3@108"file://localhost/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m0000000000000000^49#18446744073709551615#49#18446744073709551615#18446744073709551615#0#40"Control reaches end of non-void function--0#0#0#-19%DVTDocumentLocation4@108"file://localhost/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m0000000000000000^2382"CompileC build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv6/AirPushNotification.o AirPushNotification/AirPushNotification.m normal armv6 objective-c com.apple.compilers.llvmgcc42    cd /Users/titi/Projects/AirPushNotification/NativeIOS    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/llvm-gcc-4.2 -x objective-c -arch armv6 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -Wmissing-prototypes -Wreturn-type -Wunused-variable -DDEBUG=1 -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk -gdwarf-2 -mthumb -miphoneos-version-min=4.3 -iquote /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/AirPushNotification-generated-files.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/AirPushNotification-own-target-headers.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/AirPushNotification-all-target-headers.hmap -iquote /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/AirPushNotification-project-headers.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/Debug-iphoneos/include -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/DerivedSources/armv6 -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/DerivedSources -F/Users/titi/Projects/AirPushNotification/NativeIOS/build/Debug-iphoneos -include /var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-bvyspfldchstczdtzjfupqenqpzd/AirPushNotification-Prefix.pch -c /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m -o /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv6/AirPushNotification.o
+
+CCompileC build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv7/AirPushNotification.o /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m normal armv7 objective-c com.apple.compilers.llvmgcc42
+s354059489.191868
+e354059489.269544
+r1
+xCompileC
+xbuild/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv7/AirPushNotification.o
+x/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m
+xnormal
+xarmv7
+xobjective-c
+xcom.apple.compilers.llvmgcc42
+o/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m: In function 'registerPush':
+o/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m:50: warning: control reaches end of non-void function
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection100"Compile /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m7e3b31e1841ab541^daff44e1841ab541^-269"/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m: In function 'registerPush':/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m:50: warning: control reaches end of non-void function1(21%IDEActivityLogMessage2@40"Control reaches end of non-void function-354059489#122#147#-1#-23%DVTTextDocumentLocation3@108"file://localhost/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m0000000000000000^49#18446744073709551615#49#18446744073709551615#18446744073709551615#0#40"Control reaches end of non-void function--0#0#0#-19%DVTDocumentLocation4@108"file://localhost/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m0000000000000000^2382"CompileC build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv7/AirPushNotification.o AirPushNotification/AirPushNotification.m normal armv7 objective-c com.apple.compilers.llvmgcc42    cd /Users/titi/Projects/AirPushNotification/NativeIOS    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/llvm-gcc-4.2 -x objective-c -arch armv7 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -Wmissing-prototypes -Wreturn-type -Wunused-variable -DDEBUG=1 -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk -gdwarf-2 -mthumb -miphoneos-version-min=4.3 -iquote /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/AirPushNotification-generated-files.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/AirPushNotification-own-target-headers.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/AirPushNotification-all-target-headers.hmap -iquote /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/AirPushNotification-project-headers.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/Debug-iphoneos/include -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/DerivedSources/armv7 -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/DerivedSources -F/Users/titi/Projects/AirPushNotification/NativeIOS/build/Debug-iphoneos -include /var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-gmnuulkbewaqphfehathrfrhhwxr/AirPushNotification-Prefix.pch -c /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m -o /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv7/AirPushNotification.o
+
+CCreateUniversalBinary /Users/titi/Projects/AirPushNotification/NativeIOS/build/Debug-iphoneos/libAirPushNotification.a normal "armv6 armv7"
+s354059489.291193
+e354059489.297873
+r1
+xCreateUniversalBinary
+x/Users/titi/Projects/AirPushNotification/NativeIOS/build/Debug-iphoneos/libAirPushNotification.a
+xnormal
+xarmv6 armv7
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection120"Create universal binary /Users/titi/Projects/AirPushNotification/NativeIOS/build/Debug-iphoneos/libAirPushNotification.a5ea24ae1841ab541^143d4ce1841ab541^---0#0#0#-19%DVTDocumentLocation2@112"file://localhost/Users/titi/Projects/AirPushNotification/NativeIOS/build/Debug-iphoneos/libAirPushNotification.a00f4f0a3dcffdf42^788"CreateUniversalBinary build/Debug-iphoneos/libAirPushNotification.a normal "armv6 armv7"    cd /Users/titi/Projects/AirPushNotification/NativeIOS    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/libtool -static /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv6/libAirPushNotification.a /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv7/libAirPushNotification.a -o /Users/titi/Projects/AirPushNotification/NativeIOS/build/Debug-iphoneos/libAirPushNotification.a
+
+CLibtool /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv6/libAirPushNotification.a normal armv6
+s354059489.277303
+e354059489.283453
+r1
+xLibtool
+x/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv6/libAirPushNotification.a
+xnormal
+xarmv6
+o/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/libtool: -dynamic not specified the following flags are invalid: -ObjC 
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection139"Libtool build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv6/libAirPushNotification.a normal armv6ba1447e1841ab541^da8f48e1841ab541^---0#0#0#--1042"Libtool build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv6/libAirPushNotification.a normal armv6    cd /Users/titi/Projects/AirPushNotification/NativeIOS    setenv IPHONEOS_DEPLOYMENT_TARGET 4.3    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/libtool -static -arch_only armv6 -syslibroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk -L/Users/titi/Projects/AirPushNotification/NativeIOS/build/Debug-iphoneos -filelist /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv6/AirPushNotification.LinkFileList -ObjC -framework UIKit -framework CoreMotion -framework Foundation -o /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv6/libAirPushNotification.a
+
+CLibtool /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv7/libAirPushNotification.a normal armv7
+s354059489.277306
+e354059489.284175
+r1
+xLibtool
+x/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv7/libAirPushNotification.a
+xnormal
+xarmv7
+o/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/libtool: -dynamic not specified the following flags are invalid: -ObjC 
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection139"Libtool build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv7/libAirPushNotification.a normal armv7be1747e1841ab541^f4bf48e1841ab541^---0#0#0#--1042"Libtool build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv7/libAirPushNotification.a normal armv7    cd /Users/titi/Projects/AirPushNotification/NativeIOS    setenv IPHONEOS_DEPLOYMENT_TARGET 4.3    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/libtool -static -arch_only armv7 -syslibroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk -L/Users/titi/Projects/AirPushNotification/NativeIOS/build/Debug-iphoneos -filelist /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv7/AirPushNotification.LinkFileList -ObjC -framework UIKit -framework CoreMotion -framework Foundation -o /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Debug-iphoneos/AirPushNotification.build/Objects-normal/armv7/libAirPushNotification.a
+
+CProcessPCH /Users/titi/Library/Developer/Xcode/DerivedData/AirPushNotification-cokkhgwpuzsdxzgtugjrcbfiltvq/Index/PrecompiledHeaders/AirPushNotification-Prefix-cyqsvifpfxymdhbmzwxtdqoqpblu_ast/AirPushNotification-Prefix.pch.pth AirPushNotification/AirPushNotification-Prefix.pch normal armv7 objective-c com.apple.compilers.llvm.clang.1_0.astbuilder
+r0
+
+CProcessPCH /Users/titi/Library/Developer/Xcode/DerivedData/AirPushNotification-cokkhgwpuzsdxzgtugjrcbfiltvq/Index/PrecompiledHeaders/AirPushNotification-Prefix-hbsxbzbgeqpzhwdozjouiikenepl_ast/AirPushNotification-Prefix.pch.pth AirPushNotification/AirPushNotification-Prefix.pch normal armv6 objective-c com.apple.compilers.llvm.clang.1_0.astbuilder
+r0
+
+CProcessPCH /var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-bvyspfldchstczdtzjfupqenqpzd/AirPushNotification-Prefix.pch.gch AirPushNotification/AirPushNotification-Prefix.pch normal armv6 objective-c com.apple.compilers.llvmgcc42
+r0
+
+CProcessPCH /var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-gmnuulkbewaqphfehathrfrhhwxr/AirPushNotification-Prefix.pch.gch AirPushNotification/AirPushNotification-Prefix.pch normal armv7 objective-c com.apple.compilers.llvmgcc42
+r0
+
