@@ -78,7 +78,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 
 			// icon is required for notification.
 			// @see http://developer.android.com/guide/practices/ui_guidelines/icon_design_status_bar.html
-			int icon = R.drawable.icon;
+			int icon = R.drawable.icon_status;
 			long when = System.currentTimeMillis();
 
 			String parameters = intent.getStringExtra("parameters");

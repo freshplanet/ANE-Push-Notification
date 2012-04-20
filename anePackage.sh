@@ -21,6 +21,7 @@ ios_native_directory=${root_directory}/NativeIOS/build/Debug-iphoneos/
 android_build_directory=${root_directory}/Binaries/Android
 android_build_name="libAirPushNotification.jar"
 android_native_directory=${root_directory}/NativeAndroid/bin
+android_image_directory=${root_directory}/NativeAndroid/res
 
 # DEFAULT PARAMS
 default_library_directory=${root_directory}/Default
@@ -45,6 +46,10 @@ cp ${ios_native_directory}${ios_build_name} ${ios_build_directory}/
 #jar cf ${android_build_name} -C ${android_native_directory} .
 #echo "moving jar" ${android_build_name} "from" "to" $android_build_directory/
 #mv ${android_build_name} $android_build_directory/
+
+# copying res folder into Binaries/Android/
+echo "copying " ${android_image_directory} "into " ${android_build_directory}
+cp -r ${android_image_directory} ${android_build_directory}
 
 # LIBRARY.SWF BUILD
 
