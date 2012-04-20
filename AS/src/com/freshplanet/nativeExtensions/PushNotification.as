@@ -76,6 +76,22 @@ package com.freshplanet.nativeExtensions
 		}
 		
         
+		
+		/**
+		 * Sends a local notification to the device.
+		 * @param message the local notification text displayed
+		 * @param timestamp when the local notification should appear
+		 */
+		public function sendLocalNotification(message:String, timestamp:int):void
+		{
+			trace("[Push Notification]","sendLocalnotification");
+			if (this.isPushNotificationSupported)
+			{
+				extCtx.call("sendLocalNotification", message, timestamp);
+			}
+		}
+		
+		
         // onStatus()
         // Event handler for the event that the native implementation dispatches.
         //

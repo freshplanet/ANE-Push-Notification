@@ -16,6 +16,9 @@
 #import <objc/runtime.h>
 #import <objc/message.h>
 
+#define DEFINE_ANE_FUNCTION(fn) FREObject (fn)(FREContext context, void* functionData, uint32_t argc, FREObject argv[])
+
+
 @implementation AirPushNotification
 
 //empty delegate functions, stubbed signature is so we can find this method in the delegate
@@ -35,6 +38,7 @@ void didRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIAppli
 void didFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, UIApplication* application, NSError* error);
 FREObject setBadgeNb(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject registerPush(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject sendLocalNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 void ContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx, uint32_t* numFunctionsToTest, const FRENamedFunction** functionsToSet);
 void ContextFinalizer(FREContext ctx);
 void InitMyExtension(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet );
@@ -83,7 +87,7 @@ void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application,
 
 
 // set the badge number (count around the app icon)
-FREObject setBadgeNb(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+DEFINE_ANE_FUNCTION(setBadgeNb)
 {
     int32_t int1;
     FREGetObjectAsInt32(argv[0], &int1);
@@ -98,13 +102,63 @@ FREObject setBadgeNb(FREContext ctx, void* funcData, uint32_t argc, FREObject ar
 
 
 // register the device for push notification.
-FREObject registerPush(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) 
+DEFINE_ANE_FUNCTION(registerPush)
 {    
     
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
      (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
     return nil;
 }
+
+
+DEFINE_ANE_FUNCTION(sendLocalNotification)
+{
+    // delete previously local notification
+    //[[UIApplication sharedApplication] cancelAllLocalNotifications];
+    
+    /*NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
+    NSDateComponents *dateComps = [[NSDateComponents alloc] init];
+    [dateComps setDay:item.day];
+    [dateComps setMonth:item.month];
+    [dateComps setYear:item.year];
+    [dateComps setHour:item.hour];
+    [dateComps setMinute:item.minute];
+    NSDate *itemDate = [calendar dateFromComponents:dateComps];
+    [dateComps release];*/
+    
+    
+    uint32_t string_length;
+    const uint8_t *utf8_message;
+    FREGetObjectAsUTF8(argv[0], &string_length, &utf8_message);
+
+    NSString* message = [NSString stringWithUTF8String:(char*)utf8_message];
+    
+    
+    uint32_t timestamp;
+    FREGetObjectAsUint32(argv[1], &timestamp);
+
+    
+    
+    NSDate *itemDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
+    
+    UILocalNotification *localNotif = [[UILocalNotification alloc] init];
+    if (localNotif == nil)
+        return NULL;
+    localNotif.fireDate = itemDate;
+    localNotif.timeZone = [NSTimeZone defaultTimeZone];
+    
+    localNotif.alertBody = message;
+    localNotif.alertAction = @"View Details";
+    
+    localNotif.soundName = UILocalNotificationDefaultSoundName;
+    //localNotif.applicationIconBadgeNumber = 1;
+    
+    
+    [[UIApplication sharedApplication] scheduleLocalNotification:localNotif];
+    [localNotif release];
+    return NULL;
+}
+
 
 
 // ContextInitializer()
@@ -149,7 +203,7 @@ void ContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx,
     ///////// end of delegate injection / modification code
     
     // Register the links btwn AS3 and ObjC. (dont forget to modify the nbFuntionsToLink integer if you are adding/removing functions)
-    NSInteger nbFuntionsToLink = 2;
+    NSInteger nbFuntionsToLink = 3;
     *numFunctionsToTest = nbFuntionsToLink;
     
     FRENamedFunction* func = (FRENamedFunction*) malloc(sizeof(FRENamedFunction) * nbFuntionsToLink);
@@ -161,6 +215,10 @@ void ContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx,
     func[1].name = (const uint8_t*) "setBadgeNb";
     func[1].functionData = NULL;
     func[1].function = &setBadgeNb;
+    
+    func[2].name = (const uint8_t*) "sendLocalNotification";
+    func[1].functionData = NULL;
+    func[2].function = &sendLocalNotification;
     
     *functionsToSet = func;
     
