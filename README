@@ -8,7 +8,11 @@ On Android devices, it uses Android Cloud to Device Messaging Service.
 :https://developers.google.com/android/c2dm/
 
 # Use
-Call the function AirNetworkInfo.networkInfo.isConnected() to check the current status of the device.
+You can use this method to register for push notification token:
+- PushNotification.getInstance().registerForPushNotification(GOOGLE_PLAY_ACCOUNT);
+You don't need a Google play account for iOS Devices.
+Once the user has given his permission:
+an event PushNotificationEvent.PERMISSION_GIVEN_WITH_TOKEN_EVENT is sent.
 
 
 # Installation
