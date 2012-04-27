@@ -1,0 +1,22 @@
+# AirPushNotification
+AirPushNotification is an ADOBE AIR Native Extension (ANE) to send push notifications to user devices
+It works both for iOS and Android devices.
+On iOS devices, it uses Apple Push Notification Services:
+https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingWIthAPS/CommunicatingWIthAPS.html
+
+On Android devices, it uses Android Cloud to Device Messaging Service.
+:https://developers.google.com/android/c2dm/
+
+# Use
+Call the function AirNetworkInfo.networkInfo.isConnected() to check the current status of the device.
+
+
+# Installation
+The ANE is already compiled. You can find it under the folder Binaries. 
+If you want to recompile it, just run ant in the same directory, after changing the parameters (called properties) in build.xml.
+
+# IOS Compilation
+The iOS library has been compiled using the sdk iOS 4.3 and deployment target set to iOS 4.0, using GCC 4.2.
+This ANE has NOT been tested with an sdk version superior to iOS 4.3.
+
+It is distributed under Apache 2.0 license.

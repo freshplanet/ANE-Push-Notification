@@ -1,13 +1,20 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////////	
-//	ADOBE SYSTEMS INCORPORATED																		  //
-//	Copyright 2011 Adobe Systems Incorporated														  //
-//	All Rights Reserved.																			  //
-//																									  //
-//	NOTICE:  Adobe permits you to use, modify, and distribute this file in accordance with the		  //
-//	terms of the Adobe license agreement accompanying it.  If you have received this file from a	  //
-//	source other than Adobe, then your use, modification, or distribution of it requires the prior	  //
-//	written permission of Adobe.																	  //
-////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright 2012 Freshplanet (http://freshplanet.com | opensource@freshplanet.com)
+//  
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//  
+//    http://www.apache.org/licenses/LICENSE-2.0
+//  
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+//  
+//////////////////////////////////////////////////////////////////////////////////////
 
 #import "FlashRuntimeExtensions.h"
 #import <UIKit/UIApplication.h>
@@ -17,7 +24,6 @@
 #import <objc/message.h>
 
 #define DEFINE_ANE_FUNCTION(fn) FREObject (fn)(FREContext context, void* functionData, uint32_t argc, FREObject argv[])
-
 
 @implementation AirPushNotification
 
@@ -33,20 +39,6 @@
 
 
 FREContext myCtx = nil;
-
-void didRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIApplication* application, NSData* deviceToken);
-void didFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, UIApplication* application, NSError* error);
-FREObject setBadgeNb(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject registerPush(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject sendLocalNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-void ContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx, uint32_t* numFunctionsToTest, const FRENamedFunction** functionsToSet);
-void ContextFinalizer(FREContext ctx);
-void InitMyExtension(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet );
-void didRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIApplication* application, NSData* deviceToken);
-void didFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, UIApplication* application, NSError* error);
-void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application,NSDictionary *userInfo);
-
-
 
 //custom implementations of empty signatures above. Used for push notification delegate implementation.
 void didRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIApplication* application, NSData* deviceToken)
@@ -65,8 +57,6 @@ void didFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, UIAppli
 {
     
     NSString* tokenString = [NSString stringWithFormat:@"Failed to get token, error: %@",error];
-
-    NSLog(@"%@",tokenString);
     
     if ( myCtx != nil )
     {
@@ -89,11 +79,13 @@ void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application,
 // set the badge number (count around the app icon)
 DEFINE_ANE_FUNCTION(setBadgeNb)
 {
-    int32_t int1;
-    FREGetObjectAsInt32(argv[0], &int1);
+    int32_t value;
+    if (FREGetObjectAsInt32(argv[0], &value) != FRE_OK)
+    {
+        return nil;
+    }
     
-    NSNumber *newBadgeValue = [NSNumber numberWithInt:int1]; 
-    
+    NSNumber *newBadgeValue = [NSNumber numberWithInt:value]; 
     
     UIApplication *uiapplication = [UIApplication sharedApplication];
     uiapplication.applicationIconBadgeNumber = [newBadgeValue integerValue];
@@ -110,33 +102,26 @@ DEFINE_ANE_FUNCTION(registerPush)
     return nil;
 }
 
-
+// sends local notification to the device.
 DEFINE_ANE_FUNCTION(sendLocalNotification)
 {
     // delete previously local notification
-    //[[UIApplication sharedApplication] cancelAllLocalNotifications];
-    
-    /*NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
-    NSDateComponents *dateComps = [[NSDateComponents alloc] init];
-    [dateComps setDay:item.day];
-    [dateComps setMonth:item.month];
-    [dateComps setYear:item.year];
-    [dateComps setHour:item.hour];
-    [dateComps setMinute:item.minute];
-    NSDate *itemDate = [calendar dateFromComponents:dateComps];
-    [dateComps release];*/
-    
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
     
     uint32_t string_length;
     const uint8_t *utf8_message;
-    FREGetObjectAsUTF8(argv[0], &string_length, &utf8_message);
+    if (FREGetObjectAsUTF8(argv[0], &string_length, &utf8_message) != FRE_OK)
+    {
+        return nil;
+    }
 
     NSString* message = [NSString stringWithUTF8String:(char*)utf8_message];
     
-    
     uint32_t timestamp;
-    FREGetObjectAsUint32(argv[1], &timestamp);
-
+   if (FREGetObjectAsUint32(argv[1], &timestamp) != FRE_OK)
+   {
+       return nil;
+   }
     
     
     NSDate *itemDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
@@ -150,9 +135,7 @@ DEFINE_ANE_FUNCTION(sendLocalNotification)
     localNotif.alertBody = message;
     localNotif.alertAction = @"View Details";
     
-    localNotif.soundName = UILocalNotificationDefaultSoundName;
-    //localNotif.applicationIconBadgeNumber = 1;
-    
+    localNotif.soundName = UILocalNotificationDefaultSoundName;    
     
     [[UIApplication sharedApplication] scheduleLocalNotification:localNotif];
     [localNotif release];
@@ -161,10 +144,10 @@ DEFINE_ANE_FUNCTION(sendLocalNotification)
 
 
 
-// ContextInitializer()
+// AirPushContextInitializer()
 //
 // The context initializer is called when the runtime creates the extension context instance.
-void ContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx, 
+void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx, 
                         uint32_t* numFunctionsToTest, const FRENamedFunction** functionsToSet) 
 {
     
@@ -225,11 +208,11 @@ void ContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx,
     myCtx = ctx;
 }
 
-// ContextFinalizer()
+// AirPushContextFinalizer()
 //
 // Set when the context extension is created.
 
-void ContextFinalizer(FREContext ctx) { 
+void AirPushContextFinalizer(FREContext ctx) { 
     NSLog(@"Entering ContextFinalizer()");
     
     NSLog(@"Exiting ContextFinalizer()");	
@@ -237,19 +220,19 @@ void ContextFinalizer(FREContext ctx) {
 
 
 
-// InitMyExtension()
+// AirPushExtInitializer()
 //
 // The extension initializer is called the first time the ActionScript side of the extension
 // calls ExtensionContext.createExtensionContext() for any context.
 
-void InitMyExtension(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet ) 
+void AirPushExtInitializer(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet ) 
 {
     
     NSLog(@"Entering ExtInitializer()");                    
     
 	*extDataToSet = NULL;
-	*ctxInitializerToSet = &ContextInitializer; 
-	*ctxFinalizerToSet = &ContextFinalizer;
+	*ctxInitializerToSet = &AirPushContextInitializer; 
+	*ctxFinalizerToSet = &AirPushContextFinalizer;
     
     NSLog(@"Exiting ExtInitializer()"); 
 }

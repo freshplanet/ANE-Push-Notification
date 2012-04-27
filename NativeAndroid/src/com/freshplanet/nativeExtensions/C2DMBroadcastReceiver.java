@@ -1,3 +1,21 @@
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright 2012 Freshplanet (http://freshplanet.com | opensource@freshplanet.com)
+//  
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//  
+//    http://www.apache.org/licenses/LICENSE-2.0
+//  
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+//  
+//////////////////////////////////////////////////////////////////////////////////////
+
 package com.freshplanet.nativeExtensions;
 
 import android.app.Notification;
@@ -12,6 +30,8 @@ import android.util.Log;
 import com.adobe.fre.FREContext;
 
 public class C2DMBroadcastReceiver extends BroadcastReceiver {
+
+	private static String TAG = "c2dmBdcastRcvr";
 
 	public C2DMBroadcastReceiver() {
 	}
@@ -48,18 +68,18 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 
 		if (intent.getStringExtra("error") != null) {
 			String error = intent.getStringExtra("error");
-			Log.d("as3c2dm", "Registration failed with error: " + error);
+			Log.d(TAG, "Registration failed with error: " + error);
 			if (freContext != null) {
 				freContext.dispatchStatusEventAsync("TOKEN_FAIL", error);
 			}
 		} else if (intent.getStringExtra("unregistered") != null) {
-			Log.d("as3c2dm", "Unregistered successfully");
+			Log.d(TAG, "Unregistered successfully");
 			if (freContext != null) {
 				freContext.dispatchStatusEventAsync("UNREGISTERED",
 						"unregistered");
 			}
 		} else if (registration != null) {
-			Log.d("as3c2dm", "Registered successfully");
+			Log.d(TAG, "Registered successfully");
 			if (freContext != null) {
 				freContext.dispatchStatusEventAsync("TOKEN_SUCCESS", registration);
 			}
@@ -85,9 +105,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 			CharSequence tickerText = intent.getStringExtra("tickerText");
 			CharSequence contentTitle = intent.getStringExtra("contentTitle");
 			CharSequence contentText = intent.getStringExtra("contentText");
-			
-			Log.d("as3c2dm",Integer.toString(icon));
-			
+						
 			Intent notificationIntent = new Intent(context, 
 					Class.forName(context.getPackageName() + ".AppEntry"));
 			notificationIntent.setData(Uri.parse(parameters));
@@ -102,7 +120,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 
 			nm.notify(1, notification);
 		} catch (Exception e) {
-			Log.e("as3c2dm", "Error activating application:", e);
+			Log.e(TAG, "Error activating application:", e);
 		}
 	}
 }

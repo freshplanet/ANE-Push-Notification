@@ -1,0 +1,217 @@
+TAirPushNotification
+v3
+r1
+cCheck dependencies
+cProcessPCH /var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-fiaaziruhpzirgadyfzjhnveqjqk/AirPushNotification-Prefix.pch.gch AirPushNotification/AirPushNotification-Prefix.pch normal armv7 objective-c com.apple.compilers.llvmgcc42
+cProcessPCH /var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-bozbbbfuvyxfpzbzbawobogenyxu/AirPushNotification-Prefix.pch.gch AirPushNotification/AirPushNotification-Prefix.pch normal armv6 objective-c com.apple.compilers.llvmgcc42
+cCompileC build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv6/AirPushNotification.o /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m normal armv6 objective-c com.apple.compilers.llvmgcc42
+cCompileC build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv7/AirPushNotification.o /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m normal armv7 objective-c com.apple.compilers.llvmgcc42
+cLibtool /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv6/libAirPushNotification.a normal armv6
+cLibtool /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv7/libAirPushNotification.a normal armv7
+cCreateUniversalBinary /Users/titi/Projects/AirPushNotification/NativeIOS/build/Release-iphoneos/libAirPushNotification.a normal "armv6 armv7"
+
+N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk
+c000000004D9A119B0000000000000110
+t1301942683
+s272
+
+N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk/System/Library/Frameworks/Foundation.framework/Foundation
+c000000004D93E1FD00000000003E22F0
+t1301537277
+s4072176
+
+N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.h
+c000000004D93E1E60000000000001466
+t1301537254
+s5222
+
+N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIAlertView.h
+c000000004D99FA7E0000000000001780
+t1301936766
+s6016
+
+N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIApplication.h
+c000000004D99FA7C00000000000045C1
+t1301936764
+s17857
+
+N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIKit.h
+c000000004D99FA7C0000000000000AA1
+t1301936764
+s2721
+
+N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk/System/Library/Frameworks/UIKit.framework/UIKit
+c000000004D99FAFA0000000000CA2AE0
+t1301936890
+s13249248
+
+N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk/usr/include/objc/message.h
+c000000004D93DB580000000000001F13
+t1301535576
+s7955
+
+N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk/usr/include/objc/runtime.h
+c000000004D93DB5800000000000063AF
+t1301535576
+s25519
+
+N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk/usr/include/stdint.h
+c000000004D4F6E9000000000000018EF
+t1297051280
+s6383
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/../../../../../../../Applications/Adobe Flash Builder 4.6/sdks/4.6.0/include/FlashRuntimeExtensions.h
+c000000004F5FD2CD0000000000004FCB
+t1331679949
+s20427
+i<stdint.h>
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification-Prefix.pch
+c000000004F9AF83D00000000000003FA
+t1335556157
+s1018
+i<Foundation/Foundation.h>
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.h
+c000000004F9AF9E400000000000008C5
+t1335556580
+s2245
+i<UIKit/UIKit.h>
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m
+c000000004F9AFA68000000000000211B
+t1335556712
+s8475
+i"FlashRuntimeExtensions.h"
+i<UIKit/UIApplication.h>
+i<UIKit/UIAlertView.h>
+i"AirPushNotification.h"
+i<objc/runtime.h>
+i<objc/message.h>
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv6/AirPushNotification.LinkFileList
+c000000004F9B074A00000000000000A9
+t1335560010
+s169
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv6/AirPushNotification.o
+t2
+s0
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv6/libAirPushNotification.a
+t2
+s0
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv7/AirPushNotification.LinkFileList
+c000000004F9B074A00000000000000A9
+t1335560010
+s169
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv7/AirPushNotification.o
+t2
+s0
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv7/libAirPushNotification.a
+t2
+s0
+
+N/Users/titi/Projects/AirPushNotification/NativeIOS/build/Release-iphoneos/libAirPushNotification.a
+t2
+s0
+
+N/var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-bozbbbfuvyxfpzbzbawobogenyxu/AirPushNotification-Prefix.pch.gch
+t2
+s0
+
+N/var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-fiaaziruhpzirgadyfzjhnveqjqk/AirPushNotification-Prefix.pch.gch
+t2
+s0
+
+CCheck dependencies
+r0
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependenciese33810ca3e4bb541^48883aca3e4bb541^---0#1#0#--18"Check dependencies
+
+CCompileC build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv6/AirPushNotification.o /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m normal armv6 objective-c com.apple.compilers.llvmgcc42
+s357252810.947410
+e357252811.193829
+r1
+xCompileC
+xbuild/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv6/AirPushNotification.o
+x/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m
+xnormal
+xarmv6
+xobjective-c
+xcom.apple.compilers.llvmgcc42
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection100"Compile /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m01bff2ca3e4bb541^63b531cb3e4bb541^---0#0#0#-19%DVTDocumentLocation2@108"file://localhost/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m0000000000000000^2728"CompileC build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv6/AirPushNotification.o AirPushNotification/AirPushNotification.m normal armv6 objective-c com.apple.compilers.llvmgcc42    cd /Users/titi/Projects/AirPushNotification/NativeIOS    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/Users/titi/.rvm/gems/ruby-1.8.7-p249/bin:/Users/titi/.rvm/gems/ruby-1.8.7-p249@global/bin:/Users/titi/.rvm/rubies/ruby-1.8.7-p249/bin:/Users/titi/.rvm/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin:/Users/titi/bin:/Users/titi/.gem/ruby/1.8/bin:/bin:/usr/local/Cellar/cloud-watch/1.0.2.3/jars/bin:/usr/local/Cellar/auto-scaling/1.0.33.1/jars/bin:/bin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/llvm-gcc-4.2 -x objective-c -arch armv6 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -Os -Wmissing-prototypes -Wreturn-type -Wunused-variable -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk -gdwarf-2 -mthumb -miphoneos-version-min=4.3 -iquote /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/AirPushNotification-generated-files.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/AirPushNotification-own-target-headers.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/AirPushNotification-all-target-headers.hmap -iquote /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/AirPushNotification-project-headers.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/Release-iphoneos/include -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/DerivedSources/armv6 -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/DerivedSources -F/Users/titi/Projects/AirPushNotification/NativeIOS/build/Release-iphoneos -include /var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-bozbbbfuvyxfpzbzbawobogenyxu/AirPushNotification-Prefix.pch -c /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m -o /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv6/AirPushNotification.o
+
+CCompileC build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv7/AirPushNotification.o /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m normal armv7 objective-c com.apple.compilers.llvmgcc42
+s357252810.977671
+e357252811.289653
+r1
+xCompileC
+xbuild/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv7/AirPushNotification.o
+x/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m
+xnormal
+xarmv7
+xobjective-c
+xcom.apple.compilers.llvmgcc42
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection100"Compile /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m0b7bfaca3e4bb541^0f294acb3e4bb541^---0#0#0#-19%DVTDocumentLocation2@108"file://localhost/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m0000000000000000^2728"CompileC build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv7/AirPushNotification.o AirPushNotification/AirPushNotification.m normal armv7 objective-c com.apple.compilers.llvmgcc42    cd /Users/titi/Projects/AirPushNotification/NativeIOS    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/Users/titi/.rvm/gems/ruby-1.8.7-p249/bin:/Users/titi/.rvm/gems/ruby-1.8.7-p249@global/bin:/Users/titi/.rvm/rubies/ruby-1.8.7-p249/bin:/Users/titi/.rvm/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin:/Users/titi/bin:/Users/titi/.gem/ruby/1.8/bin:/bin:/usr/local/Cellar/cloud-watch/1.0.2.3/jars/bin:/usr/local/Cellar/auto-scaling/1.0.33.1/jars/bin:/bin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/llvm-gcc-4.2 -x objective-c -arch armv7 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -Os -Wmissing-prototypes -Wreturn-type -Wunused-variable -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk -gdwarf-2 -mthumb -miphoneos-version-min=4.3 -iquote /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/AirPushNotification-generated-files.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/AirPushNotification-own-target-headers.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/AirPushNotification-all-target-headers.hmap -iquote /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/AirPushNotification-project-headers.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/Release-iphoneos/include -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/DerivedSources/armv7 -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/DerivedSources -F/Users/titi/Projects/AirPushNotification/NativeIOS/build/Release-iphoneos -include /var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-fiaaziruhpzirgadyfzjhnveqjqk/AirPushNotification-Prefix.pch -c /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification.m -o /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv7/AirPushNotification.o
+
+CCreateUniversalBinary /Users/titi/Projects/AirPushNotification/NativeIOS/build/Release-iphoneos/libAirPushNotification.a normal "armv6 armv7"
+s357252811.353930
+e357252811.397620
+r1
+xCreateUniversalBinary
+x/Users/titi/Projects/AirPushNotification/NativeIOS/build/Release-iphoneos/libAirPushNotification.a
+xnormal
+xarmv6 armv7
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection122"Create universal binary /Users/titi/Projects/AirPushNotification/NativeIOS/build/Release-iphoneos/libAirPushNotification.a61c45acb3e4bb541^3fc965cb3e4bb541^---0#0#0#-19%DVTDocumentLocation2@114"file://localhost/Users/titi/Projects/AirPushNotification/NativeIOS/build/Release-iphoneos/libAirPushNotification.a00f4f4a1dfffdf42^1132"CreateUniversalBinary build/Release-iphoneos/libAirPushNotification.a normal "armv6 armv7"    cd /Users/titi/Projects/AirPushNotification/NativeIOS    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/Users/titi/.rvm/gems/ruby-1.8.7-p249/bin:/Users/titi/.rvm/gems/ruby-1.8.7-p249@global/bin:/Users/titi/.rvm/rubies/ruby-1.8.7-p249/bin:/Users/titi/.rvm/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin:/Users/titi/bin:/Users/titi/.gem/ruby/1.8/bin:/bin:/usr/local/Cellar/cloud-watch/1.0.2.3/jars/bin:/usr/local/Cellar/auto-scaling/1.0.33.1/jars/bin:/bin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/libtool -static /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv6/libAirPushNotification.a /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv7/libAirPushNotification.a -o /Users/titi/Projects/AirPushNotification/NativeIOS/build/Release-iphoneos/libAirPushNotification.a
+
+CLibtool /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv6/libAirPushNotification.a normal armv6
+s357252811.201195
+e357252811.240861
+r1
+xLibtool
+x/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv6/libAirPushNotification.a
+xnormal
+xarmv6
+o/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/libtool: -dynamic not specified the following flags are invalid: -ObjC 
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection141"Libtool build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv6/libAirPushNotification.a normal armv664af33cb3e4bb541^0ebd3dcb3e4bb541^---0#0#0#--1364"Libtool build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv6/libAirPushNotification.a normal armv6    cd /Users/titi/Projects/AirPushNotification/NativeIOS    setenv IPHONEOS_DEPLOYMENT_TARGET 4.3    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/Users/titi/.rvm/gems/ruby-1.8.7-p249/bin:/Users/titi/.rvm/gems/ruby-1.8.7-p249@global/bin:/Users/titi/.rvm/rubies/ruby-1.8.7-p249/bin:/Users/titi/.rvm/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin:/Users/titi/bin:/Users/titi/.gem/ruby/1.8/bin:/bin:/usr/local/Cellar/cloud-watch/1.0.2.3/jars/bin:/usr/local/Cellar/auto-scaling/1.0.33.1/jars/bin:/bin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/libtool -static -arch_only armv6 -syslibroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk -L/Users/titi/Projects/AirPushNotification/NativeIOS/build/Release-iphoneos -filelist /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv6/AirPushNotification.LinkFileList -ObjC -framework UIKit -framework Foundation -o /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv6/libAirPushNotification.a
+
+CLibtool /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv7/libAirPushNotification.a normal armv7
+s357252811.296137
+e357252811.347053
+r1
+xLibtool
+x/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv7/libAirPushNotification.a
+xnormal
+xarmv7
+o/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/libtool: -dynamic not specified the following flags are invalid: -ObjC 
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection141"Libtool build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv7/libAirPushNotification.a normal armv726fb4bcb3e4bb541^c7d558cb3e4bb541^---0#0#0#--1364"Libtool build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv7/libAirPushNotification.a normal armv7    cd /Users/titi/Projects/AirPushNotification/NativeIOS    setenv IPHONEOS_DEPLOYMENT_TARGET 4.3    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/Users/titi/.rvm/gems/ruby-1.8.7-p249/bin:/Users/titi/.rvm/gems/ruby-1.8.7-p249@global/bin:/Users/titi/.rvm/rubies/ruby-1.8.7-p249/bin:/Users/titi/.rvm/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin:/Users/titi/bin:/Users/titi/.gem/ruby/1.8/bin:/bin:/usr/local/Cellar/cloud-watch/1.0.2.3/jars/bin:/usr/local/Cellar/auto-scaling/1.0.33.1/jars/bin:/bin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/libtool -static -arch_only armv7 -syslibroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk -L/Users/titi/Projects/AirPushNotification/NativeIOS/build/Release-iphoneos -filelist /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv7/AirPushNotification.LinkFileList -ObjC -framework UIKit -framework Foundation -o /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/Objects-normal/armv7/libAirPushNotification.a
+
+CProcessPCH /var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-bozbbbfuvyxfpzbzbawobogenyxu/AirPushNotification-Prefix.pch.gch AirPushNotification/AirPushNotification-Prefix.pch normal armv6 objective-c com.apple.compilers.llvmgcc42
+s357252810.237494
+e357252810.940282
+r1
+xProcessPCH
+x/var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-bozbbbfuvyxfpzbzbawobogenyxu/AirPushNotification-Prefix.pch.gch
+xAirPushNotification/AirPushNotification-Prefix.pch
+xnormal
+xarmv6
+xobjective-c
+xcom.apple.compilers.llvmgcc42
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection61"Precompile AirPushNotification/AirPushNotification-Prefix.pch05193dca3e4bb541^91d6f0ca3e4bb541^---0#0#0#-19%DVTDocumentLocation2@117"file://localhost/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification-Prefix.pch0000000000000000^2648"ProcessPCH /var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-bozbbbfuvyxfpzbzbawobogenyxu/AirPushNotification-Prefix.pch.gch AirPushNotification/AirPushNotification-Prefix.pch normal armv6 objective-c com.apple.compilers.llvmgcc42    cd /Users/titi/Projects/AirPushNotification/NativeIOS    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/Users/titi/.rvm/gems/ruby-1.8.7-p249/bin:/Users/titi/.rvm/gems/ruby-1.8.7-p249@global/bin:/Users/titi/.rvm/rubies/ruby-1.8.7-p249/bin:/Users/titi/.rvm/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin:/Users/titi/bin:/Users/titi/.gem/ruby/1.8/bin:/bin:/usr/local/Cellar/cloud-watch/1.0.2.3/jars/bin:/usr/local/Cellar/auto-scaling/1.0.33.1/jars/bin:/bin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/llvm-gcc-4.2 -x objective-c-header -arch armv6 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -Os -Wmissing-prototypes -Wreturn-type -Wunused-variable -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk -gdwarf-2 -mthumb -miphoneos-version-min=4.3 -iquote /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/AirPushNotification-generated-files.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/AirPushNotification-own-target-headers.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/AirPushNotification-all-target-headers.hmap -iquote /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/AirPushNotification-project-headers.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/Release-iphoneos/include -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/DerivedSources/armv6 -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/DerivedSources -F/Users/titi/Projects/AirPushNotification/NativeIOS/build/Release-iphoneos -c /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification-Prefix.pch -o /var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-bozbbbfuvyxfpzbzbawobogenyxu/AirPushNotification-Prefix.pch.gch
+
+CProcessPCH /var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-fiaaziruhpzirgadyfzjhnveqjqk/AirPushNotification-Prefix.pch.gch AirPushNotification/AirPushNotification-Prefix.pch normal armv7 objective-c com.apple.compilers.llvmgcc42
+s357252810.237480
+e357252810.968715
+r1
+xProcessPCH
+x/var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-fiaaziruhpzirgadyfzjhnveqjqk/AirPushNotification-Prefix.pch.gch
+xAirPushNotification/AirPushNotification-Prefix.pch
+xnormal
+xarmv7
+xobjective-c
+xcom.apple.compilers.llvmgcc42
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection61"Precompile AirPushNotification/AirPushNotification-Prefix.pch05193dca3e4bb541^3b8df8ca3e4bb541^---0#0#0#-19%DVTDocumentLocation2@117"file://localhost/Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification-Prefix.pch0000000000000000^2648"ProcessPCH /var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-fiaaziruhpzirgadyfzjhnveqjqk/AirPushNotification-Prefix.pch.gch AirPushNotification/AirPushNotification-Prefix.pch normal armv7 objective-c com.apple.compilers.llvmgcc42    cd /Users/titi/Projects/AirPushNotification/NativeIOS    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/Users/titi/.rvm/gems/ruby-1.8.7-p249/bin:/Users/titi/.rvm/gems/ruby-1.8.7-p249@global/bin:/Users/titi/.rvm/rubies/ruby-1.8.7-p249/bin:/Users/titi/.rvm/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin:/Users/titi/bin:/Users/titi/.gem/ruby/1.8/bin:/bin:/usr/local/Cellar/cloud-watch/1.0.2.3/jars/bin:/usr/local/Cellar/auto-scaling/1.0.33.1/jars/bin:/bin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/llvm-gcc-4.2 -x objective-c-header -arch armv7 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -Os -Wmissing-prototypes -Wreturn-type -Wunused-variable -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk -gdwarf-2 -mthumb -miphoneos-version-min=4.3 -iquote /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/AirPushNotification-generated-files.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/AirPushNotification-own-target-headers.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/AirPushNotification-all-target-headers.hmap -iquote /Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/AirPushNotification-project-headers.hmap -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/Release-iphoneos/include -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/DerivedSources/armv7 -I/Users/titi/Projects/AirPushNotification/NativeIOS/build/AirPushNotification.build/Release-iphoneos/AirPushNotification.build/DerivedSources -F/Users/titi/Projects/AirPushNotification/NativeIOS/build/Release-iphoneos -c /Users/titi/Projects/AirPushNotification/NativeIOS/AirPushNotification/AirPushNotification-Prefix.pch -o /var/folders/5k/z80853k16hn_mm7cjjznwfjc0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/AirPushNotification-Prefix-fiaaziruhpzirgadyfzjhnveqjqk/AirPushNotification-Prefix.pch.gch
+

@@ -1,3 +1,21 @@
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright 2012 Freshplanet (http://freshplanet.com | opensource@freshplanet.com)
+//  
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//  
+//    http://www.apache.org/licenses/LICENSE-2.0
+//  
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+//  
+//////////////////////////////////////////////////////////////////////////////////////
+
 package com.freshplanet.nativeExtensions;
 
 import android.app.PendingIntent;
@@ -17,31 +35,33 @@ import com.adobe.fre.FREObject;
  */
 public class C2DMRegisterFunction implements FREFunction {
 
+	private static String TAG = "c2dmRegister";
+
 	
 	public FREObject call(FREContext context, FREObject[] args) 
 	{
 		
 		if (args == null || args.length == 0)
 		{
-			Log.e("as3c2dm", "no email adress provided. Cannot register the device.");
+			Log.e(TAG, "no email adress provided. Cannot register the device.");
 			return null;
 		}
 		String emailAdress;
 		try {
 			emailAdress = args[0].getAsString();
 		} catch (Exception e) {
-			Log.e("as3c2dm", "Wrong object passed for email adress. Object expected : String. Cannot register the device.");
+			Log.e(TAG, "Wrong object passed for email adress. Object expected : String. Cannot register the device.");
 			return null;
 		}
 		
 		if (emailAdress == null)
 		{
-			Log.e("as3c2dm", "emailAdress is null. Cannot register the device.");
+			Log.e(TAG, "emailAdress is null. Cannot register the device.");
 			return null;
 		}
 		
 		Context appContext = context.getActivity().getApplicationContext();
-		Log.d("as3c2dm", "C2DMRegisterFunction.call");
+		Log.d(TAG, "C2DMRegisterFunction.call");
 		try {
 			
 			Intent registrationIntent = new Intent(
@@ -54,8 +74,7 @@ public class C2DMRegisterFunction implements FREFunction {
 
 		} catch (Exception e) {
 			context.dispatchStatusEventAsync("REGISTERING", "error "+e.toString());
-
-			Log.e("as3c2dm", "Error sending registration intent.", e);
+			Log.e(TAG, "Error sending registration intent.", e);
 		}
 		return null;
 	}
