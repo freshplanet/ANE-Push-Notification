@@ -61,13 +61,14 @@ public class C2DMRegisterFunction implements FREFunction {
 		}
 		
 		Context appContext = context.getActivity().getApplicationContext();
-		Log.d(TAG, "C2DMRegisterFunction.call");
+		Log.d(TAG, "C2DMRegisterFunction.call "+emailAdress);
 		try {
 			
 			Intent registrationIntent = new Intent(
 					"com.google.android.c2dm.intent.REGISTER");
 			registrationIntent.putExtra("app",
 					PendingIntent.getBroadcast(appContext, 0, new Intent(), 0));
+			Log.d(TAG, "intent with extras "+PendingIntent.getBroadcast(appContext, 0, new Intent(), 0) +" ... "+emailAdress);
 			registrationIntent.putExtra("sender", emailAdress);
 			appContext.startService(registrationIntent);
 			context.dispatchStatusEventAsync("REGISTERING", "success");

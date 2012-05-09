@@ -60,10 +60,7 @@
 
 
 	<target name="AndroidCompress" depends="iOSCopy">
-		 <jar destfile="${build}/Android/libAirPushNotification.jar" 
-			basedir="NativeAndroid/"
-			excludes="assets res src"
-		/>
+		<copy file="${lib.jar}" todir="${build}/Android"/>
 	</target>
 
 	<target name="AndroidImage" depends="AndroidCompress">
