@@ -12,6 +12,7 @@ package com.freshplanet.nativeExtensions
 		public var token : String;
 		public var errorCode : String;
 		public var errorMessage : String;
+		public var parameters:Object;
 		
 		public function PushNotificationEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
 		{

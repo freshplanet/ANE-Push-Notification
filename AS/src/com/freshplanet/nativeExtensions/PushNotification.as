@@ -1,9 +1,12 @@
 package com.freshplanet.nativeExtensions
 {
+	import flash.display.BitmapData;
 	import flash.events.EventDispatcher;
 	import flash.events.StatusEvent;
 	import flash.external.ExtensionContext;
 	import flash.system.Capabilities;
+	
+	import mx.graphics.shaderClasses.ExclusionShader;
 
     
     public class PushNotification extends EventDispatcher 
@@ -55,15 +58,15 @@ package com.freshplanet.nativeExtensions
 		}
 	
         /**
-		 * Needs email Adress for Android Notifications.
-		 * The email adress is the one the developer used to register to cd2m.
-		 * @param emailAdress: adress email to use
+		 * Needs Project id for Android Notifications.
+		 * The project id is the one the developer used to register to gcm.
+		 * @param projectId: project id to use
 		 */
-		public function registerForPushNotification(emailAdress:String = null) : void
+		public function registerForPushNotification(projectId:String = null) : void
 		{
 			if (this.isPushNotificationSupported)
 			{
-				extCtx.call("registerPush", emailAdress);
+				extCtx.call("registerPush", projectId);
 			}
 		}
 		
@@ -75,19 +78,18 @@ package com.freshplanet.nativeExtensions
 			}
 		}
 		
-        
 		
 		/**
 		 * Sends a local notification to the device.
 		 * @param message the local notification text displayed
 		 * @param timestamp when the local notification should appear
 		 */
-		public function sendLocalNotification(message:String, timestamp:int):void
+		public function sendLocalNotification(message:String, timestamp:int, title:String):void
 		{
-			trace("[Push Notification]","sendLocalnotification");
+			trace("[Push Notification]","sendLocalNotification");
 			if (this.isPushNotificationSupported)
 			{
-				extCtx.call("sendLocalNotification", message, timestamp);
+				extCtx.call("sendLocalNotification", message, timestamp, title);
 			}
 		}
 		
@@ -100,30 +102,41 @@ package com.freshplanet.nativeExtensions
 			if (this.isPushNotificationSupported)
 			{
 				var event : PushNotificationEvent;
-				
-				if (e.code == "TOKEN_SUCCESS") 
+				switch (e.code)
 				{
-					trace( 'TOKEN_SUCCESS, token =', e.level );
-					event = new PushNotificationEvent( PushNotificationEvent.PERMISSION_GIVEN_WITH_TOKEN_EVENT );
-					event.token = e.level;
-					this.dispatchEvent( event );
-				}
-				else if (e.code == "TOKEN_FAIL")
-				{
-					trace( 'TOKEN_FAIL, error =', e.level );
-					event = new PushNotificationEvent( PushNotificationEvent.PERMISSION_REFUSED_EVENT );
-					event.errorCode = "NativeCodeError";
-					event.errorMessage = e.level;
-					this.dispatchEvent( event );
-				} else if (e.code == "COMING_FROM_NOTIFICATION")
-				{
-					trace( 'COMING_FROM_NOTIFICATION, message =', e.level );
-					event = new PushNotificationEvent( PushNotificationEvent.COMING_FROM_NOTIFICATION_EVENT );
+					case "TOKEN_SUCCESS":
+						event = new PushNotificationEvent( PushNotificationEvent.PERMISSION_GIVEN_WITH_TOKEN_EVENT );
+						event.token = e.level;
+						break;
+					case "TOKEN_FAILT":
+						event = new PushNotificationEvent( PushNotificationEvent.PERMISSION_REFUSED_EVENT );
+						event.errorCode = "NativeCodeError";
+						event.errorMessage = e.level;
+						break;
 					
-				} else
-				{
-					trace('unrecognized event '+e.code);
+					case "COMING_FROM_NOTIFICATION":
+						event = new PushNotificationEvent( PushNotificationEvent.COMING_FROM_NOTIFICATION_EVENT );
+						var data:String = e.level;
+						if (data != null)
+						{
+							try
+							{
+								var params:Object = JSON.parse(data);
+								event.parameters = params;
+							} catch (error:Error)
+							{
+								trace("[PushNotification Error]", "cannot parse the params string", e.level);
+							}
+						}
+						break;
+					
 				}
+				
+				if (event != null)
+				{
+					this.dispatchEvent( event );
+				}
+				
 			}
 		}
 		

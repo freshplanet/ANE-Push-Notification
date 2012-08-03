@@ -1,23 +1,7 @@
-//////////////////////////////////////////////////////////////////////////////////////
-//
-//  Copyright 2012 Freshplanet (http://freshplanet.com | opensource@freshplanet.com)
-//  
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//  
-//    http://www.apache.org/licenses/LICENSE-2.0
-//  
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
-//  
-//////////////////////////////////////////////////////////////////////////////////////
-
 package com.freshplanet.nativeExtensions;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.json.JSONObject;
@@ -26,9 +10,12 @@ import org.json.JSONTokener;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.IBinder;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -39,9 +26,41 @@ import android.widget.TextView;
 
 import com.adobe.fre.FREContext;
 
-public class C2DMBroadcastReceiver extends BroadcastReceiver {
+public class LocalNotificationService extends Service {
 
-	private static String TAG = "c2dmBdcastRcvr";
+	@Override
+	public void onCreate() {
+	}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		FREContext context = C2DMExtension.context;
+		if (context != null)
+		{
+			Log.d("LocalNService", "context not null");
+		} else
+		{
+			Log.d("LocalNService", "context is null");
+		}
+
+		handleMessage(this, intent);
+	      
+		// If we get killed, after returning from here, restart
+	    return START_STICKY;
+	}
+	
+	
+	@Override
+	public IBinder onBind(Intent intent) {
+	      // We don't provide binding, so return null
+	      return null;
+	}
+	  
+	  @Override
+	  public void onDestroy() {
+	  }
+
+	private static String TAG = "c2dmBdcastRcvrLcl";
 
 	private static int notificationIcon;
 	private static int customLayout;
@@ -49,80 +68,27 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 	private static int customLayoutDescription;
 	private static int customLayoutImageContainer;
 	private static int customLayoutImage;
-	
-	private static C2DMBroadcastReceiver instance;
-	
-	public C2DMBroadcastReceiver() {
-		
-		Log.d(TAG, "Broadcast receiver started!!!!!");
-	}
 
-	public static C2DMBroadcastReceiver getInstance()
-	{
-		return instance != null ? instance : new C2DMBroadcastReceiver();
-	}
-	
-	/**
-	 * When a cd2m intent is received by the device.
-	 * Filter the type of intent.
-	 * <ul>
-	 * <li>REGISTRATION : get the token and send it to the AS</li>
-	 * <li>RECEIVE : create a notification with the intent parameters</li>
-	 * </ul>
-	 */
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		if (intent.getAction().equals(
-				"com.google.android.c2dm.intent.REGISTRATION")) {
-			handleRegistration(context, intent);
-		} else if (intent.getAction().equals(
-				"com.google.android.c2dm.intent.RECEIVE")) {
-			handleMessage(context, intent);
-		}
-	}
-
-	/**
-	 * Check if there is a registration_id, and pass it to the AS.
-	 * Send a TOKEN_FAIL event if there is an error.
-	 * @param context 
-	 * @param intent
-	 */
-	private void handleRegistration(Context context, Intent intent) {
-		FREContext freContext = C2DMExtension.context;
-		String registration = intent.getStringExtra("registration_id");
-
-		if (intent.getStringExtra("error") != null) {
-			String error = intent.getStringExtra("error");
-			Log.d(TAG, "Registration failed with error: " + error);
-			if (freContext != null) {
-				freContext.dispatchStatusEventAsync("TOKEN_FAIL", error);
-			}
-		} else if (intent.getStringExtra("unregistered") != null) {
-			Log.d(TAG, "Unregistered successfully");
-			if (freContext != null) {
-				freContext.dispatchStatusEventAsync("UNREGISTERED",
-						"unregistered");
-			}
-		} else if (registration != null) {
-			Log.d(TAG, "Registered successfully");
-			if (freContext != null) {
-				freContext.dispatchStatusEventAsync("TOKEN_SUCCESS", registration);
-			}
-		}
-	}
-	
 	
 	private static int NotifId = 1;
-		
-	public static void registerResources(FREContext freContext)
+	
+	private void registerResources(FREContext freContext)
 	{
+		Log.d(TAG, "icon status");
 		notificationIcon = freContext.getResourceId("drawable.icon_status");
+		Log.d(TAG, "layout.notification");
 		customLayout = freContext.getResourceId("layout.notification");
+		Log.d(TAG, "title");
 		customLayoutTitle = freContext.getResourceId("id.title");
+		Log.d(TAG, "text");
 		customLayoutDescription = freContext.getResourceId("id.text");
+		Log.d(TAG, "image");
 		customLayoutImageContainer = freContext.getResourceId("id.image");
+		Log.d(TAG, "icon");
 		customLayoutImage = freContext.getResourceId("drawable.app_icon");
 	}
+
+	
 	
 	
 	/**
@@ -136,15 +102,19 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 			FREContext ctxt = C2DMExtension.context;
 			if (ctxt != null)
 			{
+				Log.d("LocalNService", "registering resources");
 				registerResources(ctxt);
 			}
 			
+			Log.d("LocalNService", "extract colors");
+
 			extractColors(context);
 			
 			NotificationManager nm = (NotificationManager) context
 					.getSystemService(Context.NOTIFICATION_SERVICE);
 
-			
+			Log.d("LocalNService", "getting nm");
+
 			// icon is required for notification.
 			// @see http://developer.android.com/guide/practices/ui_guidelines/icon_design_status_bar.html
 			
@@ -153,6 +123,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 
 			
 			// json string
+			Log.d("LocalNService", "getting extra params");
 
 			String parameters = intent.getStringExtra("parameters");
 			String facebookId = null;
@@ -175,22 +146,44 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 			CharSequence tickerText = intent.getStringExtra("tickerText");
 			CharSequence contentTitle = intent.getStringExtra("contentTitle");
 			CharSequence contentText = intent.getStringExtra("contentText");
-						
+					
+			Log.d("LocalNService", "creating intent");
+
 			Intent notificationIntent = new Intent(context, 
 					Class.forName(context.getPackageName() + ".AppEntry"));
-			
+			Log.d("LocalNService", "getting penging intent");
+
 
 			PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
 					notificationIntent, 0);
+
+			Log.d("LocalNService", "getting notif");
 
 			Notification notification = new Notification(icon, tickerText, when);
 			notification.flags |= Notification.FLAG_AUTO_CANCEL;
 			notification.setLatestEventInfo(context, contentTitle, contentText,
 					contentIntent);
 
-			
+			Log.d("LocalNService", "creating remove view");
+
 			RemoteViews contentView = new RemoteViews(context.getPackageName(), customLayout);
 			
+			if (facebookId != null)
+			{		
+				Log.d(TAG, "bitmap not null");
+				String src = "http://graph.facebook.com/"+facebookId+"/picture";
+				URL url = new URL(src);
+		        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		        connection.setDoInput(true);
+		        connection.connect();
+		        InputStream input = connection.getInputStream();
+		        Bitmap myBitmap = BitmapFactory.decodeStream(input);
+				contentView.setImageViewBitmap(customLayoutImageContainer, myBitmap);
+			} else
+			{
+				Log.d(TAG, "bitmap null");
+				contentView.setImageViewResource(customLayoutImageContainer, customLayoutImage);
+			}
 			
 			
 			contentView.setTextViewText(customLayoutTitle, contentTitle);
@@ -201,22 +194,10 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 			contentView.setTextColor(customLayoutDescription, notification_text_color);
 			contentView.setFloat(customLayoutDescription, "setTextSize", notification_text_size);
 
-			
-			if (facebookId != null)
-			{		
-				Log.d(TAG, "bitmap not null");
-				CreateNotificationTask cNT = new CreateNotificationTask();
-				cNT.setParams(customLayoutImageContainer, NotifId, nm, notification, contentView);
-				String src = "http://graph.facebook.com/"+facebookId+"/picture";
-				URL url = new URL(src);
-				cNT.execute(url);
-			} else
-			{
-				Log.d(TAG, "bitmap null");
-				contentView.setImageViewResource(customLayoutImageContainer, customLayoutImage);
-				notification.contentView = contentView;
-				nm.notify(NotifId, notification);
-			}
+			notification.contentView = contentView;
+			Log.d("LocalNService", "notifying");
+
+			nm.notify(NotifId, notification);
 			NotifId++;
 			
 			if (ctxt != null)
@@ -281,5 +262,5 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 	        notification_text_color = android.R.color.black;
 	    }
 	}
-	
+
 }

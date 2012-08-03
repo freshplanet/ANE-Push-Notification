@@ -70,7 +70,30 @@ void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application,
 
     if ( myCtx != nil )
     {
-        FREDispatchStatusEventAsync(myCtx, (uint8_t*)"COMING_FROM_NOTIFICATION", (uint8_t*)[@"" UTF8String]); 
+        NSDictionary *ctxDictionary =[userInfo objectForKey:@"ctx"];
+        NSString *stringInfo = [userInfo description];
+        if (ctxDictionary != nil)
+        {
+            stringInfo = @"{";
+            
+            int length = [ctxDictionary count];
+            int count = 0;
+            for (NSString* key in [ctxDictionary allKeys])
+            {
+                count++;
+                NSString *stringObject = [ctxDictionary objectForKey:key];
+                if (count < length)
+                {
+                    stringInfo =[stringInfo stringByAppendingFormat:@"\"%@\":\"%@\",", key, stringObject];
+                } else
+                {
+                    stringInfo =[stringInfo stringByAppendingFormat:@"\"%@\":\"%@\"", key, stringObject];
+                }
+            }
+            
+            stringInfo = [stringInfo stringByAppendingString:@"}"];
+        }
+        FREDispatchStatusEventAsync(myCtx, (uint8_t*)"COMING_FROM_NOTIFICATION", (uint8_t*)[stringInfo UTF8String]); 
     }
 }
 
@@ -168,15 +191,18 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
          
          SEL selectorToOverride2 = @selector(application:didFailToRegisterForRemoteNotificationsWithError:);
          
+         SEL selectorToOverride3 = @selector(application:didReceiveRemoteNotification:);
+
          // get the info on the method we're going to override
          Method m1 = class_getInstanceMethod(objectClass, selectorToOverride1);
          Method m2 = class_getInstanceMethod(objectClass, selectorToOverride2);
-         
+         Method m3 = class_getInstanceMethod(objectClass, selectorToOverride3);
          // add the method to the new class
          class_addMethod(modDelegate, selectorToOverride1, (IMP)didRegisterForRemoteNotificationsWithDeviceToken, method_getTypeEncoding(m1));
          
          class_addMethod(modDelegate, selectorToOverride2, (IMP)didFailToRegisterForRemoteNotificationsWithError, method_getTypeEncoding(m2));
-         
+         class_addMethod(modDelegate, selectorToOverride3, (IMP)didReceiveRemoteNotification, method_getTypeEncoding(m3));
+
          // register the new class with the runtime
          objc_registerClassPair(modDelegate);
      }
