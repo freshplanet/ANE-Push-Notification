@@ -12,6 +12,12 @@ package com.freshplanet.nativeExtensions
     public class PushNotification extends EventDispatcher 
 	{  
 	
+		public static const RECURRENCE_NONE:int   = 0;
+		public static const RECURRENCE_DAILY:int  = 1;
+		public static const RECURRENCE_WEEK:int   = 2;
+		public static const RECURRENCE_MONTH:int  = 3;
+		public static const RECURRENCE_YEAR:int   = 4;
+		
 		private static var extCtx:ExtensionContext = null;
         
         private static var _instance:PushNotification;
@@ -82,14 +88,17 @@ package com.freshplanet.nativeExtensions
 		/**
 		 * Sends a local notification to the device.
 		 * @param message the local notification text displayed
-		 * @param timestamp when the local notification should appear
+		 * @param timestamp when the local notification should appear (in sec)
+		 * @param title (Android Only) Title of the local notification
+		 * @param recurrenceType
+		 * 
 		 */
-		public function sendLocalNotification(message:String, timestamp:int, title:String):void
+		public function sendLocalNotification(message:String, timestamp:int, title:String, recurrenceType:int = RECURRENCE_NONE):void
 		{
 			trace("[Push Notification]","sendLocalNotification");
 			if (this.isPushNotificationSupported)
 			{
-				extCtx.call("sendLocalNotification", message, timestamp, title);
+				extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType);
 			}
 		}
 		
@@ -129,7 +138,9 @@ package com.freshplanet.nativeExtensions
 							}
 						}
 						break;
-					
+					case "LOGGING":
+						trace(e, e.level);
+						break;
 				}
 				
 				if (event != null)

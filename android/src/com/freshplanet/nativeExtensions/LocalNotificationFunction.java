@@ -38,6 +38,12 @@ public class LocalNotificationFunction implements FREFunction {
 
 	private static String TAG = "LocalNotificationFunction"; 
 	
+	private static int RECURRENCE_NONE = 0;
+	private static int RECURRENCE_DAY = 1;
+	private static int RECURRENCE_WEEK = 2;
+	private static int RECURRENCE_MONTH = 3;
+	private static int RECURRENCE_YEAR = 4;
+	
 	/**
 	 * Doesn't do anything for now. just to ensure iOS compatibility. 
 	 *
@@ -47,11 +53,16 @@ public class LocalNotificationFunction implements FREFunction {
 		String message = null;
 		long timestamp = 0;
 		String title = null;
+		int recurrenceType = RECURRENCE_NONE;
 		
 		try {
 			message = arg1[0].getAsString();
 			timestamp = (long) arg1[1].getAsInt();
 			title = arg1[2].getAsString();
+			if (arg1.length >= 4)
+			{
+				recurrenceType = arg1[3].getAsInt();
+			}
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		} catch (FRETypeMismatchException e) {
@@ -63,6 +74,8 @@ public class LocalNotificationFunction implements FREFunction {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		
 		
 		if (message != null && timestamp > 0)
 		{
@@ -82,11 +95,31 @@ public class LocalNotificationFunction implements FREFunction {
 				intent.putExtra("contentTitle", title);
 			}
 			intent.putExtra("contentText", message);
+			
+			
 			PendingIntent sender = PendingIntent.getBroadcast(appContext, 192837, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+			
 			// Get the AlarmManager service
 			AlarmManager am = (AlarmManager) appContext.getSystemService(Context.ALARM_SERVICE);
-			am.set(AlarmManager.RTC_WAKEUP, timestamp, sender);
+			
+			am.cancel(sender);
+
+			if (recurrenceType == RECURRENCE_DAY)
+			{
+				am.setRepeating(AlarmManager.RTC_WAKEUP, timestamp, 24*3600*1000, sender);
+			} else if (recurrenceType == RECURRENCE_WEEK) {
+				am.setRepeating(AlarmManager.RTC_WAKEUP, timestamp, 7*24*3600*1000, sender);
+			} else if (recurrenceType == RECURRENCE_MONTH) {
+				am.setRepeating(AlarmManager.RTC_WAKEUP, timestamp, 30*7*24*3600*1000, sender);
+
+			} else if (recurrenceType == RECURRENCE_YEAR) {
+				am.setRepeating(AlarmManager.RTC_WAKEUP, timestamp, 365*7*24*3600*1000, sender);
+
+			} else
+			{
+				am.set(AlarmManager.RTC_WAKEUP, timestamp, sender);
+			}
 			Log.d(TAG, "setting params to run at "+Long.toString(timestamp));
 
 		} else

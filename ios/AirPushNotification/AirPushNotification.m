@@ -125,6 +125,10 @@ DEFINE_ANE_FUNCTION(registerPush)
     return nil;
 }
 
+
+
+
+
 // sends local notification to the device.
 DEFINE_ANE_FUNCTION(sendLocalNotification)
 {
@@ -145,6 +149,12 @@ DEFINE_ANE_FUNCTION(sendLocalNotification)
    {
        return nil;
    }
+   
+    uint32_t recurrence = 0;
+    if (argc >= 4 )
+    {
+        FREGetObjectAsUint32(argv[3], &recurrence);
+    }
     
     
     NSDate *itemDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
@@ -157,8 +167,25 @@ DEFINE_ANE_FUNCTION(sendLocalNotification)
     
     localNotif.alertBody = message;
     localNotif.alertAction = @"View Details";
+    localNotif.soundName = UILocalNotificationDefaultSoundName;
     
-    localNotif.soundName = UILocalNotificationDefaultSoundName;    
+    if (recurrence > 0)
+    {
+        if (recurrence == 1)
+        {
+            localNotif.repeatInterval = NSDayCalendarUnit;
+        } else if (recurrence == 2)
+        {
+            localNotif.repeatInterval = NSWeekCalendarUnit;
+        } else if (recurrence == 3)
+        {
+            localNotif.repeatInterval = NSMonthCalendarUnit;
+        } else if (recurrence == 4)
+        {
+            localNotif.repeatInterval = NSYearCalendarUnit;
+        }
+        
+    }
     
     [[UIApplication sharedApplication] scheduleLocalNotification:localNotif];
     [localNotif release];
