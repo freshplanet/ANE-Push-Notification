@@ -7,7 +7,7 @@ This is an [Air native extension](http://www.adobe.com/devnet/air/native-extensi
 Push Notifications
 ---------
 
-On iOS devices, this ANE uses Apple [Push Notification Services](https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingWIthAPS/CommunicatingWIthAPS.html). On Android devices, it uses [Android Cloud to Device Messaging Service](https://developers.google.com/android/c2dm/).
+On iOS devices, this ANE uses Apple [Push Notification Services](https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingWIthAPS/CommunicatingWIthAPS.html). On Android devices, it uses [Google Cloud Messaging (GCM)](http://developer.android.com/guide/google/gcm/index.html).
 
 
 Installation
@@ -21,11 +21,13 @@ On Android, you might want to update the content of the *android/res* folder wit
 Usage
 -----
 
-In order to register for a push notification token on Android, you should use the following method:
+In order to register the device for a push notifications, you should use the following method:
 
-    PushNotification.getInstance().registerForPushNotification(GOOGLE_PLAY_ACCOUNT);
+    PushNotification.getInstance().registerForPushNotification(GOOGLE_PROJECT_ID);
 
-You don't need a Google play account on iOS Devices. Once the user has given his permission, the following event is triggered:
+The argument *GOOGLE_PROJECT_ID* is necessary only on Android and is your project's ID on [GCM](http://developer.android.com/guide/google/gcm/index.html).
+
+On iOS, once the user has given his permission, the following event is triggered:
 
     PushNotificationEvent.PERMISSION_GIVEN_WITH_TOKEN_EVENT
 
