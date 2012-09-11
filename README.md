@@ -25,9 +25,9 @@ In order to register the device for a push notifications, you should use the fol
 
     PushNotification.getInstance().registerForPushNotification(GOOGLE_PROJECT_ID);
 
-The argument *GOOGLE_PROJECT_ID* is necessary only on Android and is your project's ID on [GCM](http://developer.android.com/guide/google/gcm/index.html).
+The argument *GOOGLE_PROJECT_ID* is necessary only on Android and is your project's ID on [GCM](http://developer.android.com/guide/google/gcm/index.html). On iOS, you can call the method with no parameter.
 
-On iOS, once the user has given his permission, the following event is triggered:
+Once the user has given his permission, the following event is triggered:
 
     PushNotificationEvent.PERMISSION_GIVEN_WITH_TOKEN_EVENT
 
