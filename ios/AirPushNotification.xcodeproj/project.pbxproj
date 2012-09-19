@@ -69,8 +69,8 @@
 			isa = PBXGroup;
 			children = (
 				5AC0EBBD151A391600A3043E /* FlashRuntimeExtensions.h */,
-				5AC0EBB6151A38F400A3043E /* AirPushNotification.m */,
 				5A68E25D151AA23100873313 /* AirPushNotification.h */,
+				5AC0EBB6151A38F400A3043E /* AirPushNotification.m */,
 				5AC0EBB3151A38F300A3043E /* Supporting Files */,
 			);
 			path = AirPushNotification;

@@ -21,6 +21,7 @@ project.properties
 
 # Xcode
 xcuserdata
+ios/build
 
 # OS X
 Icon

@@ -289,3 +289,5 @@ void AirPushExtInitializer(void** extDataToSet, FREContextInitializer* ctxInitia
     
     NSLog(@"Exiting ExtInitializer()"); 
 }
+
+void AirPushExtFinalizer(void *extData) { }
