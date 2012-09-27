@@ -16,7 +16,39 @@ Installation
 The ANE binary (AirPushNotification.ane) is located in the *bin* folder. You should add it to your application project's Build Path and make sure to package it with your app (more information [here](http://help.adobe.com/en_US/air/build/WS597e5dadb9cc1e0253f7d2fc1311b491071-8000.html)).
 
 On Android, you might want to update the content of the *android/res* folder with your own assets.
+You should also update your android manifest:
 
+	```
+		<!-- Only this application can receive the messages and registration result -->
+		<permission android:name="INSERT.APP.ID.HERE.C2D_MESSAGE" android:protectionLevel="signature" />
+		<uses-permission android:name="INSERT.APP.ID.HERE.permission.C2D_MESSAGE" />
+		<!-- This app has permission to register and receive message -->
+		<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+		
+		
+		<!-- The following lines have to placed inside the <application> tag-->
+			<receiver android:name="com.freshplanet.nativeExtensions.C2DMBroadcastReceiver"
+				android:permission="com.google.android.c2dm.permission.SEND">
+				
+				<!-- Receive the actual message -->
+				<intent-filter>
+					<action android:name="com.google.android.c2dm.intent.RECEIVE" />
+					<category android:name="INSERT.APP.ID.HERE" />
+				</intent-filter>
+				
+				<!-- Receive the registration id -->
+				<intent-filter>
+					<action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+					<category android:name="INSERT.APP.ID.HERE" />
+				</intent-filter>
+			</receiver>
+			
+			<!-- Local notification -->
+			<service android:name="com.freshplanet.nativeExtensions.LocalNotificationService"/>
+			<receiver android:name="com.freshplanet.nativeExtensions.LocalBroadcastReceiver" android:process=":remote"></receiver>
+	```
+
+and replace INSERT.APP.ID.HERE by your application id (<id> tag in your manifest).
 
 Usage
 -----
