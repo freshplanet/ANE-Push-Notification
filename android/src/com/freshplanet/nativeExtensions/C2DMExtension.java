@@ -29,6 +29,8 @@ public class C2DMExtension implements FREExtension {
 
 	public static FREContext context;
 	
+	public static boolean isInForeground = false;
+	
 	/**
 	 * Create the context (AS to Java).
 	 */

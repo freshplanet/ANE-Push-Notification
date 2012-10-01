@@ -16,43 +16,40 @@
 //  
 //////////////////////////////////////////////////////////////////////////////////////
 
-
 package com.freshplanet.nativeExtensions;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import android.util.Log;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
+import com.adobe.fre.FREInvalidObjectException;
+import com.adobe.fre.FREObject;
+import com.adobe.fre.FRETypeMismatchException;
+import com.adobe.fre.FREWrongThreadException;
 
-public class C2DMExtensionContext extends FREContext {
+public class SetIsAppInForegroundFunction implements FREFunction {
 
-	private static String TAG = "c2dmContext";
-	
-	public C2DMExtensionContext() {
-		Log.d(TAG, "C2DMExtensionContext.C2DMExtensionContext");
-	}
-	
-	@Override
-	public void dispose() {
-		Log.d(TAG, "C2DMExtensionContext.dispose");
-		C2DMExtension.context = null;
-	}
+	public FREObject call(FREContext arg0, FREObject[] arg1) {
 
-	/**
-	 * Registers AS function name to Java Function Class
-	 */
-	@Override
-	public Map<String, FREFunction> getFunctions() {
-		Log.d(TAG, "C2DMExtensionContext.getFunctions");
-		Map<String, FREFunction> functionMap = new HashMap<String, FREFunction>();
-		functionMap.put("registerPush", new C2DMRegisterFunction());
-		functionMap.put("setBadgeNb", new SetBadgeValueFunction());
-		functionMap.put("sendLocalNotification", new LocalNotificationFunction());
-		functionMap.put("setIsAppInForeground", new SetIsAppInForegroundFunction());
-		return functionMap;	
+		boolean isInForeground;
+		try {
+			isInForeground = arg1[0].getAsBool();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+			return null;
+		} catch (FRETypeMismatchException e) {
+			e.printStackTrace();
+			return null;
+		} catch (FREInvalidObjectException e) {
+			e.printStackTrace();
+			return null;
+		} catch (FREWrongThreadException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		C2DMExtension.isInForeground = isInForeground;
+		
+		
+		return null;
 	}
 
 }
