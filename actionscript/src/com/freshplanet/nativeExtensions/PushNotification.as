@@ -103,6 +103,14 @@ package com.freshplanet.nativeExtensions
 		}
 		
 		
+		public function setIsAppInForeground(value:Boolean):void
+		{
+			if (this.isPushNotificationSupported)
+			{
+				extCtx.call("setIsAppInForeground", value);
+			}
+		}
+		
         // onStatus()
         // Event handler for the event that the native implementation dispatches.
         //

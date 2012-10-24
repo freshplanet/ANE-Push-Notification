@@ -77,8 +77,8 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 				"com.google.android.c2dm.intent.REGISTRATION")) {
 			handleRegistration(context, intent);
 		} else if (intent.getAction().equals(
-				"com.google.android.c2dm.intent.RECEIVE")) {
-			handleMessage(context, intent);
+				"com.google.android.c2dm.intent.RECEIVE") && !C2DMExtension.isInForeground) { 
+			handleMessage(context, intent);//display the notification only when in background
 		}
 	}
 

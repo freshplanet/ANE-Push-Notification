@@ -125,6 +125,11 @@ DEFINE_ANE_FUNCTION(registerPush)
     return nil;
 }
 
+// register the device for push notification.
+DEFINE_ANE_FUNCTION(setIsAppInForeground)
+{    
+    return nil;
+}
 
 
 
@@ -239,7 +244,7 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     ///////// end of delegate injection / modification code
     
     // Register the links btwn AS3 and ObjC. (dont forget to modify the nbFuntionsToLink integer if you are adding/removing functions)
-    NSInteger nbFuntionsToLink = 3;
+    NSInteger nbFuntionsToLink = 4;
     *numFunctionsToTest = nbFuntionsToLink;
     
     FRENamedFunction* func = (FRENamedFunction*) malloc(sizeof(FRENamedFunction) * nbFuntionsToLink);
@@ -253,9 +258,13 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     func[1].function = &setBadgeNb;
     
     func[2].name = (const uint8_t*) "sendLocalNotification";
-    func[1].functionData = NULL;
+    func[2].functionData = NULL;
     func[2].function = &sendLocalNotification;
     
+    func[3].name = (const uint8_t*) "setIsAppInForeground";
+    func[3].functionData = NULL;
+    func[3].function = &setIsAppInForeground;
+
     *functionsToSet = func;
     
     myCtx = ctx;
