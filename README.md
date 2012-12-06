@@ -20,7 +20,7 @@ You should also update your android manifest:
 
 	```
 		<!-- Only this application can receive the messages and registration result -->
-		<permission android:name="INSERT.APP.ID.HERE.C2D_MESSAGE" android:protectionLevel="signature" />
+		<permission android:name="INSERT.APP.ID.HERE.permission.C2D_MESSAGE" android:protectionLevel="signature" />
 		<uses-permission android:name="INSERT.APP.ID.HERE.permission.C2D_MESSAGE" />
 		<!-- This app has permission to register and receive message -->
 		<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
