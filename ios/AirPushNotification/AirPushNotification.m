@@ -35,6 +35,40 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo{}
 
++ (NSString*) convertToJSonString:(NSDictionary*)dict
+{
+    NSString *myString = @"{}";
+    if (dict != nil)
+    {
+        myString = @"{";
+        
+        int length = [dict count];
+        int count = 0;
+        for (NSString* key in [dict allKeys])
+        {
+            count++;
+            id value = [dict objectForKey:key];
+            if ([value isKindOfClass:[NSDictionary class]] )
+            {
+                NSDictionary *dictValue = [dict objectForKey:key];
+                myString = [myString stringByAppendingFormat:@"\"%@\":%@", key, [AirPushNotification convertToJSonString:dictValue]];
+
+            } else
+            {
+                NSString *stringObject = [dict objectForKey:key];
+                myString =[myString stringByAppendingFormat:@"\"%@\":\"%@\"", key, stringObject];
+            }
+            if (count < length)
+            {
+                myString = [myString stringByAppendingString:@","];
+            }
+        }
+        myString = [myString stringByAppendingString:@"}"];
+    }
+    return myString;
+}
+
+
 @end
 
 
@@ -70,30 +104,14 @@ void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application,
 
     if ( myCtx != nil )
     {
-        NSDictionary *ctxDictionary =[userInfo objectForKey:@"ctx"];
-        NSString *stringInfo = [userInfo description];
-        if (ctxDictionary != nil)
+        NSString *stringInfo = [AirPushNotification convertToJSonString:userInfo];
+        if ( application.applicationState == UIApplicationStateActive )
         {
-            stringInfo = @"{";
-            
-            int length = [ctxDictionary count];
-            int count = 0;
-            for (NSString* key in [ctxDictionary allKeys])
-            {
-                count++;
-                NSString *stringObject = [ctxDictionary objectForKey:key];
-                if (count < length)
-                {
-                    stringInfo =[stringInfo stringByAppendingFormat:@"\"%@\":\"%@\",", key, stringObject];
-                } else
-                {
-                    stringInfo =[stringInfo stringByAppendingFormat:@"\"%@\":\"%@\"", key, stringObject];
-                }
-            }
-            
-            stringInfo = [stringInfo stringByAppendingString:@"}"];
+            FREDispatchStatusEventAsync(myCtx, (uint8_t*)"NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND", (uint8_t*)[stringInfo UTF8String]);
+        } else
+        {
+            FREDispatchStatusEventAsync(myCtx, (uint8_t*)"APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION", (uint8_t*)[stringInfo UTF8String]);
         }
-        FREDispatchStatusEventAsync(myCtx, (uint8_t*)"COMING_FROM_NOTIFICATION", (uint8_t*)[stringInfo UTF8String]); 
     }
 }
 
@@ -131,6 +149,18 @@ DEFINE_ANE_FUNCTION(setIsAppInForeground)
     return nil;
 }
 
+// register the device for push notification.
+DEFINE_ANE_FUNCTION(fetchStarterNotification)
+{
+    BOOL appStartedWithNotification = [StarterNotificationChecker applicationStartedWithNotification];
+    if(appStartedWithNotification)
+    {
+        NSDictionary *launchOptions = [StarterNotificationChecker getStarterNotification];
+        NSString *stringInfo = [AirPushNotification convertToJSonString:launchOptions];
+        FREDispatchStatusEventAsync(myCtx, (uint8_t*)"APP_STARTING_FROM_NOTIFICATION", (uint8_t*)[stringInfo UTF8String]);
+    }
+    return nil;
+}
 
 
 
@@ -224,14 +254,14 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
          SEL selectorToOverride2 = @selector(application:didFailToRegisterForRemoteNotificationsWithError:);
          
          SEL selectorToOverride3 = @selector(application:didReceiveRemoteNotification:);
-
+         
          // get the info on the method we're going to override
          Method m1 = class_getInstanceMethod(objectClass, selectorToOverride1);
          Method m2 = class_getInstanceMethod(objectClass, selectorToOverride2);
          Method m3 = class_getInstanceMethod(objectClass, selectorToOverride3);
+         
          // add the method to the new class
          class_addMethod(modDelegate, selectorToOverride1, (IMP)didRegisterForRemoteNotificationsWithDeviceToken, method_getTypeEncoding(m1));
-         
          class_addMethod(modDelegate, selectorToOverride2, (IMP)didFailToRegisterForRemoteNotificationsWithError, method_getTypeEncoding(m2));
          class_addMethod(modDelegate, selectorToOverride3, (IMP)didReceiveRemoteNotification, method_getTypeEncoding(m3));
 
@@ -244,7 +274,7 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     ///////// end of delegate injection / modification code
     
     // Register the links btwn AS3 and ObjC. (dont forget to modify the nbFuntionsToLink integer if you are adding/removing functions)
-    NSInteger nbFuntionsToLink = 4;
+    NSInteger nbFuntionsToLink = 5;
     *numFunctionsToTest = nbFuntionsToLink;
     
     FRENamedFunction* func = (FRENamedFunction*) malloc(sizeof(FRENamedFunction) * nbFuntionsToLink);
@@ -264,6 +294,10 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     func[3].name = (const uint8_t*) "setIsAppInForeground";
     func[3].functionData = NULL;
     func[3].function = &setIsAppInForeground;
+
+    func[4].name = (const uint8_t*) "fetchStarterNotification";
+    func[4].functionData = NULL;
+    func[4].function = &fetchStarterNotification;
 
     *functionsToSet = func;
     

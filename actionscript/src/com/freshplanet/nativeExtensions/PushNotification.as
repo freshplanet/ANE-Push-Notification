@@ -52,7 +52,6 @@ package com.freshplanet.nativeExtensions
 		public function get isPushNotificationSupported():Boolean
 		{
 			var result:Boolean = (Capabilities.manufacturer.search('iOS') > -1 || Capabilities.manufacturer.search('Android') > -1);
-			trace('Push notification is'+(result ? ' ' : ' not ')+'supported');
 			return result;
 		}
 		
@@ -111,6 +110,15 @@ package com.freshplanet.nativeExtensions
 			}
 		}
 		
+		public function addListenerForStarterNotifications(listener:Function):void
+		{
+			if (this.isPushNotificationSupported)
+			{
+				this.addEventListener(PushNotificationEvent.APP_STARTING_FROM_NOTIFICATION_EVENT, listener);
+				extCtx.call("fetchStarterNotification");
+			}
+		}
+		
         // onStatus()
         // Event handler for the event that the native implementation dispatches.
         //
@@ -119,30 +127,67 @@ package com.freshplanet.nativeExtensions
 			if (this.isPushNotificationSupported)
 			{
 				var event : PushNotificationEvent;
+				var data:String = e.level;
 				switch (e.code)
 				{
 					case "TOKEN_SUCCESS":
 						event = new PushNotificationEvent( PushNotificationEvent.PERMISSION_GIVEN_WITH_TOKEN_EVENT );
 						event.token = e.level;
 						break;
-					case "TOKEN_FAILT":
+					case "TOKEN_FAIL":
 						event = new PushNotificationEvent( PushNotificationEvent.PERMISSION_REFUSED_EVENT );
 						event.errorCode = "NativeCodeError";
 						event.errorMessage = e.level;
 						break;
-					
 					case "COMING_FROM_NOTIFICATION":
 						event = new PushNotificationEvent( PushNotificationEvent.COMING_FROM_NOTIFICATION_EVENT );
-						var data:String = e.level;
 						if (data != null)
 						{
 							try
 							{
-								var params:Object = JSON.parse(data);
-								event.parameters = params;
+								event.parameters = JSON.parse(data);
 							} catch (error:Error)
 							{
-								trace("[PushNotification Error]", "cannot parse the params string", e.level);
+								trace("[PushNotification Error]", "cannot parse the params string", data);
+							}
+						}
+						break;
+					case "APP_STARTING_FROM_NOTIFICATION":
+						event = new PushNotificationEvent( PushNotificationEvent.APP_STARTING_FROM_NOTIFICATION_EVENT );
+						if (data != null)
+						{
+							try
+							{
+								event.parameters = JSON.parse(data);
+							} catch (error:Error)
+							{
+								trace("[PushNotification Error]", "cannot parse the params string", data);
+							}
+						}
+						break;
+					case "APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION":
+						event = new PushNotificationEvent( PushNotificationEvent.APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION_EVENT );
+						if (data != null)
+						{
+							try
+							{
+								event.parameters = JSON.parse(data);
+							} catch (error:Error)
+							{
+								trace("[PushNotification Error]", "cannot parse the params string", data);
+							}
+						}
+						break;
+					case "NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND":
+						event = new PushNotificationEvent( PushNotificationEvent.NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND_EVENT );
+						if (data != null)
+						{
+							try
+							{
+								event.parameters = JSON.parse(data);
+							} catch (error:Error)
+							{
+								trace("[PushNotification Error]", "cannot parse the params string", data);
 							}
 						}
 						break;
@@ -154,8 +199,7 @@ package com.freshplanet.nativeExtensions
 				if (event != null)
 				{
 					this.dispatchEvent( event );
-				}
-				
+				}				
 			}
 		}
 		

@@ -18,6 +18,7 @@
 
 package com.freshplanet.nativeExtensions;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.json.JSONObject;
@@ -77,7 +78,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 				"com.google.android.c2dm.intent.REGISTRATION")) {
 			handleRegistration(context, intent);
 		} else if (intent.getAction().equals(
-				"com.google.android.c2dm.intent.RECEIVE") && !C2DMExtension.isInForeground) { 
+				"com.google.android.c2dm.intent.RECEIVE")) { 
 			handleMessage(context, intent);//display the notification only when in background
 		}
 	}
@@ -133,93 +134,34 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 	 */
 	public void handleMessage(Context context, Intent intent) {
 		try {
-			registerResources(context);
-			extractColors(context);
+			
+			Log.d(TAG, "handleMessage");
+			// json string
+			String parameters = intent.getStringExtra("parameters");
+			
+			if (!C2DMExtension.isInForeground)
+			{
+				Log.d(TAG, "display notif");
+				registerResources(context);
+				extractColors(context);
+
+				createNotificationMessage(context, intent, parameters);
+			} 
 			
 			FREContext ctxt = C2DMExtension.context;
-			
-			NotificationManager nm = (NotificationManager) context
-					.getSystemService(Context.NOTIFICATION_SERVICE);
 
-			
-			// icon is required for notification.
-			// @see http://developer.android.com/guide/practices/ui_guidelines/icon_design_status_bar.html
-			
-			int icon = notificationIcon;
-			long when = System.currentTimeMillis();
-
-			
-			// json string
-
-			String parameters = intent.getStringExtra("parameters");
-			String facebookId = null;
-			JSONObject object = null;
-			if (parameters != null)
-			{
-				try
-				{
-					object = (JSONObject) new JSONTokener(parameters).nextValue();
-				} catch (Exception e)	
-				{
-					Log.d(TAG, "cannot parse the object");
-				}
-			}
-			if (object != null && object.has("facebookId"))
-			{
-				facebookId = object.getString("facebookId");
-			}
-			
-			CharSequence tickerText = intent.getStringExtra("tickerText");
-			CharSequence contentTitle = intent.getStringExtra("contentTitle");
-			CharSequence contentText = intent.getStringExtra("contentText");
-						
-			Intent notificationIntent = new Intent(context, 
-					Class.forName(context.getPackageName() + ".AppEntry"));
-			
-
-			PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-					notificationIntent, 0);
-
-			Notification notification = new Notification(icon, tickerText, when);
-			notification.flags |= Notification.FLAG_AUTO_CANCEL;
-			notification.setLatestEventInfo(context, contentTitle, contentText,
-					contentIntent);
-
-			
-			RemoteViews contentView = new RemoteViews(context.getPackageName(), customLayout);
-			
-			
-			
-			contentView.setTextViewText(customLayoutTitle, contentTitle);
-			contentView.setTextViewText(customLayoutDescription, contentText);
-
-			contentView.setTextColor(customLayoutTitle, notification_text_color);
-			contentView.setFloat(customLayoutTitle, "setTextSize", notification_title_size_factor*notification_text_size);
-			contentView.setTextColor(customLayoutDescription, notification_text_color);
-			contentView.setFloat(customLayoutDescription, "setTextSize", notification_description_size_factor*notification_text_size);
-
-			
-			if (facebookId != null)
-			{		
-				Log.d(TAG, "bitmap not null");
-				CreateNotificationTask cNT = new CreateNotificationTask();
-				cNT.setParams(customLayoutImageContainer, NotifId, nm, notification, contentView);
-				String src = "http://graph.facebook.com/"+facebookId+"/picture?type=normal";
-				URL url = new URL(src);
-				cNT.execute(url);
-			} else
-			{
-				Log.d(TAG, "bitmap null");
-				contentView.setImageViewResource(customLayoutImageContainer, customLayoutImage);
-				notification.contentView = contentView;
-				nm.notify(NotifId, notification);
-			}
-			NotifId++;
-			
 			if (ctxt != null)
 			{
 				parameters = parameters == null ? "" : parameters;
-				ctxt.dispatchStatusEventAsync("COMING_FROM_NOTIFICATION", parameters);
+				if (C2DMExtension.isInForeground)
+				{
+					Log.d(TAG, "dispatch event notif in foreground "+parameters);
+					ctxt.dispatchStatusEventAsync("NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND", parameters);
+				} else
+				{
+					Log.d(TAG, "dispatch event logging");
+					ctxt.dispatchStatusEventAsync("LOGGING", parameters);
+				}
 			}
 			
 		} catch (Exception e) {
@@ -227,6 +169,82 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 		}
 	}
 	
+	private void createNotificationMessage(Context context, Intent intent, String parameters)
+	{
+		NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		
+		// icon is required for notification.
+		// @see http://developer.android.com/guide/practices/ui_guidelines/icon_design_status_bar.html
+
+		int icon = notificationIcon;
+		long when = System.currentTimeMillis();
+
+		
+		String facebookId = null;
+		JSONObject object = null;
+		if (parameters != null)
+		{
+			try
+			{
+				object = (JSONObject) new JSONTokener(parameters).nextValue();
+				if (object != null && object.has("facebookId"))
+				{
+					facebookId = object.getString("facebookId");
+				}
+
+			} catch (Exception e)	
+			{
+				Log.d(TAG, "cannot parse the object");
+			}
+		}
+
+		CharSequence tickerText = intent.getStringExtra("tickerText");
+		CharSequence contentTitle = intent.getStringExtra("contentTitle");
+		CharSequence contentText = intent.getStringExtra("contentText");
+		
+		
+		Intent notificationIntent = null;
+		PendingIntent contentIntent = null;
+		notificationIntent = new Intent(context, NotificationActivity.class);
+		notificationIntent.putExtra("params", parameters);
+		contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+
+		Notification notification = new Notification(icon, tickerText, when);
+		notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		notification.setLatestEventInfo(context, contentTitle, contentText,
+				contentIntent);
+		RemoteViews contentView = new RemoteViews(context.getPackageName(), customLayout);
+		contentView.setTextViewText(customLayoutTitle, contentTitle);
+		contentView.setTextViewText(customLayoutDescription, contentText);
+		contentView.setTextColor(customLayoutTitle, notification_text_color);
+		contentView.setFloat(customLayoutTitle, "setTextSize", notification_title_size_factor*notification_text_size);
+		contentView.setTextColor(customLayoutDescription, notification_text_color);
+		contentView.setFloat(customLayoutDescription, "setTextSize", notification_description_size_factor*notification_text_size);
+		
+		
+		if (facebookId != null)
+		{		
+			Log.d(TAG, "bitmap not null");
+			CreateNotificationTask cNT = new CreateNotificationTask();
+			cNT.setParams(customLayoutImageContainer, NotifId, nm, notification, contentView);
+			String src = "http://graph.facebook.com/"+facebookId+"/picture?type=normal";
+			URL url;
+			try {
+				url = new URL(src);
+				cNT.execute(url);
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		} else
+		{
+			Log.d(TAG, "bitmap null");
+			contentView.setImageViewResource(customLayoutImageContainer, customLayoutImage);
+			notification.contentView = contentView;
+			nm.notify(NotifId, notification);
+		}
+		NotifId++;
+
+	}
 	
 	
 	private static Integer notification_text_color = null;
