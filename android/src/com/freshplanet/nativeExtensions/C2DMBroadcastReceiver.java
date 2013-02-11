@@ -180,16 +180,23 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 		long when = System.currentTimeMillis();
 
 		
-		String facebookId = null;
 		JSONObject object = null;
+		String pictureUrl = null;
 		if (parameters != null)
 		{
 			try
 			{
 				object = (JSONObject) new JSONTokener(parameters).nextValue();
-				if (object != null && object.has("facebookId"))
+				if (object != null)
 				{
-					facebookId = object.getString("facebookId");
+					if(object.has("pictureUrl"))
+					{
+						pictureUrl = object.getString("pictureUrl");
+					}
+					else if(object.has("facebookId"))
+					{
+						pictureUrl = "http://graph.facebook.com/"+object.getString("facebookId")+"/picture?type=normal";
+					}
 				}
 
 			} catch (Exception e)	
@@ -222,22 +229,21 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 		contentView.setFloat(customLayoutDescription, "setTextSize", notification_description_size_factor*notification_text_size);
 		
 		
-		if (facebookId != null)
+		if (pictureUrl != null)
 		{		
-			Log.d(TAG, "bitmap not null");
+			Log.d(TAG, "pictureUrl not null");
 			CreateNotificationTask cNT = new CreateNotificationTask();
 			cNT.setParams(customLayoutImageContainer, NotifId, nm, notification, contentView);
-			String src = "http://graph.facebook.com/"+facebookId+"/picture?type=normal";
 			URL url;
 			try {
-				url = new URL(src);
+				url = new URL(pictureUrl);
 				cNT.execute(url);
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
 		} else
 		{
-			Log.d(TAG, "bitmap null");
+			Log.d(TAG, "pictureUrl null");
 			contentView.setImageViewResource(customLayoutImageContainer, customLayoutImage);
 			notification.contentView = contentView;
 			nm.notify(NotifId, notification);
