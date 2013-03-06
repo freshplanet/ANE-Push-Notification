@@ -165,7 +165,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 			}
 			
 		} catch (Exception e) {
-			Log.e(TAG, "Error activating application:", e);
+			Log.e(TAG, "Error handling message:", e);
 		}
 	}
 	
@@ -218,16 +218,22 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 
 		Notification notification = new Notification(icon, tickerText, when);
 		notification.flags |= Notification.FLAG_AUTO_CANCEL;
-		notification.setLatestEventInfo(context, contentTitle, contentText,
-				contentIntent);
+		notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
 		RemoteViews contentView = new RemoteViews(context.getPackageName(), customLayout);
 		contentView.setTextViewText(customLayoutTitle, contentTitle);
 		contentView.setTextViewText(customLayoutDescription, contentText);
-		contentView.setTextColor(customLayoutTitle, notification_text_color);
-		contentView.setFloat(customLayoutTitle, "setTextSize", notification_title_size_factor*notification_text_size);
-		contentView.setTextColor(customLayoutDescription, notification_text_color);
-		contentView.setFloat(customLayoutDescription, "setTextSize", notification_description_size_factor*notification_text_size);
+
+		if (notification_text_color != null)
+		{
+			contentView.setTextColor(customLayoutTitle, notification_text_color);
+		}
 		
+		contentView.setFloat(customLayoutTitle, "setTextSize", notification_title_size_factor*notification_text_size);
+		if (notification_text_color != null)
+		{
+			contentView.setTextColor(customLayoutDescription, notification_text_color);
+		}
+		contentView.setFloat(customLayoutDescription, "setTextSize", notification_description_size_factor*notification_text_size);
 		
 		if (pictureUrl != null)
 		{		
@@ -243,7 +249,6 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 			}
 		} else
 		{
-			Log.d(TAG, "pictureUrl null");
 			contentView.setImageViewResource(customLayoutImageContainer, customLayoutImage);
 			notification.contentView = contentView;
 			nm.notify(NotifId, notification);
@@ -280,7 +285,14 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 	            }
 	        }
 	        else if (gp.getChildAt(i) instanceof ViewGroup)
-	            return recurseGroup((Context) context, (ViewGroup) gp.getChildAt(i));
+	        {
+	        	boolean value = recurseGroup((Context) context, (ViewGroup) gp.getChildAt(i));
+	        	if (value)
+	        	{
+	        		return true;
+	        	}
+	        }
+	            
 	    }
 	    return false;
 	}
@@ -302,6 +314,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 	    catch (Exception e)
 	    {
 	        notification_text_color = android.R.color.black;
+	        Log.e(TAG, "Error extracting colors: ", e);
 	    }
 	}
 	
