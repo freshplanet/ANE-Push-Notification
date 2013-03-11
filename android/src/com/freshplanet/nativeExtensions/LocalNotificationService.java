@@ -228,7 +228,13 @@ public class LocalNotificationService extends Service {
 	            }
 	        }
 	        else if (gp.getChildAt(i) instanceof ViewGroup)
-	            return recurseGroup((Context) context, (ViewGroup) gp.getChildAt(i));
+	        {
+	        	boolean value = recurseGroup((Context) context, (ViewGroup) gp.getChildAt(i));
+	        	if (value)
+	        	{
+	        		return true;
+	        	}
+	        }
 	    }
 	    return false;
 	}

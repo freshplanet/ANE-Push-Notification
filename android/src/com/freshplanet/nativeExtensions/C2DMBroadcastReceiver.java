@@ -292,7 +292,6 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 	        		return true;
 	        	}
 	        }
-	            
 	    }
 	    return false;
 	}
