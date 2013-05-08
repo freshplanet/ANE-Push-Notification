@@ -213,8 +213,9 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 		Intent notificationIntent = null;
 		PendingIntent contentIntent = null;
 		notificationIntent = new Intent(context, NotificationActivity.class);
+		Log.d(TAG, "Creating NotificationActivity intent with parameters: " + parameters);
 		notificationIntent.putExtra("params", parameters);
-		contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+		contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		Notification notification = new Notification(icon, tickerText, when);
 		notification.flags |= Notification.FLAG_AUTO_CANCEL;

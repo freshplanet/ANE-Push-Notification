@@ -25,7 +25,7 @@ public class NotificationActivity extends Activity {
 		
 		if (values.getString("params") != null)
 		{
-			Log.d(TAG, "notif has params");
+			Log.d(TAG, "notif has params: " + values.getString("params"));
 			
 			isComingFromNotification = true;
 			notifParams = values.getString("params");
