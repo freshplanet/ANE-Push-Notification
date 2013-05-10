@@ -20,6 +20,8 @@ package com.freshplanet.nativeExtensions;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -35,6 +37,7 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+
 import android.widget.RemoteViews;
 import android.widget.TextView;
 
@@ -53,6 +56,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 	private static int customLayoutImage;
 	
 	private static C2DMBroadcastReceiver instance;
+	MultiMsgNotification msg;
 	
 	public C2DMBroadcastReceiver() {
 		
@@ -142,11 +146,11 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 			if (!C2DMExtension.isInForeground)
 			{
 				Log.d(TAG, "display notif");
-				registerResources(context);
 				extractColors(context);
 
-				createNotificationMessage(context, intent, parameters);
-			} 
+				msg = MultiMsgNotification.Instance(context);
+				msg.makeBigNotif(context, intent, parameters);
+			}
 			
 			FREContext ctxt = C2DMExtension.context;
 
@@ -222,7 +226,6 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 		RemoteViews contentView = new RemoteViews(context.getPackageName(), customLayout);
 		contentView.setTextViewText(customLayoutTitle, contentTitle);
 		contentView.setTextViewText(customLayoutDescription, contentText);
-
 		if (notification_text_color != null)
 		{
 			contentView.setTextColor(customLayoutTitle, notification_text_color);
