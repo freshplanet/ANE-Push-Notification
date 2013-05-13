@@ -122,7 +122,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 		
 	public static void registerResources(Context context)
 	{
-		notificationIcon = Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon_status");
+		notificationIcon = Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36");
 		customLayout = Resources.getResourseIdByName(context.getPackageName(), "layout", "notification");
 		customLayoutTitle = Resources.getResourseIdByName(context.getPackageName(), "id", "title");
 		customLayoutDescription = Resources.getResourseIdByName(context.getPackageName(), "id", "text");
@@ -147,9 +147,16 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 			{
 				Log.d(TAG, "display notif");
 				extractColors(context);
-
-				msg = MultiMsgNotification.Instance(context);
-				msg.makeBigNotif(context, intent, parameters);
+				registerResources(context);
+				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
+				{	
+					msg = MultiMsgNotification.Instance(context);
+					msg.makeBigNotif(context, intent, parameters);
+				}
+				else
+				{
+					createNotificationMessage(context, intent, parameters);
+				}
 			}
 			
 			FREContext ctxt = C2DMExtension.context;

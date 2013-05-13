@@ -23,6 +23,12 @@ public class NotificationActivity extends Activity {
 		
 		Bundle values = this.getIntent().getExtras();
 		
+		if (values.getString("allclean").equals("true"))
+			{
+				MultiMsgNotification msg = MultiMsgNotification.Instance(this);
+				msg.initialize(this);
+			}
+		
 		if (values.getString("params") != null)
 		{
 			Log.d(TAG, "notif has params");

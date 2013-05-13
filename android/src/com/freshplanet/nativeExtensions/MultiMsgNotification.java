@@ -33,7 +33,6 @@ public class MultiMsgNotification{
 	private RemoteViews singleBigNotifView;
 	private RemoteViews multiBigNotifView;
 	private NotificationManager nm;
-
 	private static MultiMsgNotification instance;
 
 	//Singleton
@@ -47,8 +46,6 @@ public class MultiMsgNotification{
 	public MultiMsgNotification(Context context)
 	{
 		this.initialize(context);
-		
-		
 	}
 
 	public void initialize(Context context) 
@@ -59,6 +56,7 @@ public class MultiMsgNotification{
 		nbMsg = 0;
 		senderID="";
 		nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		nm.cancelAll();
 		multiBigNotifView = new RemoteViews(context.getPackageName(), Resources.getResourseIdByName(context.getPackageName(), "layout", "multibignotif"));
 		singleBigNotifView = new RemoteViews(context.getPackageName(), Resources.getResourseIdByName(context.getPackageName(), "layout", "singlebignotif"));
 		
@@ -160,6 +158,7 @@ public class MultiMsgNotification{
 		PendingIntent contentIntent = null;
 		notificationIntent = new Intent(context, NotificationActivity.class);
 		notificationIntent.putExtra("params", parameters);
+		notificationIntent.putExtra("allclean","true");
 		contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 		
 		notification.contentIntent = contentIntent;
