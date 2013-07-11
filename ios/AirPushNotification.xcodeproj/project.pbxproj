@@ -20,7 +20,7 @@
 		5AC0EBB0151A38F300A3043E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5AC0EBB4151A38F300A3043E /* AirPushNotification-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AirPushNotification-Prefix.pch"; sourceTree = "<group>"; };
 		5AC0EBB6151A38F400A3043E /* AirPushNotification.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AirPushNotification.m; sourceTree = "<group>"; };
-		5AC0EBBD151A391600A3043E /* FlashRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FlashRuntimeExtensions.h; path = "/Applications/Adobe Flash Builder 4.6/sdks/4.6.0/include/FlashRuntimeExtensions.h"; sourceTree = "<absolute>"; };
+		5AC0EBBD151A391600A3043E /* FlashRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FlashRuntimeExtensions.h; path = /Applications/FDT/sdks/flex_sdk_4_6_air_3_8/include/FlashRuntimeExtensions.h; sourceTree = "<absolute>"; };
 		5AC0EBBF151A399900A3043E /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		5AC0EBC1151A3BEE00A3043E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
