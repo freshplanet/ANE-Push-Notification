@@ -27,3 +27,4 @@ ios/build
 Icon
 Thumbs.db
 .DS_Store
+ios/DerivedData
