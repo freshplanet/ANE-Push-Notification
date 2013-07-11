@@ -44,7 +44,7 @@ FREContext myCtx = nil;
 void didRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIApplication* application, NSData* deviceToken)
 {
     NSString* tokenString = [NSString stringWithFormat:@"%@", deviceToken];
-    NSLog(@"My token is: %@", deviceToken);
+    //NSLog(@"My token is: %@", deviceToken);
 
     if ( myCtx != nil )
     {
@@ -124,6 +124,15 @@ DEFINE_ANE_FUNCTION(registerPush)
      (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
     return nil;
 }
+
+// unregisters the device for push notification.
+DEFINE_ANE_FUNCTION(unregisterPush)
+{
+    
+    [[UIApplication sharedApplication] unregisterForRemoteNotifications];
+    return nil;
+}
+
 
 // register the device for push notification.
 DEFINE_ANE_FUNCTION(setIsAppInForeground)
@@ -244,7 +253,7 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     ///////// end of delegate injection / modification code
     
     // Register the links btwn AS3 and ObjC. (dont forget to modify the nbFuntionsToLink integer if you are adding/removing functions)
-    NSInteger nbFuntionsToLink = 4;
+    NSInteger nbFuntionsToLink = 5;
     *numFunctionsToTest = nbFuntionsToLink;
     
     FRENamedFunction* func = (FRENamedFunction*) malloc(sizeof(FRENamedFunction) * nbFuntionsToLink);
@@ -265,6 +274,11 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     func[3].functionData = NULL;
     func[3].function = &setIsAppInForeground;
 
+    func[4].name = (const uint8_t*) "unregisterPush";
+    func[4].functionData = NULL;
+    func[4].function = &unregisterPush;
+    
+    
     *functionsToSet = func;
     
     myCtx = ctx;
@@ -275,9 +289,9 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
 // Set when the context extension is created.
 
 void AirPushContextFinalizer(FREContext ctx) { 
-    NSLog(@"Entering ContextFinalizer()");
+    //NSLog(@"Entering ContextFinalizer()");
     
-    NSLog(@"Exiting ContextFinalizer()");	
+    //NSLog(@"Exiting ContextFinalizer()");	
 }
 
 
@@ -290,13 +304,13 @@ void AirPushContextFinalizer(FREContext ctx) {
 void AirPushExtInitializer(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet ) 
 {
     
-    NSLog(@"Entering ExtInitializer()");                    
+    //NSLog(@"Entering ExtInitializer()");                    
     
 	*extDataToSet = NULL;
 	*ctxInitializerToSet = &AirPushContextInitializer; 
 	*ctxFinalizerToSet = &AirPushContextFinalizer;
     
-    NSLog(@"Exiting ExtInitializer()"); 
+    //NSLog(@"Exiting ExtInitializer()"); 
 }
 
 void AirPushExtFinalizer(void *extData) { }

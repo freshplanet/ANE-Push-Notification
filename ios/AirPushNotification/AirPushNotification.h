@@ -31,6 +31,7 @@ void didRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIAppli
 void didFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, UIApplication* application, NSError* error);
 FREObject setBadgeNb(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject registerPush(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject unregisterPush(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject sendLocalNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject setIsAppInForeground(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 
