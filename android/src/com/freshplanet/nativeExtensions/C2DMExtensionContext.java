@@ -49,6 +49,7 @@ public class C2DMExtensionContext extends FREContext {
 		Log.d(TAG, "C2DMExtensionContext.getFunctions");
 		Map<String, FREFunction> functionMap = new HashMap<String, FREFunction>();
 		functionMap.put("registerPush", new C2DMRegisterFunction());
+		functionMap.put("unregisterPush", new C2DMUnregisterFunction());
 		functionMap.put("setBadgeNb", new SetBadgeValueFunction());
 		functionMap.put("sendLocalNotification", new LocalNotificationFunction());
 		functionMap.put("setIsAppInForeground", new SetIsAppInForegroundFunction());
