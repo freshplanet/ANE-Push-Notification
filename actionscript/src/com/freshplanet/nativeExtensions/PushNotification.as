@@ -5,8 +5,6 @@ package com.freshplanet.nativeExtensions
 	import flash.events.StatusEvent;
 	import flash.external.ExtensionContext;
 	import flash.system.Capabilities;
-	
-	import mx.graphics.shaderClasses.ExclusionShader;
 
     
     public class PushNotification extends EventDispatcher 
@@ -73,6 +71,14 @@ package com.freshplanet.nativeExtensions
 			if (this.isPushNotificationSupported)
 			{
 				extCtx.call("registerPush", projectId);
+			}
+		}
+
+		public function unregisterPushNotification() : void
+		{
+			if (this.isPushNotificationSupported)
+			{
+				extCtx.call("unregisterPush");
 			}
 		}
 		
