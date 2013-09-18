@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import android.util.Log;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.graphics.Bitmap;
@@ -55,7 +57,10 @@ public class CreateNotificationTask extends AsyncTask<URL, Integer, Long> {
 	
 	@Override
     protected void onPostExecute(Long result) {
-		_contentView.setImageViewBitmap(_customLayoutImageContainer, _bitmap);
+    	int h = 100;
+    	int w = 100;
+    	Bitmap scaledBitmap = Bitmap.createScaledBitmap(_bitmap, w, h, true);
+		_contentView.setImageViewBitmap(_customLayoutImageContainer, scaledBitmap);
 		_notif.contentView = _contentView;
 		_nm.notify(_notifyId, _notif);
 	}

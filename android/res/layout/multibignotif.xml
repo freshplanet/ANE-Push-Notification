@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ff111111"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/chat1"
+        android:layout_width="match_parent"
+        android:layout_height="64dp" >
+
+        <AbsoluteLayout
+            android:id="@+id/notif_icon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_alignParentLeft="true"
+            android:background="#3333B5E5" >
+
+            <ImageView
+                android:id="@+id/image1"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:scaleType="center"
+                android:scaleX="0.5"
+                android:scaleY="0.5" />
+        </AbsoluteLayout>
+
+        <TextView
+            android:id="@+id/title1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@id/notif_icon"
+            android:textAppearance="@style/title" />
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title1"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@id/notif_icon"
+            android:textAppearance="@style/text" />
+
+        <TextView
+            android:id="@+id/nbMessage1"
+            style="@style/NotificationText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="12dp" >
+        </TextView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/chat2"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginLeft="64dp" >
+
+        <ImageView
+            android:id="@+id/image2"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_alignParentLeft="true"
+            android:scaleX="0.9"
+            android:scaleY="0.9" />
+
+        <TextView
+            android:id="@+id/title2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@id/image2"
+            android:textAppearance="@style/title" />
+
+        <TextView
+            android:id="@+id/text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title2"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@id/image2"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textAppearance="@style/text" />
+
+        <TextView
+            android:id="@+id/nbMessage2"
+            style="@style/NotificationText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp" >
+        </TextView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/chat3"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginLeft="64dp" >
+
+        <ImageView
+            android:id="@+id/image3"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_alignParentLeft="true"
+            android:scaleX="0.9"
+            android:scaleY="0.9" />
+
+        <TextView
+            android:id="@+id/title3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@id/image3"
+            android:textAppearance="@style/title" />
+
+        <TextView
+            android:id="@+id/text3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title3"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@id/image3"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textAppearance="@style/text" />
+
+        <TextView
+            android:id="@+id/nbMessage3"
+            style="@style/NotificationText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp" >
+        </TextView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/chat4"
+        android:layout_width="match_parent"
+        android:layout_height="30dp" >
+
+        <ImageView
+            android:id="@+id/image4"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp" />
+
+        <TextView
+            android:id="@+id/emit"
+            style="@style/NotificationText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@id/image4" >
+        </TextView>
+    </RelativeLayout>
+
+</LinearLayout>
