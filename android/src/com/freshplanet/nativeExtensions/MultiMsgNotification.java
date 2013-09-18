@@ -13,6 +13,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -33,6 +34,8 @@ public class MultiMsgNotification{
 	private RemoteViews singleBigNotifView;
 	private RemoteViews multiBigNotifView;
 	private NotificationManager nm;
+
+	private Context mContext;
 	private static MultiMsgNotification instance;
 
 	//Singleton
@@ -45,25 +48,32 @@ public class MultiMsgNotification{
 	
 	public MultiMsgNotification(Context context)
 	{
-		this.initialize(context);
+		this.mContext = context;
+		
+		this.initialize();
 	}
 
-	public void initialize(Context context) 
+	public void remove()
+	{
+		this.initialize();
+		nm.cancelAll();
+	}
+	
+	public void initialize() 
 	{
 		chatList = new HashMap<String,String>();
 		chatList.clear();
 		nbChat = 0;
 		nbMsg = 0;
 		senderID="";
-		nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		nm.cancelAll();
-		multiBigNotifView = new RemoteViews(context.getPackageName(), Resources.getResourseIdByName(context.getPackageName(), "layout", "multibignotif"));
-		singleBigNotifView = new RemoteViews(context.getPackageName(), Resources.getResourseIdByName(context.getPackageName(), "layout", "singlebignotif"));
+		multiBigNotifView = new RemoteViews(mContext.getPackageName(), Resources.getResourseIdByName(mContext.getPackageName(), "layout", "multibignotif"));
+		singleBigNotifView = new RemoteViews(mContext.getPackageName(), Resources.getResourseIdByName(mContext.getPackageName(), "layout", "singlebignotif"));
 		
-		multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(context.getPackageName(), "id", "chat1"), View.GONE);
-		multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(context.getPackageName(), "id", "chat2"), View.GONE);
-		multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(context.getPackageName(), "id", "chat3"), View.GONE);
-		multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(context.getPackageName(), "id", "chat4"), View.GONE);
+		nm = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+		multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(mContext.getPackageName(), "id", "chat1"), View.GONE);
+		multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(mContext.getPackageName(), "id", "chat2"), View.GONE);
+		multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(mContext.getPackageName(), "id", "chat3"), View.GONE);
+		multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(mContext.getPackageName(), "id", "chat4"), View.GONE);
 	}
 
 	public boolean existInNotifList(Intent intent)
@@ -152,8 +162,9 @@ public class MultiMsgNotification{
 		.setContentText(nbChat+" HelloPop Chats")
 		.setNumber(nbMsg)
 		.setSmallIcon(Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"))
+		.setLights(Color.BLUE, 500, 500)
 		.build();
-		
+		notification.ledARGB = Color.BLUE;
 		Intent notificationIntent = null;
 		PendingIntent contentIntent = null;
 		notificationIntent = new Intent(context, NotificationActivity.class);

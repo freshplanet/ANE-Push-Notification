@@ -7,13 +7,14 @@ import java.net.URL;
 
 import com.distriqt.extension.util.Resources;
 
+import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
+import android.os.Build;
 import android.widget.RemoteViews;
 
 public class NewCreateNotificationTask extends AsyncTask<URL, Integer, Long> {
@@ -57,13 +58,13 @@ public class NewCreateNotificationTask extends AsyncTask<URL, Integer, Long> {
 		return null;
 	}
 	
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
     protected void onPostExecute(Long result) {
 		_remoteviews.setImageViewBitmap(Resources.getResourseIdByName(_context.getPackageName(), "id", _imagecontainer), _bitmap);
 		
 		_notification.bigContentView = _remoteviews;
-		NotificationManager nm = (NotificationManager) _context.getSystemService(Context.NOTIFICATION_SERVICE);
-		nm.notify(0, _notification);
+		_nm.notify(0, _notification);
 		
 	}
 }
