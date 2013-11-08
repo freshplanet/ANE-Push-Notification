@@ -156,6 +156,13 @@ public class MultiMsgNotification{
 		CharSequence contentTitle = intent.getStringExtra("contentTitle");
 		CharSequence contentText = intent.getStringExtra("contentText");
 
+		Intent notificationIntent = null;
+		PendingIntent contentIntent = null;
+		notificationIntent = new Intent(context, NotificationActivity.class);
+		notificationIntent.putExtra("params", parameters);
+		notificationIntent.putExtra("allclean","true");
+		contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+
 		notification=new Notification.Builder(context)
 		.setTicker(tickerText)
 		.setContentTitle(nbMsg+" HelloPop Messages")
@@ -163,16 +170,11 @@ public class MultiMsgNotification{
 		.setNumber(nbMsg)
 		.setSmallIcon(Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"))
 		.setLights(Color.BLUE, 500, 500)
+		.setContentIntent(contentIntent)
 		.build();
 		notification.ledARGB = Color.BLUE;
-		Intent notificationIntent = null;
-		PendingIntent contentIntent = null;
-		notificationIntent = new Intent(context, NotificationActivity.class);
-		notificationIntent.putExtra("params", parameters);
-		notificationIntent.putExtra("allclean","true");
-		contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 		
-		notification.contentIntent = contentIntent;
+		//notification.contentIntent = contentIntent;
 		
 		if (nbChat == 1)
 		{
