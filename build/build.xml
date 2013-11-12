@@ -34,6 +34,11 @@
 		<delete dir="../android/temp"/>
 		<mkdir dir="../android/temp/classes"/>
 
+        <replaceregexp file="../android/src/com/freshplanet/nativeExtensions/C2DMBroadcastReceiver.java" 
+            match="private static final boolean USE_MULTI_MSG = ([^;]+);" 
+            replace="private static final boolean USE_MULTI_MSG = ${useMultiMsg};"
+	    />
+
 		<javac srcdir="../android/src" destdir="../android/temp/classes" includeantruntime="false">
 			<classpath>
 				<pathelement location="${android.sdk}/android.jar"/>

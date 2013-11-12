@@ -57,6 +57,8 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 	
 	private static C2DMBroadcastReceiver instance;
 	
+	private static final boolean USE_MULTI_MSG = true;
+	
 	public C2DMBroadcastReceiver() {
 		
 		Log.d(TAG, "Broadcast receiver started!!!!!");
@@ -148,8 +150,8 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 				Log.d(TAG, "display notif");
 				extractColors(context);
 				registerResources(context);
-				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
-				{	
+				if (USE_MULTI_MSG && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
+				{
 					MultiMsgNotification msg = MultiMsgNotification.Instance(context);
 					msg.makeBigNotif(context, intent, parameters);
 				}
