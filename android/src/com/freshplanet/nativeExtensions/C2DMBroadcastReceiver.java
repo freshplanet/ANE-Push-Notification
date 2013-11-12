@@ -56,7 +56,6 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 	private static int customLayoutImage;
 	
 	private static C2DMBroadcastReceiver instance;
-	MultiMsgNotification msg;
 	
 	public C2DMBroadcastReceiver() {
 		
@@ -151,7 +150,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 				registerResources(context);
 				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
 				{	
-					msg = MultiMsgNotification.Instance(context);
+					MultiMsgNotification msg = MultiMsgNotification.Instance(context);
 					msg.makeBigNotif(context, intent, parameters);
 				}
 				else

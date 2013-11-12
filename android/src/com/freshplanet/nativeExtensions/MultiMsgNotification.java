@@ -32,7 +32,7 @@ public class MultiMsgNotification{
 	private String senderID = "";
 
 	private CharSequence temp1,temp2,temp3,temp4;
-	Notification notification;
+	private Notification notification;
 	private RemoteViews singleBigNotifView;
 	private RemoteViews multiBigNotifView;
 	private NotificationManager nm;
