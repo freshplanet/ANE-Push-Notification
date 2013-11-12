@@ -18,7 +18,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import com.distriqt.extension.util.Resources;
-
+import android.net.Uri;
+import android.media.AudioManager;
+import android.media.RingtoneManager;
 
 public class MultiMsgNotification{
 	
@@ -163,6 +165,8 @@ public class MultiMsgNotification{
 		notificationIntent.putExtra("allclean","true");
 		contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
+
+		Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 		notification=new Notification.Builder(context)
 		.setTicker(tickerText)
 		.setContentTitle(nbMsg+" HelloPop Messages")
@@ -171,6 +175,7 @@ public class MultiMsgNotification{
 		.setSmallIcon(Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"))
 		.setLights(Color.BLUE, 500, 500)
 		.setContentIntent(contentIntent)
+		.setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
 		.build();
 		notification.ledARGB = Color.BLUE;
 		
