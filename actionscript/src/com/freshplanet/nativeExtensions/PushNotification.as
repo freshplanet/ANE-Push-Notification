@@ -5,8 +5,6 @@ package com.freshplanet.nativeExtensions
 	import flash.events.StatusEvent;
 	import flash.external.ExtensionContext;
 	import flash.system.Capabilities;
-	
-	import mx.graphics.shaderClasses.ExclusionShader;
 
     
     public class PushNotification extends EventDispatcher 
