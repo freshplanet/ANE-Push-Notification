@@ -128,6 +128,8 @@
 /* Begin PBXProject section */
 		5AC0EBA4151A38F300A3043E /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = 5AC0EBA7151A38F300A3043E /* Build configuration list for PBXProject "AirPushNotification" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
@@ -208,6 +210,7 @@
 				DSTROOT = /tmp/AirPushNotification.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AirPushNotification/AirPushNotification-Prefix.pch";
+				GCC_VERSION = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = NO;
@@ -221,6 +224,7 @@
 				DSTROOT = /tmp/AirPushNotification.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AirPushNotification/AirPushNotification-Prefix.pch";
+				GCC_VERSION = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = NO;
