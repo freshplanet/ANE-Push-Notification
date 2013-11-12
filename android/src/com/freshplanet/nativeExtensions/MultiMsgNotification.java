@@ -21,6 +21,7 @@ import com.distriqt.extension.util.Resources;
 import android.net.Uri;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
+import android.os.Vibrator;
 
 public class MultiMsgNotification{
 	
@@ -165,6 +166,16 @@ public class MultiMsgNotification{
 		notificationIntent.putExtra("allclean","true");
 		contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
+		Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+
+		// Start with a delay 100 milliseconds
+		// Vibrate for 100 milliseconds
+		// Sleep for 1000 milliseconds
+		long[] pattern = {100, 50, 1000};
+
+		// The '0' here means to repeat indefinitely
+		// '-1' would play the vibration once
+		v.vibrate(pattern, -1);
 
 		Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 		notification=new Notification.Builder(context)
