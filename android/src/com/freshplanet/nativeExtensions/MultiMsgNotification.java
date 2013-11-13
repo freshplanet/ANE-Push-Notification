@@ -14,6 +14,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -178,7 +179,7 @@ public class MultiMsgNotification{
 		v.vibrate(pattern, -1);
 
 		Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-		notification=new Notification.Builder(context)
+		notification=new NotificationCompat.Builder(context)
 		.setTicker(tickerText)
 		.setContentTitle(nbMsg+" HelloPop Messages")
 		.setContentText(nbChat+" HelloPop Chats")
