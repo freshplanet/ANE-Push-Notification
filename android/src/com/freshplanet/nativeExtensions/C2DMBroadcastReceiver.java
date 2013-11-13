@@ -26,6 +26,7 @@ import java.util.Map;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -86,6 +87,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 				"com.google.android.c2dm.intent.RECEIVE")) { 
 			handleMessage(context, intent);//display the notification only when in background
 		}
+		setResultCode(Activity.RESULT_OK);
 	}
 
 	/**

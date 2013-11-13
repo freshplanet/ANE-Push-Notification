@@ -13,6 +13,10 @@ public class FetchStarterNotificationFunction implements FREFunction {
 	
 	@Override
 	public FREObject call(FREContext arg0, FREObject[] arg1) {
+		if(NotificationActivity.isComingFromNotification == null) {
+			Log.e(TAG, "fetchStarterNotificationFunction called before NotificationActivity was created - not supposed to happen");
+			NotificationActivity.isComingFromNotification = false;
+		}
 		if (NotificationActivity.isComingFromNotification)
 		{
 			String params = NotificationActivity.notifParams;
