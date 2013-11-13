@@ -95,11 +95,15 @@
 
 	<!-- Package -->
 	<target name="package" description="Create the extension package">
+		<condition property="OUTPUT_FILENAME" value="${name}_multiMsg" else="${name}">
+            <istrue value="${useMultiMsg}"/>
+        </condition>
+
 		<exec executable="${flex.sdk}/bin/adt${bin.ext}" failonerror="true" dir="../temp">
 			<arg value="-package"/>
 			<arg value="-target"/>
 			<arg value="ane"/>
-			<arg value="${name}.ane"/>
+			<arg value="${OUTPUT_FILENAME}.ane"/>
 			<arg value="../build/extension.xml"/>
 			<arg line="-swc swc/${name}.swc"/>
 			<arg line="-platform iPhone-ARM -platformoptions ../build/platform.xml -C ios/ ."/>
@@ -107,7 +111,7 @@
 			<arg line="-platform default -C default/ ."/>
 		</exec>
 
-		<move file="../temp/${name}.ane" todir="../bin"/>
+		<move file="../temp/${OUTPUT_FILENAME}.ane" todir="../bin"/>
 		<delete dir="../temp"/>
 	</target>
 
