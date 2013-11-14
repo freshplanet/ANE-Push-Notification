@@ -149,10 +149,15 @@ public class LocalNotificationService extends Service {
 
 			Log.d("LocalNService", "getting notif");
 
-			Notification notification = new Notification(icon, tickerText, when);
-			notification.flags |= Notification.FLAG_AUTO_CANCEL;
-			notification.setLatestEventInfo(context, contentTitle, contentText,
-					contentIntent);
+			Notification notification = new NotificationCompat.Builder(context)
+				.setSmallIcon(icon)
+				.setContentTitle(contentTitle)
+				.setContentText(contentText)
+				.setContentIntent(contentIntent)
+				.setTicker(tickerText)
+				.setWhen(when)
+				.setAutoCancel(true)
+				.build();
 
 			Log.d("LocalNService", "creating remove view");
 

@@ -34,6 +34,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -234,9 +235,17 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 		notificationIntent.putExtra("params", parameters);
 		contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-		Notification notification = new Notification(icon, tickerText, when);
-		notification.flags |= Notification.FLAG_AUTO_CANCEL;
-		notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+		Notification notification = new NotificationCompat.Builder(context)
+			.setSmallIcon(icon)
+			.setTicker(tickerText)
+			.setWhen(when)
+			.setAutoCancel(true)
+			.setContentTitle(contentTitle)
+			.setContentText(contentText)
+			.setContentIntent(contentIntent)
+			.build();
+
+
 		RemoteViews contentView = new RemoteViews(context.getPackageName(), customLayout);
 		contentView.setTextViewText(customLayoutTitle, contentTitle);
 		contentView.setTextViewText(customLayoutDescription, contentText);
