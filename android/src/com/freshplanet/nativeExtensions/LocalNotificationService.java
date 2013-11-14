@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -15,7 +16,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -31,6 +34,7 @@ public class LocalNotificationService extends Service {
 
 	@Override
 	public void onCreate() {
+		Log.d(TAG, "LocalNotificationService.onCreate()");
 	}
 
 	@Override
@@ -59,6 +63,7 @@ public class LocalNotificationService extends Service {
 	  
 	  @Override
 	  public void onDestroy() {
+		  Log.d(TAG, "LocalNotificationService.onCreate()");
 	  }
 
 	private static String TAG = "c2dmBdcastRcvrLcl";
@@ -92,6 +97,15 @@ public class LocalNotificationService extends Service {
 	public void handleMessage(Context context, Intent intent) {
 		try {
 			
+			if(context == null) {
+				Log.d(TAG, "Context was null in LocalNotificationService.handleMessage");
+				return;
+			}
+
+			if(intent == null) {
+				Log.d(TAG, "Intent was null in LocalNotificationService.handleMessage");
+			}
+
 			Log.d("LocalNService", "registering resources");
 			registerResources(context);
 			
@@ -100,8 +114,17 @@ public class LocalNotificationService extends Service {
 			
 			FREContext ctxt = C2DMExtension.context;
 			
-			NotificationManager nm = (NotificationManager) context
-					.getSystemService(Context.NOTIFICATION_SERVICE);
+			if(ctxt == null) {
+				Log.d(TAG, "FREContext was null in LocalNotificationService.handleMessage");
+				return;
+			}
+
+			NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+			if(nm == null) {
+				Log.d(TAG, "NotificationManager was null in LocalNotificationService.handleMessage");
+				return;
+			}
 
 			Log.d("LocalNService", "getting nm");
 
@@ -109,13 +132,17 @@ public class LocalNotificationService extends Service {
 			// @see http://developer.android.com/guide/practices/ui_guidelines/icon_design_status_bar.html
 			
 			int icon = notificationIcon;
+
 			long when = System.currentTimeMillis();
 
 			
 			// json string
 			Log.d("LocalNService", "getting extra params");
 
+			// json string
 			String parameters = intent.getStringExtra("parameters");
+
+
 			String facebookId = null;
 			JSONObject object = null;
 			if (parameters != null)
