@@ -33,6 +33,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -58,7 +59,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 	
 	private static C2DMBroadcastReceiver instance;
 	
-	private static final boolean USE_MULTI_MSG = false;
+	private static final boolean USE_MULTI_MSG = true;
 	
 	public C2DMBroadcastReceiver() {
 		
@@ -144,8 +145,10 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 		try {
 			
 			Log.d(TAG, "handleMessage");
-			// json string
-			String parameters = intent.getStringExtra("parameters");
+
+			String allParams = LocalNotificationService.getFullJsonParams(intent);
+
+			String msgParams = intent.getStringExtra("parameters");
 			
 			if (!C2DMExtension.isInForeground)
 			{
@@ -155,11 +158,11 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 				if (USE_MULTI_MSG && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
 				{
 					MultiMsgNotification msg = MultiMsgNotification.Instance(context);
-					msg.makeBigNotif(context, intent, parameters);
+					msg.makeBigNotif(context, intent, msgParams);
 				}
 				else
 				{
-					createNotificationMessage(context, intent, parameters);
+					createNotificationMessage(context, intent, msgParams);
 				}
 			}
 			
@@ -167,15 +170,15 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 
 			if (ctxt != null)
 			{
-				parameters = parameters == null ? "" : parameters;
+
 				if (C2DMExtension.isInForeground)
 				{
-					Log.d(TAG, "dispatch event notif in foreground "+parameters);
-					ctxt.dispatchStatusEventAsync("NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND", parameters);
+					Log.d(TAG, "dispatch event notif in foreground "+allParams);
+					ctxt.dispatchStatusEventAsync("NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND", allParams);
 				} else
 				{
 					Log.d(TAG, "dispatch event logging");
-					ctxt.dispatchStatusEventAsync("LOGGING", parameters);
+					ctxt.dispatchStatusEventAsync("LOGGING", allParams);
 				}
 			}
 			

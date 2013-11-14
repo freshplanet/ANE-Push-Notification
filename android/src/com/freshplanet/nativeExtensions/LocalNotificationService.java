@@ -192,8 +192,7 @@ public class LocalNotificationService extends Service {
 			
 			if (ctxt != null)
 			{
-				parameters = parameters == null ? "" : parameters;
-				ctxt.dispatchStatusEventAsync("COMING_FROM_NOTIFICATION", parameters);
+				ctxt.dispatchStatusEventAsync("COMING_FROM_NOTIFICATION", LocalNotificationService.getFullJsonParams(intent));
 			}
 			
 		} catch (Exception e) {
@@ -202,6 +201,25 @@ public class LocalNotificationService extends Service {
 	}
 	
 	
+	public static String getFullJsonParams(Intent intent)
+	{
+		JSONObject paramsJson = new JSONObject();
+		Bundle bundle = intent.getExtras();
+		// json string
+			String parameters = intent.getStringExtra("parameters");
+		try {
+			for (String key : bundle.keySet()) {
+				paramsJson.put(key, bundle.getString(key));
+			}
+			if(parameters != null)
+				paramsJson.put("parameters", new JSONObject(parameters));
+		} catch (JSONException e) {
+			Log.e(TAG, "Couldn't build params string");
+		}
+		return paramsJson.toString();
+	}
+
+
 	
 	private static Integer notification_text_color = null;
 	private static float notification_text_size = 11;

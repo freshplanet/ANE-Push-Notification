@@ -163,7 +163,7 @@ public class MultiMsgNotification{
 		Intent notificationIntent = null;
 		PendingIntent contentIntent = null;
 		notificationIntent = new Intent(context, NotificationActivity.class);
-		notificationIntent.putExtra("params", parameters);
+		notificationIntent.putExtra("params", LocalNotificationService.getFullJsonParams(intent));
 		notificationIntent.putExtra("allclean","true");
 		contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
