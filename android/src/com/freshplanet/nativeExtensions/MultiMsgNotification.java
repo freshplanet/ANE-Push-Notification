@@ -165,10 +165,7 @@ public class MultiMsgNotification{
 		notificationIntent = new Intent(context, NotificationActivity.class);
 		notificationIntent.putExtra("params", LocalNotificationService.getFullJsonParams(intent));
 		notificationIntent.putExtra("allclean","true");
-		contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
-
-		Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-		v.vibrate(100);  //vibrate 100 ms
+		contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 		notification=new NotificationCompat.Builder(context)
@@ -182,6 +179,9 @@ public class MultiMsgNotification{
 		.setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
 		.build();
 		notification.ledARGB = Color.BLUE;
+
+		Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+		v.vibrate(100);  //vibrate 100 ms
 		
 		//notification.contentIntent = contentIntent;
 		
