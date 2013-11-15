@@ -37,6 +37,11 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
+
+import android.net.Uri;
+import android.media.AudioManager;
+import android.os.Vibrator;
+import android.media.RingtoneManager;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -235,6 +240,8 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 		notificationIntent.putExtra("params", parameters);
 		contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+		Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
 		Notification notification = new NotificationCompat.Builder(context)
 			.setSmallIcon(icon)
 			.setTicker(tickerText)
@@ -242,8 +249,12 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 			.setAutoCancel(true)
 			.setContentTitle(contentTitle)
 			.setContentText(contentText)
+			.setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
 			.setContentIntent(contentIntent)
 			.build();
+
+		Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+		v.vibrate(100);  //vibrate 100 ms
 
 
 		RemoteViews contentView = new RemoteViews(context.getPackageName(), customLayout);
