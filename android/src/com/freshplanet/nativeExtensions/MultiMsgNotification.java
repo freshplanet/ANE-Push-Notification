@@ -84,7 +84,16 @@ public class MultiMsgNotification{
 	{
 		int nbMsgInChat;
 		nbChat = chatList.size();
-		senderID = intent.getStringExtra("contentTitle");
+
+		if(intent.hasExtra("group"))
+		{
+			senderID = intent.getStringExtra("group");
+		}
+		else
+		{
+			senderID = intent.getStringExtra("contentTitle");
+		}
+
 		if (chatList.containsKey(senderID))
 		{
 			nbMsgInChat = Integer.parseInt(chatList.get(senderID));
@@ -186,15 +195,13 @@ public class MultiMsgNotification{
 		//notification.contentIntent = contentIntent;
 		
 		if (nbChat == 1)
-		{
-			
-			
-			publishImage(context, singleBigNotifView, "singleimage", pictureUrl);	
+		{	
 			singleBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "singletext"), contentText);
 			singleBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "singletitle"), contentTitle);
 			singleBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "singlenbmessage"), chatList.get(contentTitle));
 			singleBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "singletime"), when);
-			
+			publishImage(context, singleBigNotifView, "singleimage", pictureUrl);	
+
 			multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "text2"), contentText);
 			multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "title2"), contentTitle);
 			multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "nbMessage2"), chatList.get(contentTitle));
@@ -203,8 +210,6 @@ public class MultiMsgNotification{
 			temp2 = contentTitle;
 			temp3 = chatList.get(contentTitle);
 			temp4 = pictureUrl;
-
-			Log.i("nbChat=1","!!!!!!!!!!!!!!!!!");
 			
 			//notification.bigContentView = singleBigNotifView;
 			
@@ -220,6 +225,7 @@ public class MultiMsgNotification{
 			{
 				multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "text2"), contentText);
 				multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "nbMessage2"), chatList.get(contentTitle));
+				publishImage(context, multiBigNotifView, "image2", pictureUrl);
 				temp1 = contentText;
 				temp2 = contentTitle;
 				temp3 = chatList.get(contentTitle);
