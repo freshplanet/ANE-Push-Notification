@@ -164,7 +164,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 				if (USE_MULTI_MSG && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
 				{
 					MultiMsgNotification msg = MultiMsgNotification.Instance(context);
-					msg.makeBigNotif(context, intent, msgParams);
+					msg.makeBigNotif(context, intent);
 				}
 				else
 				{
