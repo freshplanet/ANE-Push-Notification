@@ -2,32 +2,37 @@ package com.freshplanet.nativeExtensions;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.sql.Timestamp;
+
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import java.util.Date;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
-import com.distriqt.extension.util.Resources;
-import android.net.Uri;
-import android.media.AudioManager;
-import android.media.RingtoneManager;
-import android.os.Vibrator;
 
-public class MultiMsgNotification
+import com.distriqt.extension.util.Resources;
+
+public class MultiMsgNotification //extends Activity
 {
 
 	private String TAG = "MultiMsgNotification";
@@ -48,13 +53,13 @@ public class MultiMsgNotification
 		public int nbMsgInChat;
 		public String pictureUrl;
 		public String timeOfMsg;
-
 		public int orderInList;
+		ArrayList<String> msgList = new ArrayList<String>();
 	}
 	
 	private Notification _notification;
-	private RemoteViews _singleBigNotifView;
-	private RemoteViews _multiBigNotifView;
+	private RemoteViews _contentView;
+	private RemoteViews _bigContentView;
 	private NotificationManager _nm;
 
 	private Context _mContext;
@@ -84,15 +89,11 @@ public class MultiMsgNotification
 	{
 		_chatList = new HashMap<String, ChatListItem>();
 
-		_multiBigNotifView = new RemoteViews(_mContext.getPackageName(), Resources.getResourseIdByName(_mContext.getPackageName(),
-				"layout", "multibignotif"));
-		_singleBigNotifView = new RemoteViews(_mContext.getPackageName(), Resources.getResourseIdByName(_mContext.getPackageName(),
-				"layout", "singlebignotif"));
+		_bigContentView = new RemoteViews(_mContext.getPackageName(), Resources.getResourseIdByName(_mContext.getPackageName(),
+				"layout", "bigcontentview"));
+		_contentView = new RemoteViews(_mContext.getPackageName(), Resources.getResourseIdByName(_mContext.getPackageName(),
+				"layout", "contentview"));
 
-		_multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(_mContext.getPackageName(), "id", "chat1"), View.GONE);
-		_multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(_mContext.getPackageName(), "id", "chat2"), View.GONE);
-		_multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(_mContext.getPackageName(), "id", "chat3"), View.GONE);
-		_multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(_mContext.getPackageName(), "id", "chat4"), View.GONE);
 	}
 
 	/**
@@ -121,12 +122,12 @@ public class MultiMsgNotification
 		if (_chatList.containsKey(chatID))
 		{
 			chatListItem = _chatList.get(chatID);
-
 			chatListItem.contentText = intent.getStringExtra("contentText").toString();
 			chatListItem.contentTitle = intent.getStringExtra("contentTitle").toString();
 			chatListItem.nbMsgInChat++;
 			chatListItem.pictureUrl = getPictureUrl(intent);
 			chatListItem.timeOfMsg = getTimeFromMessage(intent);
+			chatListItem.msgList.add(chatListItem.contentText);
 
 			// increase the order of other chats
 			for (String tempKey : _chatList.keySet())
@@ -143,6 +144,7 @@ public class MultiMsgNotification
 			chatListItem.nbMsgInChat = 1;
 			chatListItem.pictureUrl = getPictureUrl(intent);
 			chatListItem.timeOfMsg = getTimeFromMessage(intent);
+			chatListItem.msgList.add(chatListItem.contentText);
 
 			// increase the order of other chats
 			for (String tempKey : _chatList.keySet())
@@ -242,115 +244,16 @@ public class MultiMsgNotification
 	{
 		return _chatList.size();
 	}
+	
 
-	private void displayNotifFromChatList(Context context, Intent intent)
-	{
-		int nbTotalChat = getNbTotalChat();
-		int nbTotalMsg = getNbTotalMsg();
-		Collection<ChatListItem> chatListItemCollection = _chatList.values();
-
-		if (nbTotalChat == 1)
-		{
-			ChatListItem item1 = new ChatListItem();
-			for (ChatListItem temp : chatListItemCollection)
-			{
-				item1 = temp;
-			}
-			_singleBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "singletext"),
-					item1.contentText);
-			_singleBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "singletitle"),
-					item1.contentTitle);
-			_singleBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "singlenbmessage"),
-					String.valueOf(item1.nbMsgInChat));
-			_singleBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "singletime"),
-					item1.timeOfMsg);
-			publishImage(context, _singleBigNotifView, "singleimage", item1.pictureUrl);
-		} else if (nbTotalChat == 2)
-		{
-			ChatListItem item1 = new ChatListItem();
-			ChatListItem item2 = new ChatListItem();
-			for (ChatListItem temp : chatListItemCollection)
-			{
-				if (temp.orderInList == 1)
-					item1 = temp;
-				else if (temp.orderInList == 2)
-					item2 = temp;
-			}
-			_multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(context.getPackageName(), "id", "chat1"), View.VISIBLE);
-			_multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(context.getPackageName(), "id", "chat2"), View.VISIBLE);
-			_multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(context.getPackageName(), "id", "chat3"), View.VISIBLE);
-
-			_multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "text1"), nbTotalChat
-					+ " HelloPop Chats");
-			_multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "title1"), nbTotalMsg
-					+ " HelloPop Messages");
-			_multiBigNotifView
-					.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "nbMessage1"), item1.timeOfMsg);
-			_multiBigNotifView.setImageViewResource(Resources.getResourseIdByName(context.getPackageName(), "id", "image1"),
-					Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon72"));
-
-			_multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "text2"), item1.contentText);
-			_multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "title2"), item1.contentTitle);
-			_multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "nbMessage2"),
-					String.valueOf(item1.nbMsgInChat));
-
-			_multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "text3"), item2.contentText);
-			_multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "title3"), item2.contentTitle);
-			_multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "nbMessage3"),
-					String.valueOf(item2.nbMsgInChat));
-			publishImage(context, _multiBigNotifView, "image2", item1.pictureUrl);
-			publishImage(context, _multiBigNotifView, "image3", item2.pictureUrl);
-		} else if (nbTotalChat > 2)
-		{
-			ChatListItem item1 = new ChatListItem();
-			ChatListItem item2 = new ChatListItem();
-			for (ChatListItem temp : chatListItemCollection)
-			{
-				if (temp.orderInList == 1)
-					item1 = temp;
-				else if (temp.orderInList == 2)
-					item2 = temp;
-			}
-			_multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(context.getPackageName(), "id", "chat1"), View.VISIBLE);
-			_multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(context.getPackageName(), "id", "chat2"), View.VISIBLE);
-			_multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(context.getPackageName(), "id", "chat3"), View.VISIBLE);
-			_multiBigNotifView.setViewVisibility(Resources.getResourseIdByName(context.getPackageName(), "id", "chat4"), View.VISIBLE);
-
-			_multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "text1"), nbTotalChat
-					+ " HelloPop Chats");
-			_multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "title1"), nbTotalMsg
-					+ " HelloPop Messages");
-			_multiBigNotifView
-					.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "nbMessage1"), item1.timeOfMsg);
-			_multiBigNotifView.setImageViewResource(Resources.getResourseIdByName(context.getPackageName(), "id", "image1"),
-					Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon72"));
-
-			_multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "text2"), item1.contentText);
-			_multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "title2"), item1.contentTitle);
-			_multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "nbMessage2"),
-					String.valueOf(item1.nbMsgInChat));
-
-			_multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "text3"), item2.contentText);
-			_multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "title3"), item2.contentTitle);
-			_multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "nbMessage3"),
-					String.valueOf(item2.nbMsgInChat));
-
-			_multiBigNotifView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "emit"), nbTotalChat + "");
-			_multiBigNotifView.setImageViewResource(Resources.getResourseIdByName(context.getPackageName(), "id", "image4"),
-					Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"));
-
-			publishImage(context, _multiBigNotifView, "image2", item1.pictureUrl);
-			publishImage(context, _multiBigNotifView, "image3", item2.pictureUrl);
-
-		}
-	}
 
 	public void makeBigNotif(Context context, Intent intent)
 	{
 		addToChatList(intent);
 
 		CharSequence tickerText = intent.getStringExtra("tickerText");
-
+		Bitmap largeicon = BitmapFactory.decodeResource(context.getResources(), Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"));
+		
 		Intent notificationIntent = null;
 		PendingIntent contentIntent = null;
 		notificationIntent = new Intent(context, NotificationActivity.class);
@@ -362,17 +265,124 @@ public class MultiMsgNotification
 		int nbTotalMsg = getNbTotalMsg();
 
 		Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-		_notification = new NotificationCompat.Builder(context).setTicker(tickerText).setContentTitle(nbTotalMsg + " HelloPop Messages")
-				.setContentText(nbTotalChat + " HelloPop Chats").setNumber(nbTotalChat)
-				.setSmallIcon(Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"))
-				.setLights(Color.BLUE, 500, 500).setContentIntent(contentIntent).setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
-				.build();
-		_notification.ledARGB = Color.BLUE;
 
 		Vibrator v = (Vibrator) _mContext.getSystemService(Context.VIBRATOR_SERVICE);
 		v.vibrate(100); // vibrate 100 ms
 
-		displayNotifFromChatList(context, intent);
+		Collection<ChatListItem> chatListItemCollection = _chatList.values();
+		
+		if (nbTotalChat == 1)
+		{
+			ChatListItem item1 = new ChatListItem();
+			for (ChatListItem temp : chatListItemCollection)
+			{
+				item1 = temp;
+			}
+			
+			if (nbTotalMsg == 1)
+			{
+				_contentView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "contentviewtext"),
+						item1.contentText);
+				_contentView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "contentviewtitle"),
+						item1.contentTitle);
+				_contentView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "contentviewtime"),
+						item1.timeOfMsg);
+				_contentView.setImageViewResource(Resources.getResourseIdByName(context.getPackageName(), "id", "contentviewsmalllogo"),
+						Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"));
+				
+				_notification = new NotificationCompat.Builder(context).setTicker(tickerText).setContentTitle(item1.contentTitle)
+						.setContentText(item1.contentText)
+						.setLargeIcon(largeicon)
+						.setSmallIcon(Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"))
+						.setLights(Color.BLUE, 500, 500).setContentIntent(contentIntent).setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
+						.build();
+				
+				publishImage(context, _contentView, "contentviewimage", item1.pictureUrl);
+			}
+			else
+			{
+				_bigContentView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewtitle"),
+						item1.contentTitle);
+				_bigContentView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewtime"),
+						item1.timeOfMsg);
+				_bigContentView.setImageViewResource(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewsmalllogo"),
+						Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"));
+				
+				_bigContentView.removeAllViews(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewtext"));
+				for (int i=item1.msgList.size()-1;i>=0;i--)
+				{
+					RemoteViews inflateView = new RemoteViews(_mContext.getPackageName(), Resources.getResourseIdByName(_mContext.getPackageName(),
+							"layout", "inflatelayout"));
+					inflateView.setViewVisibility(Resources.getResourseIdByName(context.getPackageName(), "id", "inflateChatName"),
+							View.GONE);
+					inflateView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "inflateText"),
+							item1.msgList.get(i));
+					
+					_bigContentView.addView(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewtext"), inflateView);
+				}
+				
+				_notification = new NotificationCompat.Builder(context).setTicker(tickerText).setContentTitle(item1.contentTitle)
+						.setContentText(nbTotalMsg+" new messages")
+						.setLargeIcon(largeicon)
+						.setSmallIcon(Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"))
+						.setLights(Color.BLUE, 500, 500).setContentIntent(contentIntent).setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
+						.build();
+				
+				publishImage(context, _bigContentView, "bigcontentviewimage", item1.pictureUrl);
+			}
+
+		} else if (nbTotalChat > 1)
+		{
+			_bigContentView.removeAllViews(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewtext"));
+			
+			ChatListItem item[] = new ChatListItem[10];
+			for (ChatListItem temp : chatListItemCollection)
+			{
+				item[temp.orderInList] = temp;
+			}
+			for (int i=1;i<=nbTotalChat;i++)
+			{
+				if (item[i].nbMsgInChat==1) 
+				{
+					RemoteViews inflateView = new RemoteViews(_mContext.getPackageName(), Resources.getResourseIdByName(_mContext.getPackageName(),
+							"layout", "inflatelayout"));
+					inflateView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "inflateChatName"),
+							item[i].contentTitle);
+					inflateView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "inflateText"),
+							item[i].msgList.get(0));
+					
+					_bigContentView.addView(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewtext"), inflateView);
+				}
+				else
+				{
+					RemoteViews inflateView = new RemoteViews(_mContext.getPackageName(), Resources.getResourseIdByName(_mContext.getPackageName(),
+							"layout", "inflatelayout"));
+					inflateView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "inflateChatName"),
+							item[i].contentTitle);
+					inflateView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "inflateText"),
+							item[i].nbMsgInChat+" messages");
+					
+					_bigContentView.addView(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewtext"), inflateView);
+				}
+			}
+			
+			_bigContentView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewtitle"),
+					nbTotalMsg+" new HelloPop messages");
+			_bigContentView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewtime"),
+					item[1].timeOfMsg);
+			_bigContentView.setImageViewResource(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewsmalllogo"),
+					Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"));
+		
+			_notification = new NotificationCompat.Builder(context).setTicker(tickerText).setContentTitle(nbTotalMsg+" new HelloPop messages")
+					.setContentText(nbTotalChat+" new chats")
+					.setLargeIcon(largeicon)
+					.setSmallIcon(Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"))
+					.setLights(Color.BLUE, 500, 500).setContentIntent(contentIntent).setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
+					.build();
+			
+			publishImage(context, _bigContentView, "bigcontentviewimage", item[1].pictureUrl);
+		
+		}
 	}
 
 }

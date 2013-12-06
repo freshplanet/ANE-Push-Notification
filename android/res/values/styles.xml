@@ -21,6 +21,11 @@
         <item name="android:textColor">#999999</item>
         <item name="android:textSize">14dp</item>
     </style>
+    
+    <style name="textGroupName">
+        <item name="android:textColor">#E0DEDE</item>
+        <item name="android:textSize">14dp</item>
+    </style>
     <!--
          If you want a slightly different color for some text,
          consider using ?android:attr/textColorSecondary
