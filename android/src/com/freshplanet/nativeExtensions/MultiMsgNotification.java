@@ -279,13 +279,14 @@ public class MultiMsgNotification //extends Activity
 			{
 				item1 = temp;
 			}
+			String contentTitle = item1.contentTitle.length()>30?item1.contentTitle.substring(0, 30)+"...":item1.contentTitle;
 			
 			if (nbTotalMsg == 1)
 			{
 				_contentView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "contentviewtext"),
 						item1.contentText);
 				_contentView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "contentviewtitle"),
-						item1.contentTitle);
+						contentTitle);
 				_contentView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "contentviewtime"),
 						item1.timeOfMsg);
 				_contentView.setImageViewResource(Resources.getResourseIdByName(context.getPackageName(), "id", "contentviewsmalllogo"),
@@ -303,7 +304,7 @@ public class MultiMsgNotification //extends Activity
 			else
 			{
 				_bigContentView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewtitle"),
-						item1.contentTitle);
+						contentTitle);
 				_bigContentView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewtime"),
 						item1.timeOfMsg);
 				_bigContentView.setImageViewResource(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewsmalllogo"),
@@ -348,7 +349,7 @@ public class MultiMsgNotification //extends Activity
 					RemoteViews inflateView = new RemoteViews(_mContext.getPackageName(), Resources.getResourseIdByName(_mContext.getPackageName(),
 							"layout", "inflatelayout"));
 					inflateView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "inflateChatName"),
-							item[i].contentTitle);
+							item[i].contentTitle.length()>20?item[i].contentTitle.substring(0, 20)+"...":item[i].contentTitle);
 					inflateView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "inflateText"),
 							item[i].msgList.get(0));
 					
