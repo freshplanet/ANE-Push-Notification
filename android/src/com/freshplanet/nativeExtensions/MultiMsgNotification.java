@@ -252,7 +252,8 @@ public class MultiMsgNotification //extends Activity
 		addToChatList(intent);
 
 		CharSequence tickerText = intent.getStringExtra("tickerText");
-		Bitmap largeicon = BitmapFactory.decodeResource(context.getResources(), Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"));
+		Bitmap largeicon = BitmapFactory.decodeResource(context.getResources(), Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon72"));
+		largeicon = Bitmap.createScaledBitmap(largeicon, largeicon.getWidth()/2, largeicon.getHeight()/2, true);
 		
 		Intent notificationIntent = null;
 		PendingIntent contentIntent = null;
@@ -288,12 +289,12 @@ public class MultiMsgNotification //extends Activity
 				_contentView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "contentviewtime"),
 						item1.timeOfMsg);
 				_contentView.setImageViewResource(Resources.getResourseIdByName(context.getPackageName(), "id", "contentviewsmalllogo"),
-						Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"));
+						Resources.getResourseIdByName(context.getPackageName(), "drawable", "status_icon24"));
 				
 				_notification = new NotificationCompat.Builder(context).setTicker(tickerText).setContentTitle(item1.contentTitle)
 						.setContentText(item1.contentText)
 						.setLargeIcon(largeicon)
-						.setSmallIcon(Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"))
+						.setSmallIcon(Resources.getResourseIdByName(context.getPackageName(), "drawable", "status_icon24"))
 						.setLights(Color.BLUE, 500, 500).setContentIntent(contentIntent).setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
 						.build();
 				
@@ -306,7 +307,7 @@ public class MultiMsgNotification //extends Activity
 				_bigContentView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewtime"),
 						item1.timeOfMsg);
 				_bigContentView.setImageViewResource(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewsmalllogo"),
-						Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"));
+						Resources.getResourseIdByName(context.getPackageName(), "drawable", "status_icon24"));
 				
 				_bigContentView.removeAllViews(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewtext"));
 				for (int i=item1.msgList.size()-1;i>=0;i--)
@@ -324,7 +325,7 @@ public class MultiMsgNotification //extends Activity
 				_notification = new NotificationCompat.Builder(context).setTicker(tickerText).setContentTitle(item1.contentTitle)
 						.setContentText(nbTotalMsg+" new messages")
 						.setLargeIcon(largeicon)
-						.setSmallIcon(Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"))
+						.setSmallIcon(Resources.getResourseIdByName(context.getPackageName(), "drawable", "status_icon24"))
 						.setLights(Color.BLUE, 500, 500).setContentIntent(contentIntent).setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
 						.build();
 				
@@ -371,12 +372,12 @@ public class MultiMsgNotification //extends Activity
 			_bigContentView.setTextViewText(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewtime"),
 					item[1].timeOfMsg);
 			_bigContentView.setImageViewResource(Resources.getResourseIdByName(context.getPackageName(), "id", "bigcontentviewsmalllogo"),
-					Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"));
+					Resources.getResourseIdByName(context.getPackageName(), "drawable", "status_icon24"));
 		
 			_notification = new NotificationCompat.Builder(context).setTicker(tickerText).setContentTitle(nbTotalMsg+" new HelloPop messages")
 					.setContentText(nbTotalChat+" new chats")
 					.setLargeIcon(largeicon)
-					.setSmallIcon(Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36"))
+					.setSmallIcon(Resources.getResourseIdByName(context.getPackageName(), "drawable", "status_icon24"))
 					.setLights(Color.BLUE, 500, 500).setContentIntent(contentIntent).setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
 					.build();
 			
