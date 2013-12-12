@@ -230,7 +230,8 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 		}
 
 		CharSequence tickerText = intent.getStringExtra("tickerText");
-		CharSequence contentTitle = intent.getStringExtra("contentTitle");
+		CharSequence contentTitle = intent.getStringExtra("contentTitle").length()>20?
+				intent.getStringExtra("contentTitle").substring(0, 20)+"...":intent.getStringExtra("contentTitle");
 		CharSequence contentText = intent.getStringExtra("contentText");
 		
 		Intent notificationIntent = null;
