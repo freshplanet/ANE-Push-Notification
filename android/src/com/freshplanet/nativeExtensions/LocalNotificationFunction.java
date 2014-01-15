@@ -45,6 +45,8 @@ public class LocalNotificationFunction implements FREFunction {
 	private static int RECURRENCE_MONTH = 3;
 	private static int RECURRENCE_YEAR = 4;
 	
+	private static int DEFAULT_NOTIFICATION_ID = 192837;
+	
 	/**
 	 * Doesn't do anything for now. just to ensure iOS compatibility. 
 	 *
@@ -60,6 +62,7 @@ public class LocalNotificationFunction implements FREFunction {
 		long timestamp = 0;
 		String title = null;
 		int recurrenceType = RECURRENCE_NONE;
+		int notificationId = DEFAULT_NOTIFICATION_ID;
 		
 		try {
 			message = arg1[0].getAsString();
@@ -69,6 +72,11 @@ public class LocalNotificationFunction implements FREFunction {
 			{
 				recurrenceType = arg1[3].getAsInt();
 			}
+			if (arg1.length == 5)
+			{
+				notificationId = arg1[4].getAsInt();
+			}
+			
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		} catch (FRETypeMismatchException e) {
@@ -103,8 +111,7 @@ public class LocalNotificationFunction implements FREFunction {
 			intent.putExtra("contentText", message);
 			
 			
-			PendingIntent sender = PendingIntent.getBroadcast(appContext, 192837, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
+			PendingIntent sender = PendingIntent.getBroadcast(appContext, notificationId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 			
 			// Get the AlarmManager service
 			AlarmManager am = (AlarmManager) appContext.getSystemService(Context.ALARM_SERVICE);

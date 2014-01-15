@@ -68,6 +68,24 @@
     return myString;
 }
 
++ (void) cancelAllLocalNotificationsWithId:(NSNumber*) notifId
+{
+    // we remove all notifications with the localNotificationId
+    for (UILocalNotification* notif in [UIApplication sharedApplication].scheduledLocalNotifications)
+    {
+        if (notif.userInfo != nil)
+        {
+            if ([notif.userInfo objectForKey:[notifId stringValue]])
+            {
+                [[UIApplication sharedApplication] cancelLocalNotification:notif];
+            }
+        } else if ([notifId intValue] == 0) // for migration purpose (all the notifications without userInfo will be removed)
+        {
+            [[UIApplication sharedApplication] cancelLocalNotification:notif];
+        }
+    }
+}
+
 
 @end
 
@@ -167,11 +185,10 @@ DEFINE_ANE_FUNCTION(fetchStarterNotification)
 // sends local notification to the device.
 DEFINE_ANE_FUNCTION(sendLocalNotification)
 {
-    // delete previously local notification
-    [[UIApplication sharedApplication] cancelAllLocalNotifications];
     
     uint32_t string_length;
     const uint8_t *utf8_message;
+    // message
     if (FREGetObjectAsUTF8(argv[0], &string_length, &utf8_message) != FRE_OK)
     {
         return nil;
@@ -179,18 +196,33 @@ DEFINE_ANE_FUNCTION(sendLocalNotification)
 
     NSString* message = [NSString stringWithUTF8String:(char*)utf8_message];
     
+    // timestamp
     uint32_t timestamp;
    if (FREGetObjectAsUint32(argv[1], &timestamp) != FRE_OK)
    {
        return nil;
    }
    
+    // recurrence
     uint32_t recurrence = 0;
     if (argc >= 4 )
     {
         FREGetObjectAsUint32(argv[3], &recurrence);
     }
     
+    // local notif id: 0 is default
+    uint32_t localNotificationId = 0;
+    if (argc == 5)
+    {
+        if (FREGetObjectAsUint32(argv[4], &localNotificationId) != FRE_OK)
+        {
+            localNotificationId = 0;
+        }
+    }
+    
+    NSNumber *localNotifIdNumber =[NSNumber numberWithInt:localNotificationId];
+        
+    [AirPushNotification cancelAllLocalNotificationsWithId:localNotifIdNumber];
     
     NSDate *itemDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
     
@@ -204,6 +236,7 @@ DEFINE_ANE_FUNCTION(sendLocalNotification)
     localNotif.alertAction = @"View Details";
     localNotif.soundName = UILocalNotificationDefaultSoundName;
     
+    localNotif.userInfo = [NSDictionary dictionaryWithObject:@"" forKey:[localNotifIdNumber stringValue]];
     if (recurrence > 0)
     {
         if (recurrence == 1)
@@ -227,6 +260,26 @@ DEFINE_ANE_FUNCTION(sendLocalNotification)
     return NULL;
 }
 
+// sends local notification to the device.
+DEFINE_ANE_FUNCTION(cancelLocalNotification)
+{
+    uint32_t localNotificationId;
+    if (argc == 1)
+    {
+        if (FREGetObjectAsUint32(argv[0], &localNotificationId) != FRE_OK)
+        {
+            return nil;
+        }
+    } else
+    {
+        localNotificationId = 0;
+    }
+    
+    
+    [AirPushNotification cancelAllLocalNotificationsWithId:[NSNumber numberWithInt:localNotificationId]];
+    return nil;
+
+}
 
 
 // AirPushContextInitializer()
@@ -274,7 +327,7 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     ///////// end of delegate injection / modification code
     
     // Register the links btwn AS3 and ObjC. (dont forget to modify the nbFuntionsToLink integer if you are adding/removing functions)
-    NSInteger nbFuntionsToLink = 5;
+    NSInteger nbFuntionsToLink = 6;
     *numFunctionsToTest = nbFuntionsToLink;
     
     FRENamedFunction* func = (FRENamedFunction*) malloc(sizeof(FRENamedFunction) * nbFuntionsToLink);
@@ -299,6 +352,11 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     func[4].functionData = NULL;
     func[4].function = &fetchStarterNotification;
 
+    func[5].name = (const uint8_t*) "cancelLocalNotification";
+    func[5].functionData = NULL;
+    func[5].function = &cancelLocalNotification;
+
+    
     *functionsToSet = func;
     
     myCtx = ctx;
@@ -311,7 +369,7 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
 void AirPushContextFinalizer(FREContext ctx) { 
     NSLog(@"Entering ContextFinalizer()");
     
-    NSLog(@"Exiting ContextFinalizer()");	
+    NSLog(@"Exiting ContextFinalizer()");   
 }
 
 
@@ -326,9 +384,9 @@ void AirPushExtInitializer(void** extDataToSet, FREContextInitializer* ctxInitia
     
     NSLog(@"Entering ExtInitializer()");                    
     
-	*extDataToSet = NULL;
-	*ctxInitializerToSet = &AirPushContextInitializer; 
-	*ctxFinalizerToSet = &AirPushContextFinalizer;
+    *extDataToSet = NULL;
+    *ctxInitializerToSet = &AirPushContextInitializer; 
+    *ctxFinalizerToSet = &AirPushContextFinalizer;
     
     NSLog(@"Exiting ExtInitializer()"); 
 }
