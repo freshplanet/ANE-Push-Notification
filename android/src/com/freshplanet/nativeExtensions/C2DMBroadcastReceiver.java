@@ -65,7 +65,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 	
 	private static C2DMBroadcastReceiver instance;
 	
-	private static final boolean USE_MULTI_MSG = true;
+	public static final boolean USE_MULTI_MSG = true;
 	
 	public C2DMBroadcastReceiver() {
 		

@@ -23,7 +23,7 @@ public class NotificationActivity extends Activity {
 		
 		Bundle values = this.getIntent().getExtras();
 		
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) 
+		if (C2DMBroadcastReceiver.USE_MULTI_MSG && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) 
 		{
 			if (values.getString("allclean").equals("true"))
 				{
