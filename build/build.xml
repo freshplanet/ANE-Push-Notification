@@ -31,7 +31,6 @@
 	</target>
 
 	<!-- Android -->
-	<!-- Android -->
     <target name="android" description="Build Android Library with debugging disabled">
         <property name="ANDROID_DEBUG" value="false"/>
         <antcall target="android-build"/>
@@ -47,8 +46,8 @@
 
 		<echo message="========== Modifying source file to set USE_MULTI_MSG = ${useMultiMsg} ============"/>
         <replaceregexp file="../android/src/com/freshplanet/nativeExtensions/C2DMBroadcastReceiver.java" 
-            match="private static final boolean USE_MULTI_MSG = ([^;]+);" 
-            replace="private static final boolean USE_MULTI_MSG = ${useMultiMsg};"
+            match="public static final boolean USE_MULTI_MSG = ([^;]+);" 
+            replace="public static final boolean USE_MULTI_MSG = ${useMultiMsg};"
 	    />
 
 		<javac srcdir="../android/src" destdir="../android/temp/classes" includeantruntime="false" debug="${ANDROID_DEBUG}">
