@@ -133,7 +133,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 		
 	public static void registerResources(Context context)
 	{
-		notificationIcon = Resources.getResourseIdByName(context.getPackageName(), "drawable", "icon36");
+		notificationIcon = Resources.getResourseIdByName(context.getPackageName(), "drawable", "status_icon");
 		customLayout = Resources.getResourseIdByName(context.getPackageName(), "layout", "notification");
 		customLayoutTitle = Resources.getResourseIdByName(context.getPackageName(), "id", "title");
 		customLayoutDescription = Resources.getResourseIdByName(context.getPackageName(), "id", "text");
