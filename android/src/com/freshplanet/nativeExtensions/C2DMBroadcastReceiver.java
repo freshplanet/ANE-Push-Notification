@@ -153,8 +153,6 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 			Log.d(TAG, "handleMessage");
 
 			String allParams = LocalNotificationService.getFullJsonParams(intent);
-
-			String msgParams = intent.getStringExtra("parameters");
 			
 			if (!C2DMExtension.isInForeground)
 			{
@@ -168,7 +166,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 				}
 				else
 				{
-					createNotificationMessage(context, intent, msgParams);
+					createNotificationMessage(context, intent);
 				}
 			}
 			
@@ -193,7 +191,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 		}
 	}
 	
-	private void createNotificationMessage(Context context, Intent intent, String parameters)
+	private void createNotificationMessage(Context context, Intent intent)
 	{
 		NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		
@@ -202,6 +200,9 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 
 		int icon = notificationIcon;
 		long when = System.currentTimeMillis();
+		
+		String allParams = LocalNotificationService.getFullJsonParams(intent);
+		String parameters = intent.getStringExtra("parameters");
 
 		
 		JSONObject object = null;
@@ -238,7 +239,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 		PendingIntent contentIntent = null;
 		notificationIntent = new Intent(context, NotificationActivity.class);
 		Log.d(TAG, "Creating NotificationActivity intent with parameters: " + parameters);
-		notificationIntent.putExtra("params", parameters);
+		notificationIntent.putExtra("params", allParams);
 		contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
