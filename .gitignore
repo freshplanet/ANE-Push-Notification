@@ -12,6 +12,7 @@ actionscript/bin
 .project
 
 # Android
+bin/AirPushNotification_multiMsg.ane
 android/bin
 android/gen
 android/lint.xml
