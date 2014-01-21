@@ -13,20 +13,29 @@ On iOS devices, this ANE uses Apple [Push Notification Services](https://develop
 Installation
 ---------
 
-The ANE binary (AirPushNotification.ane) is located in the *bin* folder. You should add it to your application project's Build Path and make sure to package it with your app (more information [here](http://help.adobe.com/en_US/air/build/WS597e5dadb9cc1e0253f7d2fc1311b491071-8000.html)).
+If your app is iOS-only, you can directly use the binary located in the *bin* folder (AirPushNotification.ane). You should add it to your application project's Build Path and make sure to package it with your app (more information [here](http://help.adobe.com/en_US/air/build/WS597e5dadb9cc1e0253f7d2fc1311b491071-8000.html)).
 
-On Android, you might want to update the content of the *android/res* folder with your own assets.
-You should also update your android manifest:
+If your app supports Android, you need to compile the ANE with your own assets (status bar icon etc...). To do that, use the ant build script located in the *build* folder (build.xml):
+
+```xml
+cd /path/to/the/ane/build
+mv example.build.config build.config
+# edit the build.config file to provide your machine-specific paths
+ant
+```
+
+You should also update your manifest with:
 
 	```
 		<!-- Only this application can receive the messages and registration result -->
 		<permission android:name="INSERT.APP.ID.HERE.C2D_MESSAGE" android:protectionLevel="signature" />
 		<uses-permission android:name="INSERT.APP.ID.HERE.permission.C2D_MESSAGE" />
+		
 		<!-- This app has permission to register and receive message -->
 		<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 		
-		
-		<!-- The following lines have to placed inside the <application> tag-->
+		<application>
+
 			<activity android:name="com.freshplanet.nativeExtensions.NotificationActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
 			
 			<receiver android:name="com.freshplanet.nativeExtensions.C2DMBroadcastReceiver"
@@ -48,40 +57,37 @@ You should also update your android manifest:
 			<!-- Local notification -->
 			<service android:name="com.freshplanet.nativeExtensions.LocalNotificationService"/>
 			<receiver android:name="com.freshplanet.nativeExtensions.LocalBroadcastReceiver" android:process=":remote"></receiver>
+
+		</application>
 	```
 
 and replace INSERT.APP.ID.HERE by your application id (<id> tag in your manifest).
 
+
 Usage
 -----
 
-In order to register the device for a push notifications, you should use the following method:
+```actionscript
 
-    PushNotification.getInstance().registerForPushNotification(GOOGLE_PROJECT_ID);
+// Register the device for a push notifications
+// GOOGLE_PROJECT_ID is necessary only on Android and is your project's ID on GCM.
+// On iOS, you can call the method with no parameter.
+PushNotification.getInstance().registerForPushNotification(GOOGLE_PROJECT_ID);
 
-The argument *GOOGLE_PROJECT_ID* is necessary only on Android and is your project's ID on [GCM](http://developer.android.com/guide/google/gcm/index.html). On iOS, you can call the method with no parameter.
+// Register for events
+PushNotification.getInstance().addEventListener(PushNotificationEvent.PERMISSION_GIVEN_WITH_TOKEN_EVENT, onPushNotificationToken);
+PushNotification.getInstance().addEventListener(PushNotificationEvent.NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND_EVENT, onNotificationReceivedInForeground);
+PushNotification.getInstance().addEventListener( PushNotificationEvent.APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION_EVENT, onNotificationReceivedInBackground);
+PushNotification.getInstance().addListenerForStarterNotifications(onNotificationReceivedStartingTheApp);
 
-Once the user has given his permission, the following event is triggered:
+// Handle events
+function onPushNotificationToken(event:PushNotificationEvent):void
+{
+	trace("My push token is: " + event.token);
+}
+// other event handlers also receive a PushNotificationEvent
 
-    PushNotificationEvent.PERMISSION_GIVEN_WITH_TOKEN_EVENT
-
-
-Sample Code for remote notifications events:
-	PushNotification.getInstance().addEventListener( PushNotificationEvent.NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND_EVENT, onNotificationReceivedInForeground);
-	PushNotification.getInstance().addEventListener( PushNotificationEvent.APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION_EVENT, onNotificationReceivedInBackground);
-	PushNotification.getInstance().addListenerForStarterNotifications(onNotificationReceivedStartingTheApp);
-
-where event listeners will receive a PushNotificationEvent as argument.
-
-Build script
----------
-
-Should you need to edit the extension source code and/or recompile it, you will find an ant build script (build.xml) in the *build* folder:
-
-    cd /path/to/the/ane/build
-    mv example.build.config build.config
-    #edit the build.config file to provide your machine-specific paths
-    ant
+```
 
 
 Authors
