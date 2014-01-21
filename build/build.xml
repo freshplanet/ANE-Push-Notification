@@ -47,8 +47,7 @@
 		<echo message="========== Modifying source file to set USE_MULTI_MSG = ${useMultiMsg} ============"/>
         <replaceregexp file="../android/src/com/freshplanet/nativeExtensions/C2DMBroadcastReceiver.java" 
             match="public static final boolean USE_MULTI_MSG = ([^;]+);" 
-            replace="public static final boolean USE_MULTI_MSG = ${useMultiMsg};"
-	    />
+            replace="public static final boolean USE_MULTI_MSG = ${useMultiMsg};"/>
 
 		<javac srcdir="../android/src" destdir="../android/temp/classes" includeantruntime="false" debug="${ANDROID_DEBUG}">
 			<classpath>
@@ -57,6 +56,11 @@
 				<pathelement location="../android/libs/android-support-v4.jar"/>
 			</classpath>
 		</javac>
+
+		<echo message="========== Modifying source file to set back USE_MULTI_MSG = false ============"/>
+		<replaceregexp file="../android/src/com/freshplanet/nativeExtensions/C2DMBroadcastReceiver.java" 
+            match="public static final boolean USE_MULTI_MSG = ([^;]+);" 
+            replace="public static final boolean USE_MULTI_MSG = false;"/>
 
 		<mkdir dir="../temp/android/"/>
 		<jar basedir="../android/temp/classes" destfile="../temp/android/lib${name}.jar"/>
