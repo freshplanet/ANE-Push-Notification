@@ -254,10 +254,16 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver {
 			.setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
 			.setContentIntent(contentIntent)
 			.build();
-
-		Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-		v.vibrate(100);  //vibrate 100 ms
-
+		
+		try
+		{
+			Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+			v.vibrate(100);  //vibrate 100 ms
+		}
+		catch (SecurityException e)
+		{
+			Log.d(TAG, "Couldn't vibrate when receiving push notification (no permission).");
+		}
 
 		RemoteViews contentView = new RemoteViews(context.getPackageName(), customLayout);
 		contentView.setTextViewText(customLayoutTitle, contentTitle);
