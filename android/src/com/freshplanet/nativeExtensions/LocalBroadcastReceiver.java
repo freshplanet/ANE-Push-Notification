@@ -14,7 +14,7 @@ public class LocalBroadcastReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		
-		if (C2DMExtension.isInForeground)
+		if (Extension.isInForeground)
 		{
 			return; // display the notification only when in background
 		}

@@ -39,10 +39,10 @@ public class NotificationActivity extends Activity {
 			isComingFromNotification = true;
 			notifParams = values.getString("params");
 			
-			if (C2DMExtension.context != null)
+			if (Extension.context != null)
 			{
 				Log.d(TAG, "context exists "+notifParams);
-				C2DMExtension.context.dispatchStatusEventAsync("APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION", notifParams);
+				Extension.context.dispatchStatusEventAsync("APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION", notifParams);
 				isComingFromNotification = false;
 				notifParams = null;
 			}

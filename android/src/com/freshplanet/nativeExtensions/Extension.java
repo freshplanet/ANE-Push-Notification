@@ -23,35 +23,33 @@ import android.util.Log;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREExtension;
 
-public class C2DMExtension implements FREExtension {
+public class Extension implements FREExtension {
 
-	private static String TAG = "c2dmExtension";
+	private static String TAG = "AirPushNotification";
 
 	public static FREContext context;
 	
 	public static boolean isInForeground = false;
 	
-	/**
-	 * Create the context (AS to Java).
-	 */
-	public FREContext createContext(String extId) {
-		Log.d(TAG, "C2DMExtension.createContext extId: " + extId);
-		return context = new C2DMExtensionContext();
+	public FREContext createContext(String extId)
+	{
+		return context = new ExtensionContext();
 	}
 
-	/**
-	 * Dispose the context.
-	 */
-	public void dispose() {
-		Log.d(TAG, "C2DMExtension.dispose");
+	public void dispose()
+	{
 		context = null;
 	}
 	
-	/**
-	 * Initialize the context.
-	 * Doesn't do anything for now.
-	 */
-	public void initialize() {
-		Log.d(TAG, "C2DMExtension.initialize");
+	public void initialize() {}
+	
+	public static void log(String message)
+	{
+		Log.d(TAG, message);
+		
+		if (context != null)
+		{
+			context.dispatchStatusEventAsync("LOGGING", message);
+		}
 	}
 }
