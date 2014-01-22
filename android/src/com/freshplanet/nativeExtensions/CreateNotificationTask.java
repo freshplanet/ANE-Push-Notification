@@ -139,7 +139,7 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		
 		// Notification action
 		Intent notificationIntent = new Intent(_context, NotificationActivity.class);;
-		notificationIntent.putExtra("params", LocalNotificationService.getFullJsonParams(_intent));
+		notificationIntent.putExtra("params", Extension.getParametersFromIntent(_intent));
 		PendingIntent contentIntent = PendingIntent.getActivity(_context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		// Create notification

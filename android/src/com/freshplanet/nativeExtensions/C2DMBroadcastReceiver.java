@@ -25,16 +25,9 @@ import android.content.Intent;
 
 public class C2DMBroadcastReceiver extends BroadcastReceiver
 {	
-	private static C2DMBroadcastReceiver _instance;
-	
 	public static final boolean USE_MULTI_MSG = false;
 	
 	public C2DMBroadcastReceiver() {}
-
-	public static C2DMBroadcastReceiver getInstance()
-	{
-		return _instance != null ? _instance : new C2DMBroadcastReceiver();
-	}
 	
 	/**
 	 * When a cd2m intent is received by the device.
@@ -89,7 +82,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver
 	{
 		try
 		{
-			String params = LocalNotificationService.getFullJsonParams(intent);
+			String params = Extension.getParametersFromIntent(intent);
 			
 			Extension.log("Received push notification with parameters: " + params);
 			
@@ -110,7 +103,6 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver
 			{
 				Extension.context.dispatchStatusEventAsync("NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND", params);
 			}
-			
 		}
 		catch (Exception e)
 		{

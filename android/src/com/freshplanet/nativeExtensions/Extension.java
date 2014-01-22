@@ -18,6 +18,11 @@
 
 package com.freshplanet.nativeExtensions;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.adobe.fre.FREContext;
@@ -51,5 +56,30 @@ public class Extension implements FREExtension {
 		{
 			context.dispatchStatusEventAsync("LOGGING", message);
 		}
+	}
+	
+	public static String getParametersFromIntent(Intent intent)
+	{
+		JSONObject paramsJson = new JSONObject();
+		Bundle bundle = intent.getExtras();
+		String parameters = intent.getStringExtra("parameters");
+		try
+		{
+			for (String key : bundle.keySet())
+			{
+				paramsJson.put(key, bundle.getString(key));
+			}
+			
+			if(parameters != null)
+			{
+				paramsJson.put("parameters", new JSONObject(parameters));
+			}
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return paramsJson.toString();
 	}
 }
