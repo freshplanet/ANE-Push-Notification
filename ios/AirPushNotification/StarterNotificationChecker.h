@@ -16,6 +16,7 @@
 + (BOOL) applicationStartedWithNotification;
 
 + (NSDictionary*) getStarterNotification;
++(UILocalNotification*) getStarterLocalNotification;
 
 + (void) deleteStarterNotification;
 

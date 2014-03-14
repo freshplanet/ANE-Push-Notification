@@ -16,6 +16,7 @@ package com.freshplanet.nativeExtensions
 		public static const RECURRENCE_YEAR:int   = 4;
 
 		public static const DEFAULT_LOCAL_NOTIFICATION_ID:int = 0;
+		public static const DEFAULT_LOCAL_NOTIFICATION_CONTENT_ID:int = 0;
 		
 		private static var extCtx:ExtensionContext = null;
         
@@ -102,6 +103,29 @@ package com.freshplanet.nativeExtensions
          		{
            			extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId);
          		}
+			}
+		}
+		
+		/**
+		 * Sends a local notification to the device, with optional timezone and contentId params
+		 * @param message the local notification text displayed
+		 * @param timestamp when the local notification should appear (in sec)
+		 * @param title (Android Only) Title of the local notification
+		 * @param recurrenceType
+		 * 
+		 */
+		public function sendLocalNotificationWithOptions(
+			message:String,
+			timestamp:int,
+			title:String,
+			recurrenceType:int = RECURRENCE_NONE,
+			notificationId:int = DEFAULT_LOCAL_NOTIFICATION_ID,
+			notificationContentId:int = DEFAULT_LOCAL_NOTIFICATION_CONTENT_ID,
+			timezoneName:String = ""):void
+		{
+			if (this.isPushNotificationSupported)
+			{
+				extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, notificationContentId, timezoneName);
 			}
 		}
 

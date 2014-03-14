@@ -10,6 +10,7 @@
 
 static BOOL _startedWithNotification = NO;
 static NSDictionary *_notification = nil;
+static UILocalNotification *_localNotification = nil;
 
 @implementation StarterNotificationChecker
 
@@ -27,10 +28,14 @@ static NSDictionary *_notification = nil;
     
     // This code will be called immediately after application:didFinishLaunchingWithOptions:.
     NSDictionary *remoteNotification = [launchOptions objectForKey: @"UIApplicationLaunchOptionsRemoteNotificationKey"];
+    UILocalNotification *localNotification = [launchOptions objectForKey: @"UIApplicationLaunchOptionsLocalNotificationKey"];
+	
     if (notification)
     {
         _startedWithNotification = YES;
+		
         _notification = remoteNotification;
+		_localNotification = localNotification;
     }
     else
     {
@@ -47,10 +52,15 @@ static NSDictionary *_notification = nil;
 {
     return _notification;
 }
++(UILocalNotification*) getStarterLocalNotification
+{
+    return _localNotification;
+}
 
 + (void) deleteStarterNotification
 {
     _notification = nil;
+	_localNotification = nil;
 }
 
 @end

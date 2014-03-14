@@ -180,7 +180,18 @@ DEFINE_ANE_FUNCTION(fetchStarterNotification)
     return nil;
 }
 
-
+// attempt to trigger an event if the app started from a local notification
+DEFINE_ANE_FUNCTION(fetchStarterLocalNotification)
+{
+    BOOL appStartedWithNotification = [StarterNotificationChecker applicationStartedWithNotification];
+    if(appStartedWithNotification)
+    {
+        UILocalNotification *localNotif = [StarterNotificationChecker getStarterLocalNotification];
+        NSString *stringInfo = [AirPushNotification convertToJSonString:localNotif.userInfo];
+        FREDispatchStatusEventAsync(myCtx, (uint8_t*)"APP_STARTING_FROM_NOTIFICATION", (uint8_t*)[stringInfo UTF8String]);
+    }
+    return nil;
+}
 
 // sends local notification to the device.
 DEFINE_ANE_FUNCTION(sendLocalNotification)
@@ -260,6 +271,120 @@ DEFINE_ANE_FUNCTION(sendLocalNotification)
     return NULL;
 }
 
+// similar to sendLocalNotification, but allows a custom timezone, and custom params
+DEFINE_ANE_FUNCTION(sendLocalNotificationWithOptions)
+{
+    
+    uint32_t string_length;
+    const uint8_t *utf8_message;
+    // message
+    if (FREGetObjectAsUTF8(argv[0], &string_length, &utf8_message) != FRE_OK)
+    {
+        return nil;
+    }
+	
+    NSString* message = [NSString stringWithUTF8String:(char*)utf8_message];
+    
+    // timestamp
+    uint32_t timestamp;
+	if (FREGetObjectAsUint32(argv[1], &timestamp) != FRE_OK)
+	{
+		return nil;
+	}
+	
+    // recurrence
+    uint32_t recurrence = 0;
+    if (argc >= 4 )
+    {
+        FREGetObjectAsUint32(argv[3], &recurrence);
+    }
+    
+    // local notif id: 0 is default
+    uint32_t localNotificationId = 0;
+    if (argc >= 5)
+    {
+        if (FREGetObjectAsUint32(argv[4], &localNotificationId) != FRE_OK)
+        {
+            localNotificationId = 0;
+        }
+    }
+    
+    NSNumber *localNotifIdNumber =[NSNumber numberWithInt:localNotificationId];
+
+    // local notif id: 0 is default
+    uint32_t localNotificationContentId = 0;
+    if (argc >= 6)
+    {
+        if (FREGetObjectAsUint32(argv[4], &localNotificationContentId) != FRE_OK)
+        {
+            localNotificationContentId = 0;
+        }
+    }
+    
+    NSNumber *localNotifContentIdNumber =[NSNumber numberWithInt:localNotificationId];
+	
+	
+	// timezone name
+	if (argc >= 7) {
+		if (FREGetObjectAsUTF8(argv[0], &string_length, &utf8_message) != FRE_OK)
+		{
+			return nil;
+		}
+		
+	}
+
+    NSString* timezoneName = [NSString stringWithUTF8String:(char*)utf8_message];
+	
+	/////
+    [AirPushNotification cancelAllLocalNotificationsWithId:localNotifIdNumber];
+    
+    NSDate *itemDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
+    
+    UILocalNotification *localNotif = [[UILocalNotification alloc] init];
+    if (localNotif == nil)
+        return NULL;
+    localNotif.fireDate = itemDate;
+	
+	NSTimeZone *zone = [NSTimeZone timeZoneWithName:timezoneName];
+	if (zone == nil) {
+		zone = [NSTimeZone defaultTimeZone];
+	}
+    localNotif.timeZone = zone;
+    
+    localNotif.alertBody = message;
+    localNotif.alertAction = @"View Details";
+    localNotif.soundName = UILocalNotificationDefaultSoundName;
+    
+	localNotif.userInfo =
+		@{
+			[localNotifIdNumber stringValue] : @"",
+			@"contentId" : [localNotifContentIdNumber stringValue]
+		};
+	
+    if (recurrence > 0)
+    {
+        if (recurrence == 1)
+        {
+            localNotif.repeatInterval = NSDayCalendarUnit;
+        } else if (recurrence == 2)
+        {
+            localNotif.repeatInterval = NSWeekCalendarUnit;
+        } else if (recurrence == 3)
+        {
+            localNotif.repeatInterval = NSMonthCalendarUnit;
+        } else if (recurrence == 4)
+        {
+            localNotif.repeatInterval = NSYearCalendarUnit;
+        }
+        
+    }
+    
+    [[UIApplication sharedApplication] scheduleLocalNotification:localNotif];
+    [localNotif release];
+    return NULL;
+}
+
+
 // sends local notification to the device.
 DEFINE_ANE_FUNCTION(cancelLocalNotification)
 {
@@ -327,7 +452,7 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     ///////// end of delegate injection / modification code
     
     // Register the links btwn AS3 and ObjC. (dont forget to modify the nbFuntionsToLink integer if you are adding/removing functions)
-    NSInteger nbFuntionsToLink = 6;
+    NSInteger nbFuntionsToLink = 7;
     *numFunctionsToTest = nbFuntionsToLink;
     
     FRENamedFunction* func = (FRENamedFunction*) malloc(sizeof(FRENamedFunction) * nbFuntionsToLink);
@@ -343,18 +468,22 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     func[2].name = (const uint8_t*) "sendLocalNotification";
     func[2].functionData = NULL;
     func[2].function = &sendLocalNotification;
-    
-    func[3].name = (const uint8_t*) "setIsAppInForeground";
+	
+	func[3].name = (const uint8_t*) "sendLocalNotificationWithOptions";
     func[3].functionData = NULL;
-    func[3].function = &setIsAppInForeground;
-
-    func[4].name = (const uint8_t*) "fetchStarterNotification";
+    func[3].function = &sendLocalNotificationWithOptions;
+    
+    func[4].name = (const uint8_t*) "setIsAppInForeground";
     func[4].functionData = NULL;
-    func[4].function = &fetchStarterNotification;
+    func[4].function = &setIsAppInForeground;
 
-    func[5].name = (const uint8_t*) "cancelLocalNotification";
+    func[5].name = (const uint8_t*) "fetchStarterNotification";
     func[5].functionData = NULL;
-    func[5].function = &cancelLocalNotification;
+    func[5].function = &fetchStarterNotification;
+
+    func[6].name = (const uint8_t*) "cancelLocalNotification";
+    func[6].functionData = NULL;
+    func[6].function = &cancelLocalNotification;
 
     
     *functionsToSet = func;
