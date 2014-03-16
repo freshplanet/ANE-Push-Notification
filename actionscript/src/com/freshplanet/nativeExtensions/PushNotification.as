@@ -125,7 +125,7 @@ package com.freshplanet.nativeExtensions
 		{
 			if (this.isPushNotificationSupported)
 			{
-				extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, notificationContentId, timezoneName);
+				extCtx.call("sendLocalNotificationWithOptions", message, timestamp, title, recurrenceType, notificationId, notificationContentId, timezoneName);
 			}
 		}
 
@@ -162,6 +162,14 @@ package com.freshplanet.nativeExtensions
 			{
 				this.addEventListener(PushNotificationEvent.APP_STARTING_FROM_NOTIFICATION_EVENT, listener);
 				extCtx.call("fetchStarterNotification");
+			}
+		}
+		public function addListenerForStarterLocalNotifications(listener:Function):void
+		{
+			if (this.isPushNotificationSupported)
+			{
+				this.addEventListener(PushNotificationEvent.APP_STARTING_FROM_NOTIFICATION_EVENT, listener);
+				extCtx.call("fetchStarterLocalNotification");
 			}
 		}
 		
@@ -238,7 +246,7 @@ package com.freshplanet.nativeExtensions
 						}
 						break;
 					case "LOGGING":
-						trace(e, e.level);
+						trace("[AirPushNotification]", e, e.level);
 						break;
 				}
 				

@@ -25,6 +25,8 @@
 
 #define DEFINE_ANE_FUNCTION(fn) FREObject (fn)(FREContext context, void* functionData, uint32_t argc, FREObject argv[])
 
+FREContext myCtx = nil;
+
 @implementation AirPushNotification
 
 //empty delegate functions, stubbed signature is so we can find this method in the delegate
@@ -68,6 +70,20 @@
     return myString;
 }
 
++ (void)dispatchEvent:(NSString *)eventName withInfo:(NSString *)info
+{
+    if (myCtx != nil)
+    {
+        FREDispatchStatusEventAsync(myCtx, (const uint8_t *)[eventName UTF8String], (const uint8_t *)[info UTF8String]);
+    }
+}
+
++ (void)log:(NSString *)message
+{
+    [AirPushNotification dispatchEvent:@"LOGGING" withInfo:message];
+}
+
+
 + (void) cancelAllLocalNotificationsWithId:(NSNumber*) notifId
 {
     // we remove all notifications with the localNotificationId
@@ -90,7 +106,6 @@
 @end
 
 
-FREContext myCtx = nil;
 
 //custom implementations of empty signatures above. Used for push notification delegate implementation.
 void didRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIApplication* application, NSData* deviceToken)
@@ -311,22 +326,22 @@ DEFINE_ANE_FUNCTION(sendLocalNotificationWithOptions)
     
     NSNumber *localNotifIdNumber =[NSNumber numberWithInt:localNotificationId];
 
-    // local notif id: 0 is default
+    // local notif content id: 0 is default
     uint32_t localNotificationContentId = 0;
     if (argc >= 6)
     {
-        if (FREGetObjectAsUint32(argv[4], &localNotificationContentId) != FRE_OK)
+        if (FREGetObjectAsUint32(argv[5], &localNotificationContentId) != FRE_OK)
         {
             localNotificationContentId = 0;
         }
     }
     
-    NSNumber *localNotifContentIdNumber =[NSNumber numberWithInt:localNotificationId];
+    NSNumber *localNotifContentIdNumber =[NSNumber numberWithInt:localNotificationContentId];
 	
 	
 	// timezone name
 	if (argc >= 7) {
-		if (FREGetObjectAsUTF8(argv[0], &string_length, &utf8_message) != FRE_OK)
+		if (FREGetObjectAsUTF8(argv[6], &string_length, &utf8_message) != FRE_OK)
 		{
 			return nil;
 		}
@@ -345,11 +360,7 @@ DEFINE_ANE_FUNCTION(sendLocalNotificationWithOptions)
         return NULL;
     localNotif.fireDate = itemDate;
 	
-	NSTimeZone *zone = [NSTimeZone timeZoneWithName:timezoneName];
-	if (zone == nil) {
-		zone = [NSTimeZone defaultTimeZone];
-	}
-    localNotif.timeZone = zone;
+    localNotif.timeZone = [NSTimeZone timeZoneWithName:timezoneName];
     
     localNotif.alertBody = message;
     localNotif.alertAction = @"View Details";
@@ -361,11 +372,16 @@ DEFINE_ANE_FUNCTION(sendLocalNotificationWithOptions)
 			@"contentId" : [localNotifContentIdNumber stringValue]
 		};
 	
+
+	NSString *logString = [NSString stringWithFormat:@"recurrence = %d", recurrence];
+	[AirPushNotification log:@"about to set repeat"];
+	[AirPushNotification log:logString];
     if (recurrence > 0)
     {
         if (recurrence == 1)
         {
             localNotif.repeatInterval = NSDayCalendarUnit;
+			[AirPushNotification log:@"repeat is daily"];
         } else if (recurrence == 2)
         {
             localNotif.repeatInterval = NSWeekCalendarUnit;
@@ -452,7 +468,7 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     ///////// end of delegate injection / modification code
     
     // Register the links btwn AS3 and ObjC. (dont forget to modify the nbFuntionsToLink integer if you are adding/removing functions)
-    NSInteger nbFuntionsToLink = 7;
+    NSInteger nbFuntionsToLink = 8;
     *numFunctionsToTest = nbFuntionsToLink;
     
     FRENamedFunction* func = (FRENamedFunction*) malloc(sizeof(FRENamedFunction) * nbFuntionsToLink);
@@ -480,10 +496,14 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     func[5].name = (const uint8_t*) "fetchStarterNotification";
     func[5].functionData = NULL;
     func[5].function = &fetchStarterNotification;
-
-    func[6].name = (const uint8_t*) "cancelLocalNotification";
+	
+	func[6].name = (const uint8_t*) "fetchStarterLocalNotification";
     func[6].functionData = NULL;
-    func[6].function = &cancelLocalNotification;
+    func[6].function = &fetchStarterLocalNotification;
+
+    func[7].name = (const uint8_t*) "cancelLocalNotification";
+    func[7].functionData = NULL;
+    func[7].function = &cancelLocalNotification;
 
     
     *functionsToSet = func;

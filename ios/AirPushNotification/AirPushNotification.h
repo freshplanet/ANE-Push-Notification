@@ -26,6 +26,8 @@
 @interface  AirPushNotification : NSObject <UIApplicationDelegate>
 
 +(NSString*) convertToJSonString:(NSDictionary*)dict;
++ (void)dispatchEvent:(NSString *)eventName withInfo:(NSString *)info;
++ (void)log:(NSString *)message;
 
 @end
 
@@ -36,6 +38,7 @@ FREObject sendLocalNotificationWithOptions(FREContext ctx, void* funcData, uint3
 FREObject cancelLocalNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject setIsAppInForeground(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject fetchStarterNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject fetchStarterLocalNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 
 void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx, uint32_t* numFunctionsToTest, const FRENamedFunction** functionsToSet);
 void AirPushContextFinalizer(FREContext ctx);
