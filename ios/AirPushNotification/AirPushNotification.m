@@ -373,15 +373,11 @@ DEFINE_ANE_FUNCTION(sendLocalNotificationWithOptions)
 		};
 	
 
-	NSString *logString = [NSString stringWithFormat:@"recurrence = %d", recurrence];
-	[AirPushNotification log:@"about to set repeat"];
-	[AirPushNotification log:logString];
     if (recurrence > 0)
     {
         if (recurrence == 1)
         {
             localNotif.repeatInterval = NSDayCalendarUnit;
-			[AirPushNotification log:@"repeat is daily"];
         } else if (recurrence == 2)
         {
             localNotif.repeatInterval = NSWeekCalendarUnit;

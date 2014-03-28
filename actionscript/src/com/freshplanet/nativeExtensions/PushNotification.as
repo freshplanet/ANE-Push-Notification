@@ -21,7 +21,6 @@ package com.freshplanet.nativeExtensions
 		private static var extCtx:ExtensionContext = null;
         
         private static var _instance:PushNotification;
-        
 		
         public function PushNotification()
 		{
