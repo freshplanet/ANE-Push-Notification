@@ -25,7 +25,7 @@
 
 @interface  AirPushNotification : NSObject <UIApplicationDelegate>
 
-+(NSString*) convertToJSonString:(NSDictionary*)dict;
++ (NSString*) convertToJSonString:(NSDictionary*)dict;
 + (void)dispatchEvent:(NSString *)eventName withInfo:(NSString *)info;
 + (void)log:(NSString *)message;
 
@@ -34,7 +34,7 @@
 FREObject setBadgeNb(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject registerPush(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject sendLocalNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject sendLocalNotificationWithOptions(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject sendLocalNotificationsWithOptions(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject cancelLocalNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject setIsAppInForeground(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject fetchStarterNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
@@ -49,3 +49,6 @@ void AirPushExtFinalizer(void *extData);
 void didRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIApplication* application, NSData* deviceToken);
 void didFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, UIApplication* application, NSError* error);
 void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application,NSDictionary *userInfo);
+
+//UILocalNotification* createLocalNotif(FREObject notifArr, uint32_t notifArrCount);
+//void scheduleLocalNotifs(FREObject allNotifsInfo)

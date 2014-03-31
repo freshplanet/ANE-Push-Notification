@@ -43,7 +43,7 @@ public class ExtensionContext extends FREContext
 		functionMap.put("registerPush", new C2DMRegisterFunction());
 		functionMap.put("setBadgeNb", new SetBadgeValueFunction());
 		functionMap.put("sendLocalNotification", new LocalNotificationFunction());
-		functionMap.put("sendLocalNotificationWithOptions", new LocalNotificationFunction());
+		functionMap.put("sendLocalNotificationsWithOptions", new LocalNotificationFunction());
 		functionMap.put("setIsAppInForeground", new SetIsAppInForegroundFunction());
 		functionMap.put("fetchStarterNotification", new FetchStarterNotificationFunction());
 		functionMap.put("fetchStarterLocalNotification", new FetchStarterLocalNotificationFunction());

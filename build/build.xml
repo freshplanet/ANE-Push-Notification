@@ -119,6 +119,7 @@
 		</exec>
 
 		<move file="../temp/${OUTPUT_FILENAME}.ane" todir="../bin"/>
+		<copy file="../bin/${OUTPUT_FILENAME}.ane" todir="/Users/nigamshah/Documents/projects/FamePop/AIR_app/anes"/>
 		<delete dir="../temp"/>
 	</target>
 

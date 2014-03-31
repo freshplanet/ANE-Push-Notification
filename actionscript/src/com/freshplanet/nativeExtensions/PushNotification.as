@@ -106,25 +106,14 @@ package com.freshplanet.nativeExtensions
 		}
 		
 		/**
-		 * Sends a local notification to the device, with optional timezone and contentId params
-		 * @param message the local notification text displayed
-		 * @param timestamp when the local notification should appear (in sec)
-		 * @param title (Android Only) Title of the local notification
-		 * @param recurrenceType
-		 * 
+		 * Sends an array of local notifications to the device, with optional timezone and contentId params
+		 * @param array of info regarding the local notifications
 		 */
-		public function sendLocalNotificationWithOptions(
-			message:String,
-			timestamp:int,
-			title:String,
-			recurrenceType:int = RECURRENCE_NONE,
-			notificationId:int = DEFAULT_LOCAL_NOTIFICATION_ID,
-			notificationContentId:int = DEFAULT_LOCAL_NOTIFICATION_CONTENT_ID,
-			timezoneName:String = ""):void
+		public function sendLocalNotificationsWithOptions(arr:Array):void
 		{
 			if (this.isPushNotificationSupported)
 			{
-				extCtx.call("sendLocalNotificationWithOptions", message, timestamp, title, recurrenceType, notificationId, notificationContentId, timezoneName);
+				extCtx.call("sendLocalNotificationsWithOptions", arr);
 			}
 		}
 
