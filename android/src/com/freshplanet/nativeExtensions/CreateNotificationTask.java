@@ -59,7 +59,7 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 						}
 						else if (parameters.has("facebookId"))
 						{
-							pictureUrl = "http://graph.facebook.com/"+parameters.getString("facebookId")+"/picture?type=normal";
+							pictureUrl = "https://graph.facebook.com/"+parameters.getString("facebookId")+"/picture?type=normal";
 						}
 					}
 				}
