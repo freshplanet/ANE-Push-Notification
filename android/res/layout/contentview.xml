@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:background="#ff111111" >
+
+    <ImageView
+        android:id="@+id/contentviewimage"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_alignParentLeft="true"
+        android:scaleX="0.9"
+        android:scaleY="0.9" />
+
+    <TextView
+        android:id="@+id/contentviewtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/contentviewimage"
+        android:textAppearance="@style/title" />
+
+    <TextView
+        android:id="@+id/contentviewtext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/contentviewtitle"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="10dp"
+        android:layout_toRightOf="@id/contentviewimage"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textAppearance="@style/text" />
+
+    <TextView
+        android:id="@+id/contentviewtime"
+        style="@style/NotificationText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="12dp" />
+
+    <ImageView
+        android:id="@+id/contentviewsmalllogo"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_below="@id/contentviewtime"
+        android:layout_alignParentRight="true" />
+
+</RelativeLayout>
