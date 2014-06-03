@@ -37,35 +37,16 @@
 
 + (NSString*) convertToJSonString:(NSDictionary*)dict
 {
-    NSString *myString = @"{}";
-    if (dict != nil)
-    {
-        myString = @"{";
-        
-        int length = [dict count];
-        int count = 0;
-        for (NSString* key in [dict allKeys])
-        {
-            count++;
-            id value = [dict objectForKey:key];
-            if ([value isKindOfClass:[NSDictionary class]] )
-            {
-                NSDictionary *dictValue = [dict objectForKey:key];
-                myString = [myString stringByAppendingFormat:@"\"%@\":%@", key, [AirPushNotification convertToJSonString:dictValue]];
-
-            } else
-            {
-                NSString *stringObject = [dict objectForKey:key];
-                myString =[myString stringByAppendingFormat:@"\"%@\":\"%@\"", key, stringObject];
-            }
-            if (count < length)
-            {
-                myString = [myString stringByAppendingString:@","];
-            }
-        }
-        myString = [myString stringByAppendingString:@"}"];
+    if(dict == nil) {
+        return @"{}";
     }
-    return myString;
+    NSError *jsonError = nil;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&jsonError];
+    if (jsonError != nil) {
+        NSLog(@"[AirPushNotification] JSON stringify error: %@", jsonError.localizedDescription);
+        return @"{}";
+    }
+    return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
 }
 
 
