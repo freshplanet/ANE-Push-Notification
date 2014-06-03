@@ -27,6 +27,8 @@ You should also update your android manifest:
 		
 		
 		<!-- The following lines have to placed inside the <application> tag-->
+			<activity android:name="com.freshplanet.nativeExtensions.NotificationActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+			
 			<receiver android:name="com.freshplanet.nativeExtensions.C2DMBroadcastReceiver"
 				android:permission="com.google.android.c2dm.permission.SEND">
 				
@@ -63,6 +65,13 @@ Once the user has given his permission, the following event is triggered:
 
     PushNotificationEvent.PERMISSION_GIVEN_WITH_TOKEN_EVENT
 
+
+Sample Code for remote notifications events:
+	PushNotification.getInstance().addEventListener( PushNotificationEvent.NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND_EVENT, onNotificationReceivedInForeground);
+	PushNotification.getInstance().addEventListener( PushNotificationEvent.APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION_EVENT, onNotificationReceivedInBackground);
+	PushNotification.getInstance().addListenerForStarterNotifications(onNotificationReceivedStartingTheApp);
+
+where event listeners will receive a PushNotificationEvent as argument.
 
 Build script
 ---------

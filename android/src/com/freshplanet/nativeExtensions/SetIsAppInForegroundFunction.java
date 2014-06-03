@@ -18,6 +18,8 @@
 
 package com.freshplanet.nativeExtensions;
 
+import android.util.Log;
+
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREInvalidObjectException;
@@ -32,6 +34,11 @@ public class SetIsAppInForegroundFunction implements FREFunction {
 		boolean isInForeground;
 		try {
 			isInForeground = arg1[0].getAsBool();
+			if(isInForeground)
+			{
+				MultiMsgNotification msg = MultiMsgNotification.Instance(arg0.getActivity());
+				msg.remove();
+			}
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 			return null;
@@ -47,8 +54,7 @@ public class SetIsAppInForegroundFunction implements FREFunction {
 		}
 		
 		C2DMExtension.isInForeground = isInForeground;
-		
-		
+
 		return null;
 	}
 

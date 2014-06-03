@@ -52,6 +52,7 @@ public class C2DMExtensionContext extends FREContext {
 		functionMap.put("setBadgeNb", new SetBadgeValueFunction());
 		functionMap.put("sendLocalNotification", new LocalNotificationFunction());
 		functionMap.put("setIsAppInForeground", new SetIsAppInForegroundFunction());
+		functionMap.put("fetchStarterNotification", new FetchStarterNotificationFunction());
 		return functionMap;	
 	}
 
