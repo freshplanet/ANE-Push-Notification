@@ -41,6 +41,7 @@
     </target>
 
 	<target name="android-build" description="Build Android Library">
+		<fail message="Property 'android.res' must be set in build config" unless="android.res"/>
 		<delete dir="../android/temp"/>
 		<mkdir dir="../android/temp/classes"/>
 
