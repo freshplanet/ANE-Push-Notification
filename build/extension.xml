@@ -16,26 +16,32 @@
 //  
 //////////////////////////////////////////////////////////////////////////////////////-->
 
-<extension xmlns="http://ns.adobe.com/air/extension/3.1">
-  <id>com.freshplanet.AirPushNotification</id>
-  <versionNumber>1.0</versionNumber>
-  <platforms>
-    <platform name="iPhone-ARM">
+<extension xmlns="http://ns.adobe.com/air/extension/3.9">
+    
+    <id>com.freshplanet.AirPushNotification</id>
+    
+    <versionNumber>1.0</versionNumber>
+    
+    <platforms>
+        <platform name="iPhone-ARM">
             <applicationDeployment>
                 <nativeLibrary>libAirPushNotification.a</nativeLibrary>
                 <initializer>AirPushExtInitializer</initializer>
                 <finalizer>AirPushExtFinalizer</finalizer>
             </applicationDeployment>
-    </platform>
-    <platform name="Android-ARM"> 
-        <applicationDeployment> 
-            <nativeLibrary>libAirPushNotification.jar</nativeLibrary> 
-            <initializer>com.freshplanet.nativeExtensions.C2DMExtension</initializer> 
-            <finalizer>com.freshplanet.nativeExtensions.C2DMExtension</finalizer> 
-        </applicationDeployment> 
-    </platform> 
-    <platform name="default"> 
-        <applicationDeployment/> 
-    </platform> 
-  </platforms>
+        </platform>
+
+        <platform name="Android-ARM"> 
+            <applicationDeployment> 
+                <nativeLibrary>libAirPushNotification.jar</nativeLibrary> 
+                <initializer>com.freshplanet.nativeExtensions.Extension</initializer> 
+                <finalizer>com.freshplanet.nativeExtensions.Extension</finalizer> 
+            </applicationDeployment> 
+        </platform> 
+    
+        <platform name="default"> 
+            <applicationDeployment/> 
+        </platform> 
+    </platforms>
+    
 </extension>

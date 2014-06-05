@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    android:background="#ff111111" >
+
+    <AbsoluteLayout
+        android:id="@+id/notif_icon"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_alignParentLeft="true"
+        android:background="#3333B5E5" >
+
+        <ImageView
+            android:id="@+id/bigcontentviewimage"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            />
+    </AbsoluteLayout>
+
+    <TextView
+        android:id="@+id/bigcontentviewtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="10dp"
+        android:singleLine="true"
+        android:layout_toRightOf="@id/notif_icon"
+        android:textAppearance="@style/title" />
+
+    <LinearLayout
+        android:id="@+id/bigcontentviewtext"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/bigcontentviewtitle"
+        android:layout_toRightOf="@id/notif_icon"
+        android:layout_marginBottom="15dp"
+        android:background="#ff111111"
+        android:orientation="vertical" >
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/bigcontentviewtime"
+        style="@style/NotificationText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="12dp" />
+
+    <ImageView
+        android:id="@+id/bigcontentviewsmalllogo"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_below="@id/bigcontentviewtime"
+        android:layout_alignParentRight="true" />
+
+</RelativeLayout>
