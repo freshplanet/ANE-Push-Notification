@@ -1,36 +1,51 @@
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright 2012 Freshplanet (http://freshplanet.com | opensource@freshplanet.com)
+//  
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//  
+//    http://www.apache.org/licenses/LICENSE-2.0
+//  
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+//  
+//////////////////////////////////////////////////////////////////////////////////////
+
 package com.freshplanet.nativeExtensions;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
 
-
-public class LocalBroadcastReceiver extends BroadcastReceiver {
-
-	private static String TAG = "LclBrRec";
-	
+public class LocalBroadcastReceiver extends BroadcastReceiver
+{
 	@Override
-	public void onReceive(Context context, Intent intent) {
-		
-		if (C2DMExtension.isInForeground)
+	public void onReceive(Context context, Intent intent)
+	{
+		try
 		{
-			return; // display the notification only when in background
+			String params = Extension.getParametersFromIntent(intent);
+			
+			Extension.log("Received local notification with parameters: " + params);
+			
+			// Build the notification if the app is not in foreground, otherwise just dispatch an event
+			if (!Extension.isInForeground)
+			{
+				new CreateNotificationTask(context, intent).execute();
+			}
+			else if (Extension.context != null)
+			{
+				Extension.context.dispatchStatusEventAsync("NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND", params);
+			}
 		}
-		
-		Log.d(TAG, "receive local notification");
-
-		Bundle bundle = intent.getExtras();
-		String title = bundle.getString("contentTitle");
-		String message = bundle.getString("contentText");
-
-		Intent newIntent = new Intent(context, LocalNotificationService.class);
-		newIntent.putExtra("contentTitle", title);
-		newIntent.putExtra("contentText", message);
-		context.startService(newIntent);
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
-
-	
-	
 }

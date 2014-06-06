@@ -53,7 +53,7 @@ public class SetIsAppInForegroundFunction implements FREFunction {
 			return null;
 		}
 		
-		C2DMExtension.isInForeground = isInForeground;
+		Extension.isInForeground = isInForeground;
 
 		return null;
 	}

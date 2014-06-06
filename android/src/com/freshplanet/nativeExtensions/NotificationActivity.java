@@ -23,7 +23,7 @@ public class NotificationActivity extends Activity {
 		
 		Bundle values = this.getIntent().getExtras();
 		
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) 
+		if (C2DMBroadcastReceiver.USE_MULTI_MSG && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) 
 		{
 			if (values.getString("allclean").equals("true"))
 				{
@@ -39,10 +39,10 @@ public class NotificationActivity extends Activity {
 			isComingFromNotification = true;
 			notifParams = values.getString("params");
 			
-			if (C2DMExtension.context != null)
+			if (Extension.context != null)
 			{
 				Log.d(TAG, "context exists "+notifParams);
-				C2DMExtension.context.dispatchStatusEventAsync("APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION", notifParams);
+				Extension.context.dispatchStatusEventAsync("APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION", notifParams);
 				isComingFromNotification = false;
 				notifParams = null;
 			}

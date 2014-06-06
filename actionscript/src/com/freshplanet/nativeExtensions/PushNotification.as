@@ -1,6 +1,5 @@
 package com.freshplanet.nativeExtensions
 {
-	import flash.display.BitmapData;
 	import flash.events.EventDispatcher;
 	import flash.events.StatusEvent;
 	import flash.external.ExtensionContext;
@@ -15,6 +14,8 @@ package com.freshplanet.nativeExtensions
 		public static const RECURRENCE_WEEK:int   = 2;
 		public static const RECURRENCE_MONTH:int  = 3;
 		public static const RECURRENCE_YEAR:int   = 4;
+
+		public static const DEFAULT_LOCAL_NOTIFICATION_ID:int = 0;
 		
 		private static var extCtx:ExtensionContext = null;
         
@@ -90,16 +91,39 @@ package com.freshplanet.nativeExtensions
 		 * @param recurrenceType
 		 * 
 		 */
-		public function sendLocalNotification(message:String, timestamp:int, title:String, recurrenceType:int = RECURRENCE_NONE):void
+		public function sendLocalNotification(message:String, timestamp:int, title:String, recurrenceType:int = RECURRENCE_NONE,  notificationId:int = DEFAULT_LOCAL_NOTIFICATION_ID):void
 		{
-			trace("[Push Notification]","sendLocalNotification");
 			if (this.isPushNotificationSupported)
 			{
-				extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType);
+				if (notificationId == DEFAULT_LOCAL_NOTIFICATION_ID)
+       			{
+           			extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType);
+         		} else
+         		{
+           			extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId);
+         		}
 			}
 		}
-		
-		
+
+		/**
+      	* Not implemented on Android for now. 
+      	* @param notificationId
+      	* 
+	  	*/
+	    public function cancelLocalNotification(notificationId:int = DEFAULT_LOCAL_NOTIFICATION_ID):void
+	    {
+	       	if (this.isPushNotificationSupported)
+	       	{
+	         	if (notificationId == DEFAULT_LOCAL_NOTIFICATION_ID)
+	         	{
+	           		extCtx.call("cancelLocalNotification");
+	         	} else
+	         	{
+	           		extCtx.call("cancelLocalNotification", notificationId);
+	         	}
+	       	}
+	    }
+     		
 		public function setIsAppInForeground(value:Boolean):void
 		{
 			if (this.isPushNotificationSupported)
