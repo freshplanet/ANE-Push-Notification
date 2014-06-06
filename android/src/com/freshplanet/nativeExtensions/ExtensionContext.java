@@ -22,38 +22,31 @@ package com.freshplanet.nativeExtensions;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.util.Log;
-
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 
-public class C2DMExtensionContext extends FREContext {
-
-	private static String TAG = "c2dmContext";
-	
-	public C2DMExtensionContext() {
-		Log.d(TAG, "C2DMExtensionContext.C2DMExtensionContext");
-	}
+public class ExtensionContext extends FREContext
+{	
+	public ExtensionContext() {}
 	
 	@Override
-	public void dispose() {
-		Log.d(TAG, "C2DMExtensionContext.dispose");
-		C2DMExtension.context = null;
+	public void dispose()
+	{
+		Extension.context = null;
 	}
 
-	/**
-	 * Registers AS function name to Java Function Class
-	 */
 	@Override
-	public Map<String, FREFunction> getFunctions() {
-		Log.d(TAG, "C2DMExtensionContext.getFunctions");
+	public Map<String, FREFunction> getFunctions()
+	{
 		Map<String, FREFunction> functionMap = new HashMap<String, FREFunction>();
+		
 		functionMap.put("registerPush", new C2DMRegisterFunction());
 		functionMap.put("setBadgeNb", new SetBadgeValueFunction());
 		functionMap.put("sendLocalNotification", new LocalNotificationFunction());
 		functionMap.put("setIsAppInForeground", new SetIsAppInForegroundFunction());
 		functionMap.put("fetchStarterNotification", new FetchStarterNotificationFunction());
+		functionMap.put("cancelLocalNotification", new CancelLocalNotificationFunction());
+		
 		return functionMap;	
 	}
-
 }

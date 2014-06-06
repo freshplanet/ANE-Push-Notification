@@ -32,6 +32,7 @@
 FREObject setBadgeNb(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject registerPush(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject sendLocalNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject cancelLocalNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject setIsAppInForeground(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject fetchStarterNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 

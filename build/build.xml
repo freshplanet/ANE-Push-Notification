@@ -31,7 +31,6 @@
 	</target>
 
 	<!-- Android -->
-	<!-- Android -->
     <target name="android" description="Build Android Library with debugging disabled">
         <property name="ANDROID_DEBUG" value="false"/>
         <antcall target="android-build"/>
@@ -42,14 +41,14 @@
     </target>
 
 	<target name="android-build" description="Build Android Library">
+		<fail message="Property 'android.res' must be set in build config" unless="android.res"/>
 		<delete dir="../android/temp"/>
 		<mkdir dir="../android/temp/classes"/>
 
 		<echo message="========== Modifying source file to set USE_MULTI_MSG = ${useMultiMsg} ============"/>
         <replaceregexp file="../android/src/com/freshplanet/nativeExtensions/C2DMBroadcastReceiver.java" 
-            match="private static final boolean USE_MULTI_MSG = ([^;]+);" 
-            replace="private static final boolean USE_MULTI_MSG = ${useMultiMsg};"
-	    />
+            match="public static final boolean USE_MULTI_MSG = ([^;]+);" 
+            replace="public static final boolean USE_MULTI_MSG = ${useMultiMsg};"/>
 
 		<javac srcdir="../android/src" destdir="../android/temp/classes" includeantruntime="false" debug="${ANDROID_DEBUG}">
 			<classpath>
@@ -59,10 +58,18 @@
 			</classpath>
 		</javac>
 
+		<echo message="========== Modifying source file to set back USE_MULTI_MSG = false ============"/>
+		<replaceregexp file="../android/src/com/freshplanet/nativeExtensions/C2DMBroadcastReceiver.java" 
+            match="public static final boolean USE_MULTI_MSG = ([^;]+);" 
+            replace="public static final boolean USE_MULTI_MSG = false;"/>
+
 		<mkdir dir="../temp/android/"/>
 		<jar basedir="../android/temp/classes" destfile="../temp/android/lib${name}.jar"/>
 		<copy todir="../temp/android/res/">
 			<fileset dir="../android/res"/>
+		</copy>
+		<copy todir="../temp/android/res/" overwrite="true">
+			<fileset dir="${android.res}"/>
 		</copy>
 		<delete dir="../android/temp"/>
 	</target>

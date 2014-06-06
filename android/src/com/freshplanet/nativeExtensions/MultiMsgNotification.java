@@ -258,7 +258,7 @@ public class MultiMsgNotification //extends Activity
 		Intent notificationIntent = null;
 		PendingIntent contentIntent = null;
 		notificationIntent = new Intent(context, NotificationActivity.class);
-		notificationIntent.putExtra("params", LocalNotificationService.getFullJsonParams(intent));
+		notificationIntent.putExtra("params", Extension.getParametersFromIntent(intent));
 		notificationIntent.putExtra("allclean", "true");
 		contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
