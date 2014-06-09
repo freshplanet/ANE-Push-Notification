@@ -13,6 +13,8 @@ package com.freshplanet.nativeExtensions
 		public static const APP_STARTING_FROM_NOTIFICATION_EVENT : String = "startingFromNotificationEvent";
 		/** App was in background when clicking on the push notification*/
 		public static const APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION_EVENT : String = "BroughtToForegroundFromNotificationEvent";
+		/** App was in background and awoken by iOS when receiving the push notification (background fetch on iOS 7+) */
+		public static const APP_STARTED_IN_BACKGROUND_FROM_NOTIFICATION_EVENT : String = "StartedInBackgroundFromNotificationEvent";
 		/** App was in foreground when receiving push notification*/
 		public static const NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND_EVENT : String = "NotificationReceivedWhenInForegroundEvent";
 		

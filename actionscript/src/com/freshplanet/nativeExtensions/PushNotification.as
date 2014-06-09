@@ -200,6 +200,19 @@ package com.freshplanet.nativeExtensions
 							}
 						}
 						break;
+					case "APP_STARTED_IN_BACKGROUND_FROM_NOTIFICATION":
+						event = new PushNotificationEvent( PushNotificationEvent.APP_STARTED_IN_BACKGROUND_FROM_NOTIFICATION_EVENT );
+						if (data != null)
+						{
+							try
+							{
+								event.parameters = JSON.parse(data);
+							} catch (error:Error)
+							{
+								trace("[PushNotification Error]", "cannot parse the params string", data);
+							}
+						}
+						break;
 					case "NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND":
 						event = new PushNotificationEvent( PushNotificationEvent.NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND_EVENT );
 						if (data != null)
