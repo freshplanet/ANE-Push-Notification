@@ -53,7 +53,7 @@
 		<javac srcdir="../android/src" destdir="../android/temp/classes" includeantruntime="false" debug="${ANDROID_DEBUG}">
 			<classpath>
 				<pathelement location="${android.sdk}/android.jar"/>
-				<pathelement location="${flex.sdk}/lib/android/FlashRuntimeExtensions.jar"/>
+				<pathelement location="../android/libs/FlashRuntimeExtensions.jar"/>
 				<pathelement location="../android/libs/android-support-v4.jar"/>
 			</classpath>
 		</javac>
