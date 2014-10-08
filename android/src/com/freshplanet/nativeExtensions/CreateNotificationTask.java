@@ -94,6 +94,11 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 						rawPicture.getWidth(), rawPicture.getWidth() );
 			}
 			
+			if (rawPicture.getWidth() > 100)
+			{
+				_picture = Bitmap.createScaledBitmap(_picture, 100, 100, false);
+			}
+			
 			return true;
 		}
 		catch (Exception e)
