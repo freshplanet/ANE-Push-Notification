@@ -89,6 +89,8 @@ function onPushNotificationToken(event:PushNotificationEvent):void
 
 ```
 
+Notes:
+* included binary has been compiled for 64-bit iOS support
 
 Authors
 ------
