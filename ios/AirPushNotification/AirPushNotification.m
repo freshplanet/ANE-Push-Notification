@@ -119,7 +119,6 @@ void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application,
 }
 
 
-
 // set the badge number (count around the app icon)
 DEFINE_ANE_FUNCTION(setBadgeNb)
 {
@@ -139,10 +138,16 @@ DEFINE_ANE_FUNCTION(setBadgeNb)
 
 // register the device for push notification.
 DEFINE_ANE_FUNCTION(registerPush)
-{    
-    
-    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
-     (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+{
+    if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)]) {
+
+         UIUserNotificationSettings* notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil];
+        [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    } else {
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+         (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+    }
     return nil;
 }
 
@@ -170,7 +175,7 @@ DEFINE_ANE_FUNCTION(fetchStarterNotification)
 // sends local notification to the device.
 DEFINE_ANE_FUNCTION(sendLocalNotification)
 {
-    
+
     uint32_t string_length;
     const uint8_t *utf8_message;
     // message
@@ -303,6 +308,7 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
          class_addMethod(modDelegate, selectorToOverride2, (IMP)didFailToRegisterForRemoteNotificationsWithError, method_getTypeEncoding(m2));
          class_addMethod(modDelegate, selectorToOverride3, (IMP)didReceiveRemoteNotification, method_getTypeEncoding(m3));
 
+
          // register the new class with the runtime
          objc_registerClassPair(modDelegate);
      }
@@ -352,9 +358,6 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
 // Set when the context extension is created.
 
 void AirPushContextFinalizer(FREContext ctx) { 
-    NSLog(@"Entering ContextFinalizer()");
-    
-    NSLog(@"Exiting ContextFinalizer()");   
 }
 
 
@@ -366,14 +369,9 @@ void AirPushContextFinalizer(FREContext ctx) {
 
 void AirPushExtInitializer(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet ) 
 {
-    
-    NSLog(@"Entering ExtInitializer()");                    
-    
     *extDataToSet = NULL;
     *ctxInitializerToSet = &AirPushContextInitializer; 
     *ctxFinalizerToSet = &AirPushContextFinalizer;
-    
-    NSLog(@"Exiting ExtInitializer()"); 
 }
 
 void AirPushExtFinalizer(void *extData) { }
