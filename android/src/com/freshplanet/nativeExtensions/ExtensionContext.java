@@ -46,6 +46,11 @@ public class ExtensionContext extends FREContext
 		functionMap.put("setIsAppInForeground", new SetIsAppInForegroundFunction());
 		functionMap.put("fetchStarterNotification", new FetchStarterNotificationFunction());
 		functionMap.put("cancelLocalNotification", new CancelLocalNotificationFunction());
+		functionMap.put("cancelAllLocalNotifications", new CancelLocalNotificationFunction());
+		functionMap.put("getNotificationsEnabled", new GetNotificationsEnabledFunction());
+		functionMap.put("openDeviceSettings", new GoToNotifSettingsFunction());
+		functionMap.put("getCanSendUserToSettings", new GetCanSendUserToSettings());
+
 		
 		return functionMap;	
 	}

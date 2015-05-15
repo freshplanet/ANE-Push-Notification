@@ -33,8 +33,12 @@ FREObject setBadgeNb(FREContext ctx, void* funcData, uint32_t argc, FREObject ar
 FREObject registerPush(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject sendLocalNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject cancelLocalNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject cancelAllLocalNotifications(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject setIsAppInForeground(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject fetchStarterNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject getCanSendUserToSettings(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject getNotificationsEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject openDeviceSettings(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 
 void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx, uint32_t* numFunctionsToTest, const FRENamedFunction** functionsToSet);
 void AirPushContextFinalizer(FREContext ctx);

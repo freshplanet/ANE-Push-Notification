@@ -53,8 +53,35 @@ package com.freshplanet.nativeExtensions
 			var result:Boolean = (Capabilities.manufacturer.search('iOS') > -1 || Capabilities.manufacturer.search('Android') > -1);
 			return result;
 		}
-		
-		
+
+		/**
+		 *  return true if notifs are enabled for this app in device settings, or if it's android < 4.1
+		 */
+		public function get notificationsEnabled():Boolean
+		{
+			if(!isPushNotificationSupported) {
+				return false;
+			}
+			return extCtx.call("getNotificationsEnabled");
+		}
+
+		/**
+		 * return true if OS permits sending user to settings (iOS 8, Android
+		 */
+		public function get canSendUserToSettings():Boolean
+		{
+			if(!isPushNotificationSupported) {
+				return false;
+			}
+			return extCtx.call("getCanSendUserToSettings");
+		}
+
+		public function openDeviceNotificationSettions():void
+		{
+			if(isPushNotificationSupported) {
+				extCtx.call("openDeviceNotificationSettings");
+			}
+		}
 		
 		public static function getInstance() : PushNotification
 		{
@@ -123,6 +150,14 @@ package com.freshplanet.nativeExtensions
 	         	}
 	       	}
 	    }
+
+		public function cancelAllLocalNotifications():void
+		{
+			if(this.isPushNotificationSupported)
+			{
+				extCtx.call("cancelAllLocalNotifications");
+			}
+		}
      		
 		public function setIsAppInForeground(value:Boolean):void
 		{
@@ -148,6 +183,7 @@ package com.freshplanet.nativeExtensions
 		{
 			if (this.isPushNotificationSupported)
 			{
+
 				var event : PushNotificationEvent;
 				var data:String = e.level;
 				switch (e.code)

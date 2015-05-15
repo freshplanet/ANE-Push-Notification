@@ -46,6 +46,8 @@ public class CancelLocalNotificationFunction implements FREFunction {
 		AlarmManager am = (AlarmManager) appContext.getSystemService(Context.ALARM_SERVICE);
 		am.cancel(sender);
 
+
+
 		
 		return null;
 	}

@@ -141,7 +141,6 @@ DEFINE_ANE_FUNCTION(registerPush)
 {
     // iOS8+ selector 
     if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)]) {
-
          UIUserNotificationSettings* notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil];
         [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
         [[UIApplication sharedApplication] registerForRemoteNotifications];
@@ -272,6 +271,34 @@ DEFINE_ANE_FUNCTION(cancelLocalNotification)
 
 }
 
+DEFINE_ANE_FUNCTION(cancelAllLocalNotifications)
+{
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    return nil;
+}
+
+DEFINE_ANE_FUNCTION(getCanSendUserToSettings)
+{
+    FREObject canSendObj = nil;
+    // if this selector is available the other feature is as well
+    BOOL canSend = [[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)];
+    FRENewObjectFromBool(canSend, canSendObj);
+    return canSendObj;
+}
+
+//TODO implement this for ios8 and return true for ios7
+DEFINE_ANE_FUNCTION(getNotificationsEnabled)
+{
+    FREObject notifsEnabled = nil;
+    FRENewObjectFromBool(false, notifsEnabled);
+    return notifsEnabled;
+}
+
+DEFINE_ANE_FUNCTION(openDeviceSettings)
+{
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+    return nil;
+}
 
 // AirPushContextInitializer()
 //
@@ -347,6 +374,22 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     func[5].name = (const uint8_t*) "cancelLocalNotification";
     func[5].functionData = NULL;
     func[5].function = &cancelLocalNotification;
+    
+    func[6].name = (const uint8_t*) "cancelAllLocalNotifications";
+    func[6].functionData = NULL;
+    func[6].function = &cancelAllLocalNotifications;
+    
+    func[7].name = (const uint8_t*) "getCanSendUserToSettings";
+    func[7].functionData = NULL;
+    func[7].function = &getCanSendUserToSettings;
+    
+    func[8].name = (const uint8_t*) "getNotificationsEnabled";
+    func[8].functionData = NULL;
+    func[8].function = &getNotificationsEnabled;
+    
+    func[9].name = (const uint8_t*) "openDeviceNotificationSettings";
+    func[9].functionData = NULL;
+    func[9].function = &openDeviceSettings;
 
     
     *functionsToSet = func;
