@@ -55,7 +55,8 @@ package com.freshplanet.nativeExtensions
 		}
 
 		/**
-		 *  return true if notifs are enabled for this app in device settings, or if it's android < 4.1
+		 *  return true if notifs are enabled for this app in device settings
+		 *  If iOS < 8 or android < 4.1 this isn't available, so will always return true.
 		 */
 		public function get notificationsEnabled():Boolean
 		{
@@ -262,6 +263,13 @@ package com.freshplanet.nativeExtensions
 							}
 						}
 						break;
+					case "NOTIFICATION_SETTINGS_ENABLED":
+						event = new PushNotificationEvent(PushNotificationEvent.NOTIFICATION_SETTINGS_ENABLED);
+						break;
+					case "NOTIFICATION_SETTINGS_DISABLED":
+						event = new PushNotificationEvent(PushNotificationEvent.NOTIFICATION_SETTINGS_DISABLED);
+						break;
+
 					case "LOGGING":
 						trace(e, e.level);
 						break;

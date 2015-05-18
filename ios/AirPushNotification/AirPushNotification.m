@@ -35,6 +35,8 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo{}
 
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings{}
+
 + (NSString*) convertToJSonString:(NSDictionary*)dict
 {
     if(dict == nil) {
@@ -116,6 +118,16 @@ void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application,
             FREDispatchStatusEventAsync(myCtx, (uint8_t*)"APP_STARTED_IN_BACKGROUND_FROM_NOTIFICATION", (uint8_t*)[stringInfo UTF8String]);
         }
     }
+}
+
+void didRegisterUserNotificationSettings(id self, SEL _cmd, UIApplication* application, UIUserNotificationSettings* notificationSettings)
+{
+    if(notificationSettings.types & UIUserNotificationTypeAlert) {
+        FREDispatchStatusEventAsync(myCtx, (uint8_t*)"NOTIFICATION_SETTINGS_ENABLED", (uint8_t*)"");
+    } else {
+        FREDispatchStatusEventAsync(myCtx, (uint8_t*)"NOTIFICATION_SETTINGS_DISABLED", (uint8_t*)"");
+    }
+
 }
 
 
@@ -265,7 +277,6 @@ DEFINE_ANE_FUNCTION(cancelLocalNotification)
         localNotificationId = 0;
     }
     
-    
     [AirPushNotification cancelAllLocalNotificationsWithId:[NSNumber numberWithInt:localNotificationId]];
     return nil;
 
@@ -289,8 +300,14 @@ DEFINE_ANE_FUNCTION(getCanSendUserToSettings)
 //TODO implement this for ios8 and return true for ios7
 DEFINE_ANE_FUNCTION(getNotificationsEnabled)
 {
+    BOOL enabled = true;
+    if ([[UIApplication sharedApplication] respondsToSelector:@selector(currentUserNotificationSettings)]){
+        UIUserNotificationSettings *notifSettings = [[UIApplication sharedApplication] currentUserNotificationSettings];
+        enabled = (notifSettings.types & UIUserNotificationTypeAlert);
+    }
+    
     FREObject notifsEnabled = nil;
-    FRENewObjectFromBool(false, notifsEnabled);
+    FRENewObjectFromBool(enabled, notifsEnabled);
     return notifsEnabled;
 }
 
@@ -335,7 +352,12 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
          class_addMethod(modDelegate, selectorToOverride1, (IMP)didRegisterForRemoteNotificationsWithDeviceToken, method_getTypeEncoding(m1));
          class_addMethod(modDelegate, selectorToOverride2, (IMP)didFailToRegisterForRemoteNotificationsWithError, method_getTypeEncoding(m2));
          class_addMethod(modDelegate, selectorToOverride3, (IMP)didReceiveRemoteNotification, method_getTypeEncoding(m3));
-
+         
+         if ([[UIApplication sharedApplication] respondsToSelector:@selector(currentUserNotificationSettings)]){
+             SEL selectorToOverride4 = @selector(application:didRegisterUserNotificationSettings:);
+             Method m4 = class_getInstanceMethod(objectClass, selectorToOverride4);
+             class_addMethod(modDelegate, selectorToOverride4, (IMP)didRegisterUserNotificationSettings, method_getTypeEncoding(m4));
+         }
 
          // register the new class with the runtime
          objc_registerClassPair(modDelegate);
@@ -346,7 +368,7 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     ///////// end of delegate injection / modification code
     
     // Register the links btwn AS3 and ObjC. (dont forget to modify the nbFuntionsToLink integer if you are adding/removing functions)
-    NSInteger nbFuntionsToLink = 6;
+    NSInteger nbFuntionsToLink = 10;
     *numFunctionsToTest = nbFuntionsToLink;
     
     FRENamedFunction* func = (FRENamedFunction*) malloc(sizeof(FRENamedFunction) * nbFuntionsToLink);
