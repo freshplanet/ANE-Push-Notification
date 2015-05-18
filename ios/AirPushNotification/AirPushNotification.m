@@ -292,8 +292,8 @@ DEFINE_ANE_FUNCTION(getCanSendUserToSettings)
 {
     FREObject canSendObj = nil;
     // if this selector is available the other feature is as well
-    BOOL canSend = [[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)];
-    FRENewObjectFromBool(canSend, canSendObj);
+    uint32_t canSend = [[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)] ? 1 : 0;
+    FRENewObjectFromBool(canSend, &canSendObj);
     return canSendObj;
 }
 
@@ -307,7 +307,7 @@ DEFINE_ANE_FUNCTION(getNotificationsEnabled)
     }
     
     FREObject notifsEnabled = nil;
-    FRENewObjectFromBool(enabled, notifsEnabled);
+    FRENewObjectFromBool(enabled, &notifsEnabled);
     return notifsEnabled;
 }
 
