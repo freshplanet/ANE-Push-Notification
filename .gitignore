@@ -28,3 +28,7 @@ ios/build
 Icon
 Thumbs.db
 .DS_Store
+
+# IntelliJ
+.idea
+*.iml
