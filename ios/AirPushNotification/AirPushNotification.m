@@ -69,11 +69,20 @@
     }
 }
 
-
 @end
 
-
 FREContext myCtx = nil;
+
+void didRegisterUserNotificationSettings(id self, SEL _cmd, UIApplication* application, UIUserNotificationSettings* notificationSettings)
+{
+    if(notificationSettings.types & UIUserNotificationTypeAlert) {
+        FREDispatchStatusEventAsync(myCtx, (uint8_t*)"NOTIFICATION_SETTINGS_ENABLED", (uint8_t*)"");
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    } else {
+        FREDispatchStatusEventAsync(myCtx, (uint8_t*)"NOTIFICATION_SETTINGS_DISABLED", (uint8_t*)"");
+    }
+    
+}
 
 //custom implementations of empty signatures above. Used for push notification delegate implementation.
 void didRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIApplication* application, NSData* deviceToken)
@@ -120,15 +129,7 @@ void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application,
     }
 }
 
-void didRegisterUserNotificationSettings(id self, SEL _cmd, UIApplication* application, UIUserNotificationSettings* notificationSettings)
-{
-    if(notificationSettings.types & UIUserNotificationTypeAlert) {
-        FREDispatchStatusEventAsync(myCtx, (uint8_t*)"NOTIFICATION_SETTINGS_ENABLED", (uint8_t*)"");
-    } else {
-        FREDispatchStatusEventAsync(myCtx, (uint8_t*)"NOTIFICATION_SETTINGS_DISABLED", (uint8_t*)"");
-    }
 
-}
 
 
 // set the badge number (count around the app icon)
@@ -155,7 +156,6 @@ DEFINE_ANE_FUNCTION(registerPush)
     if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)]) {
          UIUserNotificationSettings* notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil];
         [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
     } else { // iOS7 or less
         [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
          (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
