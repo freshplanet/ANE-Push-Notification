@@ -58,9 +58,13 @@
     {
         if (notif.userInfo != nil)
         {
-            if ([notif.userInfo objectForKey:[notifId stringValue]])
+            if ([notif.userInfo objectForKey:[notifId stringValue]]) // also for migration
             {
                 [[UIApplication sharedApplication] cancelLocalNotification:notif];
+            } else if ([notif.userInfo objectForKey:@"notifId"]) { // the current way of storing notifId
+                if([[notif.userInfo objectForKey:@"notifId"] intValue] == [notifId intValue]) {
+                    [[UIApplication sharedApplication] cancelLocalNotification:notif];
+                }
             }
         } else if ([notifId intValue] == 0) // for migration purpose (all the notifications without userInfo will be removed)
         {
@@ -113,7 +117,7 @@ void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application,
 {
     if ( myCtx != nil )
     {
-        NSString *stringInfo = [AirPushNotification convertToJSonString:userInfo];
+    NSString *stringInfo = [AirPushNotification convertToJSonString:userInfo];
         if (application.applicationState == UIApplicationStateActive)
         {
             FREDispatchStatusEventAsync(myCtx, (uint8_t*)"NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND", (uint8_t*)[stringInfo UTF8String]);
@@ -214,13 +218,15 @@ DEFINE_ANE_FUNCTION(sendLocalNotification)
     
     // local notif id: 0 is default
     uint32_t localNotificationId = 0;
-    if (argc == 5)
+    if (argc >= 5)
     {
         if (FREGetObjectAsUint32(argv[4], &localNotificationId) != FRE_OK)
         {
             localNotificationId = 0;
         }
     }
+    
+    
     
     NSNumber *localNotifIdNumber =[NSNumber numberWithInt:localNotificationId];
         
@@ -238,7 +244,23 @@ DEFINE_ANE_FUNCTION(sendLocalNotification)
     localNotif.alertAction = @"View Details";
     localNotif.soundName = UILocalNotificationDefaultSoundName;
     
-    localNotif.userInfo = [NSDictionary dictionaryWithObject:@"" forKey:[localNotifIdNumber stringValue]];
+    if (argc == 6) // optional path for deep linking
+    {
+        uint32_t path_len;
+        const uint8_t *path_utf8;
+        if (FREGetObjectAsUTF8(argv[5], &path_len, &path_utf8) == FRE_OK) {
+            NSString* pathString = [NSString stringWithUTF8String:(char*)path_utf8];
+            localNotif.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:localNotifIdNumber, @"notifId", pathString, @"path", nil];
+        } else {
+            localNotif.userInfo = [NSDictionary dictionaryWithObject:localNotifIdNumber forKey:@"notifId"];
+        }
+        
+    } else {
+        localNotif.userInfo = [NSDictionary dictionaryWithObject:localNotifIdNumber forKey:@"notifId"];
+    }
+    
+    
+
     if (recurrence > 0)
     {
         if (recurrence == 1)

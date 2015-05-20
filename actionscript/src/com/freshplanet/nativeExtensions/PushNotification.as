@@ -119,7 +119,8 @@ package com.freshplanet.nativeExtensions
 		 * @param recurrenceType
 		 * 
 		 */
-		public function sendLocalNotification(message:String, timestamp:int, title:String, recurrenceType:int = RECURRENCE_NONE,  notificationId:int = DEFAULT_LOCAL_NOTIFICATION_ID):void
+		public function sendLocalNotification(message:String, timestamp:int, title:String, recurrenceType:int = RECURRENCE_NONE,
+											  notificationId:int = DEFAULT_LOCAL_NOTIFICATION_ID, deepLinkPath:String = null):void
 		{
 			if (this.isPushNotificationSupported)
 			{
@@ -128,7 +129,12 @@ package com.freshplanet.nativeExtensions
            			extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType);
          		} else
          		{
-           			extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId);
+					if(deepLinkPath === null) {
+						extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId);
+					} else {
+						extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath);
+					}
+
          		}
 			}
 		}

@@ -26,7 +26,7 @@ static NSDictionary *_notification = nil;
     NSDictionary *launchOptions = [notification userInfo] ;
     
     // This code will be called immediately after application:didFinishLaunchingWithOptions:.
-    NSDictionary *remoteNotification = [launchOptions objectForKey: @"UIApplicationLaunchOptionsRemoteNotificationKey"];
+    NSDictionary *remoteNotification = [launchOptions objectForKey: UIApplicationLaunchOptionsRemoteNotificationKey];
     if (notification)
     {
         _startedWithNotification = YES;
@@ -34,7 +34,13 @@ static NSDictionary *_notification = nil;
     }
     else
     {
-        _startedWithNotification = NO;
+        UILocalNotification *localNotification = [launchOptions objectForKey: UIApplicationLaunchOptionsLocalNotificationKey];
+        if(localNotification) {
+            _notification = localNotification.userInfo;
+            _startedWithNotification = YES;
+        } else {
+          _startedWithNotification = NO;
+        }
     }
 }
 
