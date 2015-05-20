@@ -77,7 +77,7 @@ package com.freshplanet.nativeExtensions
 			return extCtx.call("getCanSendUserToSettings");
 		}
 
-		public function openDeviceNotificationSettions():void
+		public function openDeviceNotificationSettings():void
 		{
 			if(isPushNotificationSupported) {
 				extCtx.call("openDeviceNotificationSettings");
