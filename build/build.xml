@@ -65,10 +65,10 @@
 
 		<mkdir dir="../temp/android/"/>
 		<jar basedir="../android/temp/classes" destfile="../temp/android/lib${name}.jar"/>
-		<copy todir="../temp/android/push-notifications-res/">
+		<copy todir="../temp/android/res/">
 			<fileset dir="../android/res"/>
 		</copy>
-		<copy todir="../temp/android/push-notifications-res" overwrite="true">
+		<copy todir="../temp/android/res/" overwrite="true">
 			<fileset dir="${android.res}"/>
 		</copy>
 		<delete dir="../android/temp"/>
