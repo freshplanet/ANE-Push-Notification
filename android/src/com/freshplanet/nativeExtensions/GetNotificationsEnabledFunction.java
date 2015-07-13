@@ -13,10 +13,11 @@ import java.util.Set;
  */
 public class GetNotificationsEnabledFunction implements FREFunction
 {
+	private static final String TAG = "GetNotificationsEnabledFunction";
+	
     @Override
-    public FREObject call(FREContext freContext, FREObject[] freObjects) {
-        Set<String> packages = NotificationManagerCompat.getEnabledListenerPackages(freContext.getActivity().getApplicationContext());
-        Boolean notifsEnabled = packages.contains(freContext.getActivity().getPackageName());
+    public FREObject call(FREContext freContext, FREObject[] freObjects) {        
+        Boolean notifsEnabled = true;
         try {
             return FREObject.newObject(notifsEnabled);
         } catch (FREWrongThreadException e) {
