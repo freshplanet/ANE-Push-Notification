@@ -120,7 +120,7 @@ package com.freshplanet.nativeExtensions
 		 * 
 		 */
 		public function sendLocalNotification(message:String, timestamp:int, title:String, recurrenceType:int = RECURRENCE_NONE,
-											  notificationId:int = DEFAULT_LOCAL_NOTIFICATION_ID, deepLinkPath:String = null):void
+											  notificationId:int = DEFAULT_LOCAL_NOTIFICATION_ID, deepLinkPath:String = null, androidLargeIconResourceId:String = null):void
 		{
 			if (this.isPushNotificationSupported)
 			{
@@ -129,12 +129,18 @@ package com.freshplanet.nativeExtensions
            			extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType);
          		} else
          		{
-					if(deepLinkPath === null) {
-						extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId);
-					} else {
-						extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath);
+					if (Capabilities.manufacturer.search('Android') > -1)
+					{
+						extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath, androidLargeIconResourceId);
+					} else // iOS doesn't support null params
+					{
+						if(deepLinkPath === null) {
+							extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId);
+						} else {
+							extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath);
+						}
+						
 					}
-
          		}
 			}
 		}

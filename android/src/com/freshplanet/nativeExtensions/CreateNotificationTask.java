@@ -12,12 +12,20 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import com.distriqt.extension.util.Resources;
@@ -126,9 +134,16 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		CharSequence contentText = _intent.getStringExtra("contentText");
 		CharSequence tickerText = _intent.getStringExtra("tickerText");
 		
+		String largeIconResourceId = _intent.getStringExtra("largeIconResourceId");
+		
 		// Notification images
 		int smallIconId = Resources.getResourseIdByName(_context.getPackageName(), "drawable", "status_icon");
 		int largeIconId = Resources.getResourseIdByName(_context.getPackageName(), "drawable", "app_icon");
+		if (largeIconResourceId != null)
+		{
+			largeIconId = Resources.getResourseIdByName(_context.getPackageName(), "drawable", largeIconResourceId);
+		}
+		
 		Bitmap largeIcon;
 		if (downloadSuccess)
 		{
@@ -137,6 +152,12 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		else
 		{
 			largeIcon = BitmapFactory.decodeResource(_context.getResources(), largeIconId);
+		}
+		
+		// rounded picture for lollipop
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+		{
+			largeIcon = getCircleBitmap(largeIcon);
 		}
 		
 		// Notification sound
@@ -165,4 +186,30 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		notifManager.notify(NOTIFICATION_ID, notification);
 		NOTIFICATION_ID++;
 	}
+	
+	
+	private Bitmap getCircleBitmap(Bitmap bitmap) 
+	{
+		final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+		bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+		final Canvas canvas = new Canvas(output);
+
+		final int color = Color.RED;
+		final Paint paint = new Paint();
+		final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+		final RectF rectF = new RectF(rect);
+
+		paint.setAntiAlias(true);
+		canvas.drawARGB(0, 0, 0, 0);
+		paint.setColor(color);
+		canvas.drawOval(rectF, paint);
+
+		paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+		canvas.drawBitmap(bitmap, rect, rect, paint);
+
+		bitmap.recycle();
+
+		return output;
+	}
+	
 }
