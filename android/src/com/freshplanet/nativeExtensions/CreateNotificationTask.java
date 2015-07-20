@@ -12,15 +12,15 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -85,6 +85,8 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 			InputStream input = connection.getInputStream();
 			Bitmap rawPicture = BitmapFactory.decodeStream(input);
 			
+			
+			
 			// Center-crop the picture as a square
 			if (rawPicture.getWidth() >= rawPicture.getHeight())
 			{
@@ -102,9 +104,13 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 						rawPicture.getWidth(), rawPicture.getWidth() );
 			}
 			
-			if (rawPicture.getWidth() > 100)
+
+			float density = _context.getResources().getDisplayMetrics().density;
+			int finalSize = Math.round(100*density);
+			
+			if (rawPicture.getWidth() < finalSize)
 			{
-				_picture = Bitmap.createScaledBitmap(_picture, 100, 100, false);
+				_picture = Bitmap.createScaledBitmap(_picture, finalSize, finalSize, false);
 			}
 			
 			return true;
@@ -169,7 +175,7 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		PendingIntent contentIntent = PendingIntent.getActivity(_context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		// Create notification
-		Notification notification = new NotificationCompat.Builder(_context)
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(_context)
 			.setContentTitle(contentTitle)
 			.setContentText(contentText)
 			.setTicker(tickerText)
@@ -178,8 +184,10 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 			.setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
 			.setWhen(System.currentTimeMillis())
 			.setAutoCancel(true)
-			.setContentIntent(contentIntent)
-			.build();
+			.setContentIntent(contentIntent);
+		
+		Notification notification = builder.build();
+		
 		
 		// Dispatch notification
 		NotificationManager notifManager = (NotificationManager)_context.getSystemService(Context.NOTIFICATION_SERVICE);
