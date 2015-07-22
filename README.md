@@ -89,6 +89,15 @@ function onPushNotificationToken(event:PushNotificationEvent):void
 
 ```
 
+Packaging final app for Android
+-------------------------------
+
+When you build your final APK for Android, you need to update (patch) the AIRSDK you're using.
+First, make sure you download the latest build-tools (from the Android SDK manager).
+Then, patch your AIR SDK with the following command:
+`cp pathtoyourANDROIDSDK/build-tools/22.0.1/lib/dx.jar pathtoyourAIRSDK/lib/android/bin/dx.jar`
+
+
 Notes:
 * included binary has been compiled for 64-bit iOS support
 

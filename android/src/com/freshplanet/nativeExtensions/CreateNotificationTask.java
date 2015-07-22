@@ -184,6 +184,7 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 			.setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
 			.setWhen(System.currentTimeMillis())
 			.setAutoCancel(true)
+			.setColor(0xFF2DA9F9)
 			.setContentIntent(contentIntent);
 		
 		Notification notification = builder.build();
