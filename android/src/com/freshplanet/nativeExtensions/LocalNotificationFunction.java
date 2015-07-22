@@ -79,7 +79,7 @@ public class LocalNotificationFunction implements FREFunction {
 				notificationId = arg1[4].getAsInt();
 			}
 			
-			if (arg1.length >= 7)
+			if (arg1.length >= 7 && arg1[6] != null)
 			{
 				largeIconResourceId = arg1[6].getAsString();
 			}
