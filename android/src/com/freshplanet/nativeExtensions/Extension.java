@@ -32,7 +32,7 @@ public class Extension implements FREExtension {
 
 	private static String TAG = "AirPushNotification";
 
-	public static FREContext context;
+	public static ExtensionContext context;
 	
 	public static boolean isInForeground = false;
 	

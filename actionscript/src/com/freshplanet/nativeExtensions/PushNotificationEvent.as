@@ -17,6 +17,10 @@ package com.freshplanet.nativeExtensions
 		public static const APP_STARTED_IN_BACKGROUND_FROM_NOTIFICATION_EVENT : String = "StartedInBackgroundFromNotificationEvent";
 		/** App was in foreground when receiving push notification*/
 		public static const NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND_EVENT : String = "NotificationReceivedWhenInForegroundEvent";
+
+		// Not available on earlier OS versions
+		public static const NOTIFICATION_SETTINGS_ENABLED: String = "notificationSettingsEnabled";
+		public static const NOTIFICATION_SETTINGS_DISABLED: String = "notificationSettingsDisabled";
 		
 		public var token : String;
 		public var errorCode : String;

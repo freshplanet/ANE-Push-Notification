@@ -53,8 +53,36 @@ package com.freshplanet.nativeExtensions
 			var result:Boolean = (Capabilities.manufacturer.search('iOS') > -1 || Capabilities.manufacturer.search('Android') > -1);
 			return result;
 		}
-		
-		
+
+		/**
+		 *  return true if notifs are enabled for this app in device settings
+		 *  If iOS < 8 or android < 4.1 this isn't available, so will always return true.
+		 */
+		public function get notificationsEnabled():Boolean
+		{
+			if(!isPushNotificationSupported) {
+				return false;
+			}
+			return extCtx.call("getNotificationsEnabled");
+		}
+
+		/**
+		 * return true if OS permits sending user to settings (iOS 8, Android
+		 */
+		public function get canSendUserToSettings():Boolean
+		{
+			if(!isPushNotificationSupported) {
+				return false;
+			}
+			return extCtx.call("getCanSendUserToSettings");
+		}
+
+		public function openDeviceNotificationSettings():void
+		{
+			if(isPushNotificationSupported) {
+				extCtx.call("openDeviceNotificationSettings");
+			}
+		}
 		
 		public static function getInstance() : PushNotification
 		{
@@ -91,7 +119,8 @@ package com.freshplanet.nativeExtensions
 		 * @param recurrenceType
 		 * 
 		 */
-		public function sendLocalNotification(message:String, timestamp:int, title:String, recurrenceType:int = RECURRENCE_NONE,  notificationId:int = DEFAULT_LOCAL_NOTIFICATION_ID):void
+		public function sendLocalNotification(message:String, timestamp:int, title:String, recurrenceType:int = RECURRENCE_NONE,
+											  notificationId:int = DEFAULT_LOCAL_NOTIFICATION_ID, deepLinkPath:String = null, androidLargeIconResourceId:String = null):void
 		{
 			if (this.isPushNotificationSupported)
 			{
@@ -100,7 +129,18 @@ package com.freshplanet.nativeExtensions
            			extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType);
          		} else
          		{
-           			extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId);
+					if (Capabilities.manufacturer.search('Android') > -1)
+					{
+						extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath, androidLargeIconResourceId);
+					} else // iOS doesn't support null params
+					{
+						if(deepLinkPath === null) {
+							extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId);
+						} else {
+							extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath);
+						}
+						
+					}
          		}
 			}
 		}
@@ -123,6 +163,14 @@ package com.freshplanet.nativeExtensions
 	         	}
 	       	}
 	    }
+
+		public function cancelAllLocalNotifications():void
+		{
+			if(this.isPushNotificationSupported)
+			{
+				extCtx.call("cancelAllLocalNotifications");
+			}
+		}
      		
 		public function setIsAppInForeground(value:Boolean):void
 		{
@@ -148,6 +196,7 @@ package com.freshplanet.nativeExtensions
 		{
 			if (this.isPushNotificationSupported)
 			{
+
 				var event : PushNotificationEvent;
 				var data:String = e.level;
 				switch (e.code)
@@ -226,6 +275,13 @@ package com.freshplanet.nativeExtensions
 							}
 						}
 						break;
+					case "NOTIFICATION_SETTINGS_ENABLED":
+						event = new PushNotificationEvent(PushNotificationEvent.NOTIFICATION_SETTINGS_ENABLED);
+						break;
+					case "NOTIFICATION_SETTINGS_DISABLED":
+						event = new PushNotificationEvent(PushNotificationEvent.NOTIFICATION_SETTINGS_DISABLED);
+						break;
+
 					case "LOGGING":
 						trace(e, e.level);
 						break;
