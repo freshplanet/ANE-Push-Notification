@@ -55,6 +55,7 @@
 				<pathelement location="${android.sdk}/android.jar"/>
 				<pathelement location="../android/libs/FlashRuntimeExtensions.jar"/>
 				<pathelement location="../android/libs/android-support-v4.jar"/>
+				<pathelement location="../android/external-libs/amazon-device-messaging-1.0.1.jar"/>
 			</classpath>
 		</javac>
 

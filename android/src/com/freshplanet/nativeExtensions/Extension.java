@@ -27,13 +27,14 @@ import android.util.Log;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREExtension;
+import com.amazon.device.messaging.ADM;
 
 public class Extension implements FREExtension {
 
 	private static String TAG = "AirPushNotification";
 
 	public static ExtensionContext context;
-	
+	public static ADM adm = null;
 	public static boolean isInForeground = false;
 	
 	public FREContext createContext(String extId)

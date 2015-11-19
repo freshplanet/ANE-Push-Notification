@@ -21,12 +21,14 @@ package com.freshplanet.nativeExtensions;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
+import com.amazon.device.messaging.ADM;
 
 /**
  * Register the app for push notification
@@ -41,11 +43,85 @@ public class C2DMRegisterFunction implements FREFunction {
 	
 	public FREObject call(FREContext context, FREObject[] args) 
 	{
-		if(Build.MANUFACTURER.equals("Amazon")) {
-			Log.d(TAG, "push notifications disabled on amzon devices, ignoring register");
-			return null;
+		
+		Context appContext = context.getActivity().getApplicationContext();
+		
+		PackageManager pkgManager = appContext.getPackageManager();
+		String installerPackageName = pkgManager.getInstallerPackageName(appContext.getPackageName());
+		
+		if(installerPackageName.startsWith("com.amazon")) 
+		{
+			return callAmazon(context, args);
+		} else
+		{
+			return callAndroid(context, args);
+		}
+	}
+	
+	private FREObject callAmazon(FREContext context, FREObject[] args)
+	{
+		Boolean ADMAvailable = false ;
+		
+		Log.e(TAG, "callAmazon");
+
+		try {
+			
+			Class.forName( "com.amazon.device.messaging.ADM" );
+			ADMAvailable = true ;
+		}
+		catch (ClassNotFoundException e) {
+			
+			e.printStackTrace();
+		} catch (Exception e) {
+			
+			e.printStackTrace();
 		}
 		
+		Log.e(TAG, "adm capabilities computed");
+		Log.e(TAG, "adm capabilities computed 2" + ADMAvailable.toString());
+
+		if (ADMAvailable) {
+			
+			Log.e(TAG, "ADMAvailable");
+
+			try {
+				Extension.adm = new ADM(context.getActivity());
+			} catch (Exception e) {
+				
+				Log.e(TAG, "error creating ADM");
+				e.printStackTrace();
+				return null;
+			}
+			
+			Log.e(TAG, "ADM created");
+
+			String token = Extension.adm.getRegistrationId();
+			
+			Log.e(TAG, "Got token registration");
+
+			if (token == null) 
+			{
+				Log.e(TAG, "ADM start registering");
+				Extension.adm.startRegister();
+			} else
+			{
+				Log.e(TAG, "ADM token already there: "+token);
+				Extension.context.dispatchStatusEventAsync("TOKEN_SUCCESS", token);
+			}
+
+		} else {
+			Log.e(TAG, "ADM not available");
+		}
+		
+		Log.e(TAG, "return");
+
+
+		return null;
+	}
+
+	
+	private FREObject callAndroid(FREContext context, FREObject[] args)
+	{
 		if (args == null || args.length == 0)
 		{
 			Log.e(TAG, "no email adress provided. Cannot register the device.");
@@ -86,7 +162,8 @@ public class C2DMRegisterFunction implements FREFunction {
 			Log.e(TAG, "Error sending registration intent.", e);
 		}
 		return null;
-	}
 
+	}
+	
 	
 }
