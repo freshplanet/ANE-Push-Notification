@@ -22,7 +22,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.util.Log;
 
 import com.adobe.fre.FREContext;
@@ -39,17 +38,14 @@ import com.amazon.device.messaging.ADM;
 public class C2DMRegisterFunction implements FREFunction {
 
 	private static String TAG = "c2dmRegister";
-
+	
+	private static boolean isAmazon = true;
 	
 	public FREObject call(FREContext context, FREObject[] args) 
 	{
+		Log.e(TAG, "callRegister");
 		
-		Context appContext = context.getActivity().getApplicationContext();
-		
-		PackageManager pkgManager = appContext.getPackageManager();
-		String installerPackageName = pkgManager.getInstallerPackageName(appContext.getPackageName());
-		
-		if(installerPackageName.startsWith("com.amazon")) 
+		if(isAmazon) 
 		{
 			return callAmazon(context, args);
 		} else
@@ -122,6 +118,9 @@ public class C2DMRegisterFunction implements FREFunction {
 	
 	private FREObject callAndroid(FREContext context, FREObject[] args)
 	{
+		
+		Log.e(TAG, "callAndroid");
+
 		if (args == null || args.length == 0)
 		{
 			Log.e(TAG, "no email adress provided. Cannot register the device.");
