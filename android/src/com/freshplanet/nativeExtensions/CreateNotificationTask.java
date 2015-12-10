@@ -162,7 +162,7 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		}
 		
 		// rounded picture for lollipop
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+		if (largeIcon != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 		{
 			largeIcon = getCircleBitmap(largeIcon);
 		}
