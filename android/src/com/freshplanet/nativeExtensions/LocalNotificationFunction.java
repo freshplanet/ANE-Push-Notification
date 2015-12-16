@@ -62,6 +62,7 @@ public class LocalNotificationFunction implements FREFunction {
 		long timestamp = 0;
 		String title = null;
 		int recurrenceType = RECURRENCE_NONE;
+		String soundName = null;
 		int notificationId = DEFAULT_NOTIFICATION_ID;
 		String largeIconResourceId = null;
 		try {
@@ -73,15 +74,20 @@ public class LocalNotificationFunction implements FREFunction {
 			{
 				recurrenceType = arg1[3].getAsInt();
 			}
-			
+
 			if (arg1.length >= 5)
 			{
-				notificationId = arg1[4].getAsInt();
+				soundName = arg1[4].getAsString();
+			}
+
+			if (arg1.length >= 6)
+			{
+				notificationId = arg1[5].getAsInt();
 			}
 			
-			if (arg1.length >= 7 && arg1[6] != null)
+			if (arg1.length >= 8 && arg1[7] != null)
 			{
-				largeIconResourceId = arg1[6].getAsString();
+				largeIconResourceId = arg1[7].getAsString();
 			}
 			
 		} catch (IllegalStateException e) {
@@ -145,6 +151,12 @@ public class LocalNotificationFunction implements FREFunction {
 			{
 				am.set(AlarmManager.RTC_WAKEUP, timestamp, sender);
 			}
+
+			if (soundName != null)
+			{
+				intent.putExtra("soundName", soundName);
+			}
+
 			Log.d(TAG, "setting params to run at "+Long.toString(timestamp));
 
 		} else

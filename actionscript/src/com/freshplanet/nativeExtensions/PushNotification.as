@@ -117,27 +117,28 @@ package com.freshplanet.nativeExtensions
 		 * @param timestamp when the local notification should appear (in sec)
 		 * @param title (Android Only) Title of the local notification
 		 * @param recurrenceType
+		 * @param soundName is the sound to play with the notification. If not used, a default sound will play
 		 * 
 		 */
 		public function sendLocalNotification(message:String, timestamp:int, title:String, recurrenceType:int = RECURRENCE_NONE,
-											  notificationId:int = DEFAULT_LOCAL_NOTIFICATION_ID, deepLinkPath:String = null, androidLargeIconResourceId:String = null):void
+											  notificationId:int = DEFAULT_LOCAL_NOTIFICATION_ID, deepLinkPath:String = null, androidLargeIconResourceId:String = null, soundName:String = null):void
 		{
 			if (this.isPushNotificationSupported)
 			{
 				if (notificationId == DEFAULT_LOCAL_NOTIFICATION_ID)
        			{
-           			extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType);
+           			extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, soundName);
          		} else
          		{
 					if (Capabilities.manufacturer.search('Android') > -1)
 					{
-						extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath, androidLargeIconResourceId);
+						extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, soundName, notificationId, deepLinkPath, androidLargeIconResourceId);
 					} else // iOS doesn't support null params
 					{
 						if(deepLinkPath === null) {
-							extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId);
+							extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, soundName, notificationId);
 						} else {
-							extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath);
+							extCtx.call("sendLocalNotification", message, timestamp, title, recurrenceType, soundName, notificationId, deepLinkPath);
 						}
 						
 					}

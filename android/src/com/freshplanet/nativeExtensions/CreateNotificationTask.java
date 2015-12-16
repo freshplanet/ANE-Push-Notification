@@ -168,7 +168,13 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		}
 		
 		// Notification sound
-		Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+		Uri soundUri = null;
+		String soundName = _intent.getStringExtra("soundName");
+		if(soundName == null){
+			soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+		}else{
+			soundUri = Uri.parse("android.resource://" + _context.getPackageName() + "/raw/" + soundName);
+		}
 		
 		// Notification action
 		Intent notificationIntent = new Intent(_context, NotificationActivity.class);;
