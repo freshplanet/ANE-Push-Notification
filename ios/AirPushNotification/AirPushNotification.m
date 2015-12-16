@@ -216,16 +216,26 @@ DEFINE_ANE_FUNCTION(sendLocalNotification)
         FREGetObjectAsUint32(argv[3], &recurrence);
     }
     
+    // sound name : UILocalNotificationDefaultSoundName is default
+    NSString* soundName = UILocalNotificationDefaultSoundName;
+    if(argc >= 5)
+    {
+        const uint8_t *utf8_soundName;
+        if (FREGetObjectAsUTF8(argv[4], &string_length, &utf8_soundName) == FRE_OK)
+        {
+            soundName = [NSString stringWithUTF8String:(char*)utf8_soundName];
+        }
+    }
+    
     // local notif id: 0 is default
     uint32_t localNotificationId = 0;
-    if (argc >= 5)
+    if (argc >= 6)
     {
-        if (FREGetObjectAsUint32(argv[4], &localNotificationId) != FRE_OK)
+        if (FREGetObjectAsUint32(argv[5], &localNotificationId) != FRE_OK)
         {
             localNotificationId = 0;
         }
     }
-    
     
     
     NSNumber *localNotifIdNumber =[NSNumber numberWithInt:localNotificationId];
@@ -239,16 +249,16 @@ DEFINE_ANE_FUNCTION(sendLocalNotification)
         return NULL;
     localNotif.fireDate = itemDate;
     localNotif.timeZone = [NSTimeZone defaultTimeZone];
-    
+
     localNotif.alertBody = message;
     localNotif.alertAction = @"View Details";
-    localNotif.soundName = UILocalNotificationDefaultSoundName;
+    localNotif.soundName = soundName;
     
-    if (argc == 6) // optional path for deep linking
+    if (argc == 7) // optional path for deep linking
     {
         uint32_t path_len;
         const uint8_t *path_utf8;
-        if (FREGetObjectAsUTF8(argv[5], &path_len, &path_utf8) == FRE_OK) {
+        if (FREGetObjectAsUTF8(argv[6], &path_len, &path_utf8) == FRE_OK) {
             NSString* pathString = [NSString stringWithUTF8String:(char*)path_utf8];
             localNotif.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:localNotifIdNumber, @"notifId", pathString, @"path", nil];
         } else {
