@@ -116,6 +116,7 @@
 			<arg line="-swc swc/${name}.swc"/>
 			<arg line="-platform iPhone-ARM -platformoptions ../build/platform.xml -C ios/ ."/>
 			<arg line="-platform Android-ARM -C android/ ."/>
+			<arg line="-platform Android-x86 -C android/ ."/>
 			<arg line="-platform default -C default/ ."/>
 		</exec>
 

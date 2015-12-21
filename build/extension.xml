@@ -16,7 +16,7 @@
 //  
 //////////////////////////////////////////////////////////////////////////////////////-->
 
-<extension xmlns="http://ns.adobe.com/air/extension/17.0">
+<extension xmlns="http://ns.adobe.com/air/extension/19.0">
     
     <id>com.freshplanet.AirPushNotification</id>
     
@@ -38,7 +38,15 @@
                 <finalizer>com.freshplanet.nativeExtensions.Extension</finalizer> 
             </applicationDeployment> 
         </platform> 
-    
+
+        <platform name="Android-x86">
+            <applicationDeployment>
+                <nativeLibrary>libAirPushNotification.jar</nativeLibrary>
+                <initializer>com.freshplanet.nativeExtensions.Extension</initializer>
+                <finalizer>com.freshplanet.nativeExtensions.Extension</finalizer>
+            </applicationDeployment>
+        </platform>
+
         <platform name="default"> 
             <applicationDeployment/> 
         </platform> 
