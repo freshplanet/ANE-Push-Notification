@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		17007FB917398624009C1500 /* FlashRuntimeExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 17007FB817398624009C1500 /* FlashRuntimeExtensions.h */; };
+		5A2CD0891C498E0F00B529C3 /* CTAppController+APNAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A2CD0871C498E0F00B529C3 /* CTAppController+APNAdditions.h */; };
+		5A2CD08A1C498E0F00B529C3 /* CTAppController+APNAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A2CD0881C498E0F00B529C3 /* CTAppController+APNAdditions.m */; };
 		5A68E25E151AA23100873313 /* AirPushNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A68E25D151AA23100873313 /* AirPushNotification.h */; };
 		5AB4B519167A84370094293C /* StarterNotificationChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 5AB4B517167A84370094293C /* StarterNotificationChecker.h */; };
 		5AB4B51A167A84370094293C /* StarterNotificationChecker.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AB4B518167A84370094293C /* StarterNotificationChecker.m */; };
@@ -18,6 +20,8 @@
 
 /* Begin PBXFileReference section */
 		17007FB817398624009C1500 /* FlashRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlashRuntimeExtensions.h; sourceTree = "<group>"; };
+		5A2CD0871C498E0F00B529C3 /* CTAppController+APNAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CTAppController+APNAdditions.h"; sourceTree = "<group>"; };
+		5A2CD0881C498E0F00B529C3 /* CTAppController+APNAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CTAppController+APNAdditions.m"; sourceTree = "<group>"; };
 		5A68E25D151AA23100873313 /* AirPushNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirPushNotification.h; sourceTree = "<group>"; };
 		5AB4B517167A84370094293C /* StarterNotificationChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StarterNotificationChecker.h; sourceTree = "<group>"; };
 		5AB4B518167A84370094293C /* StarterNotificationChecker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StarterNotificationChecker.m; sourceTree = "<group>"; };
@@ -77,6 +81,8 @@
 				5AC0EBB6151A38F400A3043E /* AirPushNotification.m */,
 				5AB4B517167A84370094293C /* StarterNotificationChecker.h */,
 				5AB4B518167A84370094293C /* StarterNotificationChecker.m */,
+				5A2CD0871C498E0F00B529C3 /* CTAppController+APNAdditions.h */,
+				5A2CD0881C498E0F00B529C3 /* CTAppController+APNAdditions.m */,
 				5AC0EBB3151A38F300A3043E /* Supporting Files */,
 			);
 			path = AirPushNotification;
@@ -98,6 +104,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5A68E25E151AA23100873313 /* AirPushNotification.h in Headers */,
+				5A2CD0891C498E0F00B529C3 /* CTAppController+APNAdditions.h in Headers */,
 				5AB4B519167A84370094293C /* StarterNotificationChecker.h in Headers */,
 				17007FB917398624009C1500 /* FlashRuntimeExtensions.h in Headers */,
 			);
@@ -152,6 +159,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5A2CD08A1C498E0F00B529C3 /* CTAppController+APNAdditions.m in Sources */,
 				5AC0EBB7151A38F400A3043E /* AirPushNotification.m in Sources */,
 				5AB4B51A167A84370094293C /* StarterNotificationChecker.m in Sources */,
 			);

@@ -25,6 +25,10 @@
 
 #define DEFINE_ANE_FUNCTION(fn) FREObject (fn)(FREContext context, void* functionData, uint32_t argc, FREObject argv[])
 
+
+NSString *const storedNotifTrackingUrl = @"storedNotifTrackingUrl";
+
+
 @implementation AirPushNotification
 
 //empty delegate functions, stubbed signature is so we can find this method in the delegate
@@ -36,6 +40,7 @@
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo{}
 
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings{}
+
 
 + (NSString*) convertToJSonString:(NSDictionary*)dict
 {
@@ -77,6 +82,7 @@
 
 FREContext myCtx = nil;
 
+
 void didRegisterUserNotificationSettings(id self, SEL _cmd, UIApplication* application, UIUserNotificationSettings* notificationSettings)
 {
     if(notificationSettings.types & UIUserNotificationTypeAlert) {
@@ -113,11 +119,11 @@ void didFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, UIAppli
 }
 
 //custom implementations of empty signatures above. Used for push notification delegate implementation.
-void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application,NSDictionary *userInfo)
+void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application, NSDictionary *userInfo)
 {
     if ( myCtx != nil )
     {
-    NSString *stringInfo = [AirPushNotification convertToJSonString:userInfo];
+        NSString *stringInfo = [AirPushNotification convertToJSonString:userInfo];
         if (application.applicationState == UIApplicationStateActive)
         {
             FREDispatchStatusEventAsync(myCtx, (uint8_t*)"NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND", (uint8_t*)[stringInfo UTF8String]);
@@ -132,8 +138,6 @@ void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application,
         }
     }
 }
-
-
 
 
 // set the badge number (count around the app icon)
@@ -339,6 +343,34 @@ DEFINE_ANE_FUNCTION(openDeviceSettings)
     return nil;
 }
 
+
+DEFINE_ANE_FUNCTION(storeNotifTrackingInfo)
+{
+
+    NSLog(@"store notif tracking info");
+    // when receiving a notification, AS3 might be not available, so we store all the info we need here.
+
+    uint32_t string_length;
+    const uint8_t *utf8_message;
+    // message
+    if (FREGetObjectAsUTF8(argv[0], &string_length, &utf8_message) != FRE_OK)
+    {
+        return nil;
+    }
+
+    NSString* url = [NSString stringWithUTF8String:(char*)utf8_message];
+
+    NSLog(@"about to store url %@", url);
+    
+    [[NSUserDefaults standardUserDefaults] setObject:url forKey:storedNotifTrackingUrl];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
+    NSLog(@"url stored");
+
+    return nil;
+}
+
+
 // AirPushContextInitializer()
 //
 // The context initializer is called when the runtime creates the extension context instance.
@@ -364,17 +396,17 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
          SEL selectorToOverride2 = @selector(application:didFailToRegisterForRemoteNotificationsWithError:);
          
          SEL selectorToOverride3 = @selector(application:didReceiveRemoteNotification:);
-         
+
          // get the info on the method we're going to override
          Method m1 = class_getInstanceMethod(objectClass, selectorToOverride1);
          Method m2 = class_getInstanceMethod(objectClass, selectorToOverride2);
          Method m3 = class_getInstanceMethod(objectClass, selectorToOverride3);
-         
+
          // add the method to the new class
          class_addMethod(modDelegate, selectorToOverride1, (IMP)didRegisterForRemoteNotificationsWithDeviceToken, method_getTypeEncoding(m1));
          class_addMethod(modDelegate, selectorToOverride2, (IMP)didFailToRegisterForRemoteNotificationsWithError, method_getTypeEncoding(m2));
          class_addMethod(modDelegate, selectorToOverride3, (IMP)didReceiveRemoteNotification, method_getTypeEncoding(m3));
-         
+
          if ([[UIApplication sharedApplication] respondsToSelector:@selector(currentUserNotificationSettings)]){
              SEL selectorToOverride4 = @selector(application:didRegisterUserNotificationSettings:);
              Method m4 = class_getInstanceMethod(objectClass, selectorToOverride4);
@@ -390,7 +422,7 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     ///////// end of delegate injection / modification code
     
     // Register the links btwn AS3 and ObjC. (dont forget to modify the nbFuntionsToLink integer if you are adding/removing functions)
-    NSInteger nbFuntionsToLink = 10;
+    NSInteger nbFuntionsToLink = 11;
     *numFunctionsToTest = nbFuntionsToLink;
     
     FRENamedFunction* func = (FRENamedFunction*) malloc(sizeof(FRENamedFunction) * nbFuntionsToLink);
@@ -435,7 +467,11 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     func[9].functionData = NULL;
     func[9].function = &openDeviceSettings;
 
-    
+    func[10].name = (const uint8_t*) "storeNotifTrackingInfo";
+    func[10].functionData = NULL;
+    func[10].function = &storeNotifTrackingInfo;
+
+
     *functionsToSet = func;
     
     myCtx = ctx;

@@ -50,6 +50,7 @@ public class ExtensionContext extends FREContext
 		functionMap.put("getNotificationsEnabled", new GetNotificationsEnabledFunction());
 		functionMap.put("openDeviceSettings", new GoToNotifSettingsFunction());
 		functionMap.put("getCanSendUserToSettings", new GetCanSendUserToSettings());
+		functionMap.put("storeNotifTrackingInfo", new StoreNotifTrackingInfo());
 
 		
 		return functionMap;	

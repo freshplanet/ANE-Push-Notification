@@ -188,7 +188,16 @@ package com.freshplanet.nativeExtensions
 				extCtx.call("fetchStarterNotification");
 			}
 		}
-		
+
+		public function storeTrackingNotifUrl(url:String):void
+		{
+			if (this.isPushNotificationSupported)
+			{
+				extCtx.call("storeNotifTrackingInfo", url);
+			}
+		}
+
+
         // onStatus()
         // Event handler for the event that the native implementation dispatches.
         //
