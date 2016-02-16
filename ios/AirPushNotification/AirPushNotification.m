@@ -27,7 +27,7 @@
 
 
 NSString *const storedNotifTrackingUrl = @"storedNotifTrackingUrl";
-
+FREContext myCtx = nil;
 
 @implementation AirPushNotification
 
@@ -78,9 +78,34 @@ NSString *const storedNotifTrackingUrl = @"storedNotifTrackingUrl";
     }
 }
 
++(void) trackRemoteNofiticationFromApp:(UIApplication*)app andUserInfo:(NSDictionary*)userInfo
+{
+    if ( myCtx != nil )
+    {
+        NSLog(@"trackRemoteNofiticationFromApp");
+        NSString *stringInfo = [AirPushNotification convertToJSonString:userInfo];
+        if (app.applicationState == UIApplicationStateActive)
+        {
+            NSLog(@"active");
+            FREDispatchStatusEventAsync(myCtx, (uint8_t*)"NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND", (uint8_t*)[stringInfo UTF8String]);
+        }
+        else if (app.applicationState == UIApplicationStateInactive)
+        {
+            NSLog(@"inactive");
+            FREDispatchStatusEventAsync(myCtx, (uint8_t*)"APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION", (uint8_t*)[stringInfo UTF8String]);
+        }
+        else if (app.applicationState == UIApplicationStateBackground)
+        {
+            NSLog(@"background");
+            FREDispatchStatusEventAsync(myCtx, (uint8_t*)"APP_STARTED_IN_BACKGROUND_FROM_NOTIFICATION", (uint8_t*)[stringInfo UTF8String]);
+        }
+    }
+
+}
+
+
 @end
 
-FREContext myCtx = nil;
 
 
 void didRegisterUserNotificationSettings(id self, SEL _cmd, UIApplication* application, UIUserNotificationSettings* notificationSettings)
@@ -121,22 +146,8 @@ void didFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, UIAppli
 //custom implementations of empty signatures above. Used for push notification delegate implementation.
 void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application, NSDictionary *userInfo)
 {
-    if ( myCtx != nil )
-    {
-        NSString *stringInfo = [AirPushNotification convertToJSonString:userInfo];
-        if (application.applicationState == UIApplicationStateActive)
-        {
-            FREDispatchStatusEventAsync(myCtx, (uint8_t*)"NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND", (uint8_t*)[stringInfo UTF8String]);
-        }
-        else if (application.applicationState == UIApplicationStateInactive)
-        {
-            FREDispatchStatusEventAsync(myCtx, (uint8_t*)"APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION", (uint8_t*)[stringInfo UTF8String]);
-        }
-        else if (application.applicationState == UIApplicationStateBackground)
-        {
-            FREDispatchStatusEventAsync(myCtx, (uint8_t*)"APP_STARTED_IN_BACKGROUND_FROM_NOTIFICATION", (uint8_t*)[stringInfo UTF8String]);
-        }
-    }
+
+    [AirPushNotification trackRemoteNofiticationFromApp:application andUserInfo:userInfo];
 }
 
 

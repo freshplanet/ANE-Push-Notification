@@ -18,6 +18,7 @@
 
 #import "CTAppController+APNAdditions.h"
 #import <objc/runtime.h>
+#import "AirPushNotification.h"
 
 @implementation CTAppController (APNAdditions)
 
@@ -59,8 +60,9 @@
         [self performTracking:userInfo withCompletionHander:completionHandler];
     } else
     {
-        completionHandler(UIBackgroundFetchResultNewData);
+        completionHandler(UIBackgroundFetchResultNoData);
     }
+    [AirPushNotification trackRemoteNofiticationFromApp:application andUserInfo:userInfo];
 }
 
 

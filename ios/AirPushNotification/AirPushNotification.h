@@ -26,7 +26,7 @@
 @interface  AirPushNotification : NSObject <UIApplicationDelegate>
 
 +(NSString*) convertToJSonString:(NSDictionary*)dict;
-
++(void) trackRemoteNofiticationFromApp:(UIApplication*)app andUserInfo:(NSDictionary*)userInfo;
 @end
 
 FREObject setBadgeNb(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
