@@ -54,6 +54,7 @@
 
 - (void)APN_application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler
 {
+    NSLog(@"APN_application didReceiveRemoteNotification with completion handler");
     // track only when app is in background
     if (application.applicationState == UIApplicationStateBackground)
     {

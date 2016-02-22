@@ -48,7 +48,16 @@ FREContext myCtx = nil;
         return @"{}";
     }
     NSError *jsonError = nil;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&jsonError];
+    NSData *jsonData = nil;
+    @try {
+        jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&jsonError];
+    }
+    @catch (NSException *exception) {
+
+        NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : [NSString stringWithFormat:@"%@", dict]};
+        jsonError = [NSError errorWithDomain:@"com.freshplanet.apn.errors" code:-101 userInfo:userInfo];
+        
+    }
     if (jsonError != nil) {
         NSLog(@"[AirPushNotification] JSON stringify error: %@", jsonError.localizedDescription);
         return @"{}";
