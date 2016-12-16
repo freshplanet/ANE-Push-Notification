@@ -40,6 +40,7 @@ FREObject getCanSendUserToSettings(FREContext ctx, void* funcData, uint32_t argc
 FREObject getNotificationsEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject openDeviceSettings(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject storeNotifTrackingInfo(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject setShowWhileAppIsOpen(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 
 void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx, uint32_t* numFunctionsToTest, const FRENamedFunction** functionsToSet);
 void AirPushContextFinalizer(FREContext ctx);

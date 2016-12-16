@@ -16,7 +16,9 @@
 //  
 //////////////////////////////////////////////////////////////////////////////////////-->
 
-<platform xmlns="http://ns.adobe.com/air/extension/17.0">
-    <sdkVersion>7.0</sdkVersion>
-    <linkerOptions></linkerOptions>
+<platform xmlns="http://ns.adobe.com/air/extension/22.0">
+    <sdkVersion>10.0</sdkVersion>
+    <linkerOptions>
+    	<option>-framework UserNotifications</option>
+    </linkerOptions>
 </platform>

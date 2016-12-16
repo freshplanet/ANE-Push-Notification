@@ -22,6 +22,7 @@
 #import "AirPushNotification.h"
 #import <objc/runtime.h>
 #import <objc/message.h>
+#import "SPNotifCenterDelegate.h"
 
 #define DEFINE_ANE_FUNCTION(fn) FREObject (fn)(FREContext context, void* functionData, uint32_t argc, FREObject argv[])
 
@@ -390,6 +391,16 @@ DEFINE_ANE_FUNCTION(storeNotifTrackingInfo)
     return nil;
 }
 
+DEFINE_ANE_FUNCTION(setShowWhileAppIsOpen)
+{
+    NSLog(@"entering setShowWhileAppIsOpen");
+    uint32_t shouldShow;
+    if (FREGetObjectAsBool(argv[0], &shouldShow) == FRE_OK) {
+        [SPNotifCenterDelegate setShowWhenAppIsOpen:shouldShow ? YES : NO];
+    }
+    return nil;
+}
+
 
 // AirPushContextInitializer()
 //
@@ -442,7 +453,7 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     ///////// end of delegate injection / modification code
     
     // Register the links btwn AS3 and ObjC. (dont forget to modify the nbFuntionsToLink integer if you are adding/removing functions)
-    NSInteger nbFuntionsToLink = 11;
+    NSInteger nbFuntionsToLink = 12;
     *numFunctionsToTest = nbFuntionsToLink;
     
     FRENamedFunction* func = (FRENamedFunction*) malloc(sizeof(FRENamedFunction) * nbFuntionsToLink);
@@ -490,6 +501,10 @@ void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext
     func[10].name = (const uint8_t*) "storeNotifTrackingInfo";
     func[10].functionData = NULL;
     func[10].function = &storeNotifTrackingInfo;
+    
+    func[11].name = (const uint8_t*) "setShowWhileAppIsOpen";
+    func[11].functionData = NULL;
+    func[11].function = &setShowWhileAppIsOpen;
 
 
     *functionsToSet = func;

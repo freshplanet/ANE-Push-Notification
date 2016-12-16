@@ -18,6 +18,9 @@
 
 
 #import "StarterNotificationChecker.h"
+#import "SPNotifCenterDelegate.h"
+
+#import <UserNotifications/UserNotifications.h>
 
 static BOOL _startedWithNotification = NO;
 static NSDictionary *_notification = nil;
@@ -29,6 +32,10 @@ static NSDictionary *_notification = nil;
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(createStarterNotificationChecker:)
                                                  name:@"UIApplicationDidFinishLaunchingNotification" object:nil];
+    
+    if([UNUserNotificationCenter class]) {
+        [[UNUserNotificationCenter currentNotificationCenter] setDelegate: [[SPNotifCenterDelegate alloc] init]];
+    }
     
 }
 
