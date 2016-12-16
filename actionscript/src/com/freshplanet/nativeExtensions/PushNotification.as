@@ -200,7 +200,7 @@ package com.freshplanet.nativeExtensions
 		public function setShowWhileAppIsOpen(show:Boolean):void 
 		{
 			if(Capabilities.manufacturer.search('iOS') != -1) {
-				extCtx.call("setShowWhileAppIsOpen");
+				extCtx.call("setShowWhileAppIsOpen", show);
 			}
 		}
 
