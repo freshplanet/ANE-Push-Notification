@@ -17,14 +17,7 @@ BOOL _showWhenAppIsOpen = NO;
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
 {
-    NSDictionary *userInfo = notification.request.content.userInfo;
-    BOOL hasAlert = NO;
-    if(userInfo != nil) {
-        NSDictionary * apsData = userInfo[@"aps"];
-        if(apsData != nil) {
-            hasAlert = (apsData[@"alert"] != nil);
-        }
-    }
+    BOOL hasAlert = [notification.request.content.body length] > 1;
     if(_showWhenAppIsOpen && hasAlert) {
         completionHandler(UNNotificationPresentationOptionAlert);
     }
