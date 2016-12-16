@@ -394,9 +394,12 @@ DEFINE_ANE_FUNCTION(storeNotifTrackingInfo)
 DEFINE_ANE_FUNCTION(setShowWhileAppIsOpen)
 {
     NSLog(@"entering setShowWhileAppIsOpen");
+    if(![UNUserNotificationCenter class]) {
+        return nil;
+    }
     uint32_t shouldShow;
     if (FREGetObjectAsBool(argv[0], &shouldShow) == FRE_OK) {
-        [SPNotifCenterDelegate setShowWhenAppIsOpen:shouldShow ? YES : NO];
+        [SPNotifCenterDelegate setShowWhenAppIsOpen:(shouldShow ? YES : NO)];
     }
     return nil;
 }
