@@ -28,6 +28,8 @@
     dispatch_once(&onceToken, ^{
         [self swizzleMethodWithOriginalSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
                                swizzledSelector:@selector(APN_application:didReceiveRemoteNotification:fetchCompletionHandler:)];
+        [self swizzleMethodWithOriginalSelector:@selector(application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)
+                               swizzledSelector:@selector(APN_application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)];
     });
 }
 
@@ -66,6 +68,22 @@
     [AirPushNotification trackRemoteNofiticationFromApp:application andUserInfo:userInfo];
 }
 
+- (void)APN_application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier
+            forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)(void))completionHandler
+{
+    NSLog(@"APN_application handleActionWithIdentifier with completion handler");
+    // track only when app is in background
+    if (application.applicationState == UIApplicationStateBackground)
+    {
+        [self performTracking:userInfo withCompletionHander:^(UIBackgroundFetchResult result){
+            completionHandler();
+        }];
+    } else
+    {
+        completionHandler();
+    }
+    [AirPushNotification trackRemoteNofiticationFromApp:application andUserInfo:userInfo];
+}
 
 - (void) performTracking:(NSDictionary *)userInfo withCompletionHander:(void (^)(UIBackgroundFetchResult result))completionHandler
 {
