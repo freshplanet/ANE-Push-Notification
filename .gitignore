@@ -1,7 +1,7 @@
 # General
 temp
 build.config
-
+.idea/
 # Flash Builder
 actionscript/bin
 .actionScriptProperties
