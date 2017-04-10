@@ -141,16 +141,30 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 			Extension.log("Couldn't create push notification: _context or _intent was null (CreateNotificationTask.onPostExecute)");
 			return;
 		}
+        
+         //Bundle bundle = _intent.getExtras(); for (String key : bundle.keySet()) {  Object value = bundle.get(key);  Extension.log(String.format("Key:%s Value:%s Type:(%s)", key, value.toString(), value.getClass().getName())); }
 		
 		// Notification texts
-		CharSequence contentTitle = _intent.getStringExtra("contentTitle");
+		CharSequence contentTitle = (_intent.getStringExtra("contentTitle") != null) ? _intent.getStringExtra("contentText") : "";
 		if (contentTitle.length() > 22)
 		{
 			contentTitle = contentTitle.subSequence(0, 20) + "...";
 		}
-		CharSequence contentText = _intent.getStringExtra("contentText");
-		CharSequence tickerText = _intent.getStringExtra("tickerText");
+		CharSequence contentText = (_intent.getStringExtra("contentText") != null) ? _intent.getStringExtra("contentText") : "";
+		CharSequence tickerText = (_intent.getStringExtra("tickerText") != null) ? _intent.getStringExtra("tickerText") : "";
 		
+        // Set Priority
+        int priority = Notification.PRIORITY_DEFAULT;
+        String priotiryString = _intent.getStringExtra("priority");
+        if (priotiryString != null) 
+        {
+            int priorityInt = Integer.parseInt(priotiryString);
+            if (priorityInt == 2) priority = Notification.PRIORITY_MAX;
+            else if (priorityInt == 1) priority = Notification.PRIORITY_HIGH;
+            else if (priorityInt == -1) priority = Notification.PRIORITY_LOW;
+            else if (priorityInt == -2) priority = Notification.PRIORITY_MIN;
+        }
+        
 		String largeIconResourceId = _intent.getStringExtra("largeIconResourceId");
 		
 		// Notification images
@@ -195,8 +209,9 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 			.setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
 			.setWhen(System.currentTimeMillis())
 			.setAutoCancel(true)
-			.setColor(0xFF2DA9F9)
+            .setPriority(priority)
 			.setContentIntent(contentIntent);
+        //  .setColor(0xFF2DA9F9) CRASH!
 		
 		Notification notification = builder.build();
 		
