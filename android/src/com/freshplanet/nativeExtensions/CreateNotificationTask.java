@@ -145,7 +145,7 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
          //Bundle bundle = _intent.getExtras(); for (String key : bundle.keySet()) {  Object value = bundle.get(key);  Extension.log(String.format("Key:%s Value:%s Type:(%s)", key, value.toString(), value.getClass().getName())); }
 		
 		// Notification texts
-		CharSequence contentTitle = (_intent.getStringExtra("contentTitle") != null) ? _intent.getStringExtra("contentText") : "";
+		CharSequence contentTitle = (_intent.getStringExtra("contentTitle") != null) ? _intent.getStringExtra("contentTitle") : "";
 		if (contentTitle.length() > 22)
 		{
 			contentTitle = contentTitle.subSequence(0, 20) + "...";
