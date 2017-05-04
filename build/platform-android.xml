@@ -1,6 +1,6 @@
 <!--//////////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright 2012 Freshplanet (http://freshplanet.com | opensource@freshplanet.com)
+//  Copyright 2017 Freshplanet (http://freshplanet.com | opensource@freshplanet.com)
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -16,7 +16,12 @@
 //  
 //////////////////////////////////////////////////////////////////////////////////////-->
 
-<platform xmlns="http://ns.adobe.com/air/extension/17.0">
-    <sdkVersion>7.0</sdkVersion>
-    <linkerOptions></linkerOptions>
+<platform xmlns="http://ns.adobe.com/air/extension/22.0">
+	<!-- <packagedDependency>internal_impl-25.0.0.jar</packagedDependency> -->
+	<!-- <packagedDependency>support-compat-25.0.0.jar</packagedDependency> -->
+	<!-- <packagedDependency>support-core-ui-25.0.0.jar</packagedDependency> -->
+	<!-- <packagedDependency>support-core-utils-25.0.0.jar</packagedDependency> -->
+	<!-- <packagedDependency>support-fragment-25.0.0.jar</packagedDependency> -->
+	<!-- <packagedDependency>support-media-compat-25.0.0.jar</packagedDependency> -->
+	<!-- <packagedDependency>support-v4-25.0.0.jar</packagedDependency> -->
 </platform>

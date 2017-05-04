@@ -1,6 +1,6 @@
 <!--//////////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright 2012 Freshplanet (http://freshplanet.com | opensource@freshplanet.com)
+//  Copyright 2017 Freshplanet (http://freshplanet.com | opensource@freshplanet.com)
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -16,26 +16,24 @@
 //  
 //////////////////////////////////////////////////////////////////////////////////////-->
 
-<extension xmlns="http://ns.adobe.com/air/extension/17.0">
-    
+<extension xmlns="http://ns.adobe.com/air/extension/22.0">
     <id>com.freshplanet.AirPushNotification</id>
-    
-    <versionNumber>1.0</versionNumber>
-    
+    <versionNumber>2.0.0</versionNumber>
     <platforms>
+
         <platform name="iPhone-ARM">
             <applicationDeployment>
                 <nativeLibrary>libAirPushNotification.a</nativeLibrary>
-                <initializer>AirPushExtInitializer</initializer>
-                <finalizer>AirPushExtFinalizer</finalizer>
+                <initializer>AirPushNotificationInitializer</initializer>
+                <finalizer>AirPushNotificationFinalizer</finalizer>
             </applicationDeployment>
         </platform>
 
         <platform name="Android-ARM"> 
             <applicationDeployment> 
                 <nativeLibrary>libAirPushNotification.jar</nativeLibrary> 
-                <initializer>com.freshplanet.nativeExtensions.Extension</initializer> 
-                <finalizer>com.freshplanet.nativeExtensions.Extension</finalizer> 
+                <initializer>com.freshplanet.ane.AirPushNotification.Extension</initializer> 
+                <finalizer>com.freshplanet.ane.AirPushNotification.Extension</finalizer> 
             </applicationDeployment> 
         </platform> 
     
