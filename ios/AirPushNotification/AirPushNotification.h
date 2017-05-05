@@ -13,37 +13,15 @@
  * limitations under the License.
  */
 
-#ifndef AirPushNotification_AirPushNotification_h
-#define AirPushNotification_AirPushNotification_h
-#endif
-
+#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "StarterNotificationChecker.h"
+#import "FlashRuntimeExtensions.h"
 
-@interface  AirPushNotification : NSObject <UIApplicationDelegate>
+@interface  AirPushNotification : NSObject <UIApplicationDelegate> {
+    FREContext _context;
+}
 
-+(NSString*) convertToJSonString:(NSDictionary*)dict;
-+(void) trackRemoteNofiticationFromApp:(UIApplication*)app andUserInfo:(NSDictionary*)userInfo;
++ (AirPushNotification*)instance;
+- (void)trackRemoteNofiticationFromApp:(UIApplication*)app andUserInfo:(NSDictionary*)userInfo;
+
 @end
-
-FREObject setBadgeNb(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject registerPush(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject sendLocalNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject cancelLocalNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject cancelAllLocalNotifications(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject setIsAppInForeground(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject fetchStarterNotification(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject getCanSendUserToSettings(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject getNotificationsEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject openDeviceSettings(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject storeNotifTrackingInfo(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-
-void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx, uint32_t* numFunctionsToTest, const FRENamedFunction** functionsToSet);
-void AirPushContextFinalizer(FREContext ctx);
-void AirPushExtInitializer(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet );
-void AirPushExtFinalizer(void *extData);
-
-void didRegisterUserNotificationSettings(id self, SEL _cmd, UIApplication* application, UIUserNotificationSettings* notificationSettings);
-void didRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIApplication* application, NSData* deviceToken);
-void didFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, UIApplication* application, NSError* error);
-void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application,NSDictionary *userInfo);

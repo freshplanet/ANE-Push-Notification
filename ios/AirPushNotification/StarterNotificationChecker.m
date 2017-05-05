@@ -12,7 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #import "StarterNotificationChecker.h"
+#import <UIKit/UIKit.h>
 
 static BOOL _startedWithNotification = NO;
 static NSDictionary *_notification = nil;
@@ -20,48 +22,49 @@ static NSDictionary *_notification = nil;
 @implementation StarterNotificationChecker
 
 // hack, this is called before UIApplicationDidFinishLaunching
-+ (void)load
-{
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(createStarterNotificationChecker:)
-                                                 name:@"UIApplicationDidFinishLaunchingNotification" object:nil];
++ (void)load {
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(createStarterNotificationChecker:)
+                                                 name:@"UIApplicationDidFinishLaunchingNotification"
+                                               object:nil];
 }
 
-+ (void)createStarterNotificationChecker:(NSNotification *)notification
-{
-    NSDictionary *launchOptions = [notification userInfo] ;
++ (void)createStarterNotificationChecker:(NSNotification *)notification {
+    
+    NSDictionary *launchOptions = [notification userInfo];
     
     // This code will be called immediately after application:didFinishLaunchingWithOptions:.
     NSDictionary *remoteNotification = [launchOptions objectForKey: UIApplicationLaunchOptionsRemoteNotificationKey];
-    if (notification)
-    {
+    if (notification) {
+        
         _startedWithNotification = YES;
         _notification = remoteNotification;
     }
-    else
-    {
+    else {
+        
         UILocalNotification *localNotification = [launchOptions objectForKey: UIApplicationLaunchOptionsLocalNotificationKey];
-        if(localNotification) {
+        
+        if (localNotification) {
+        
             _notification = localNotification.userInfo;
             _startedWithNotification = YES;
-        } else {
+        }
+        else {
           _startedWithNotification = NO;
         }
     }
 }
 
-+(BOOL) applicationStartedWithNotification
-{
++ (BOOL) applicationStartedWithNotification {
     return _startedWithNotification;
 }
 
-+(NSDictionary*) getStarterNotification
-{
++ (NSDictionary*) getStarterNotification {
     return _notification;
 }
 
-+ (void) deleteStarterNotification
-{
++ (void) deleteStarterNotification {
     _notification = nil;
 }
 

@@ -13,251 +13,293 @@
  * limitations under the License.
  */
 
-#import "FlashRuntimeExtensions.h"
+#import "AirPushNotification.h"
 #import <UIKit/UIApplication.h>
 #import <UIKit/UIAlertView.h>
-#import "AirPushNotification.h"
+#import <UserNotifications/UserNotifications.h>
 #import <objc/runtime.h>
 #import <objc/message.h>
+#import "StarterNotificationChecker.h"
 
 #define DEFINE_ANE_FUNCTION(fn) FREObject (fn)(FREContext context, void* functionData, uint32_t argc, FREObject argv[])
+#define MAP_FUNCTION(fn, data) { (const uint8_t*)(#fn), (data), &(fn) }
 
-
-NSString *const storedNotifTrackingUrl = @"storedNotifTrackingUrl";
-FREContext myCtx = nil;
+NSString* const storedNotifTrackingUrl = @"storedNotifTrackingUrl";
 
 @implementation AirPushNotification
 
-//empty delegate functions, stubbed signature is so we can find this method in the delegate
-//and override it with our custom implementation
-- (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken{}
-// 
-- (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error{}
+#pragma mark - init
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo{}
++ (AirPushNotification*)instance {
+    
+    static AirPushNotification* _sharedInstance = nil;
+    static dispatch_once_t oncePredicate;
+    
+    dispatch_once(&oncePredicate, ^{
+        _sharedInstance = [[AirPushNotification alloc] init];
+    });
+    
+    return _sharedInstance;
+}
 
-- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings{}
-
-
-+ (NSString*) convertToJSonString:(NSDictionary*)dict
-{
-    if(dict == nil) {
-        return @"{}";
-    }
-    NSError *jsonError = nil;
-    NSData *jsonData = nil;
-    @try {
-        jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&jsonError];
-    }
-    @catch (NSException *exception) {
-
-        NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : [NSString stringWithFormat:@"%@", dict]};
-        jsonError = [NSError errorWithDomain:@"com.freshplanet.apn.errors" code:-101 userInfo:userInfo];
+- (void)setupWithContext:(FREContext)extensionContext {
+    
+    _context = extensionContext;
+    
+    id delegate = [[UIApplication sharedApplication] delegate];
+    Class delegateClass = [delegate class];
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         
+        [self swizzleInstanceMethodsFromClass:delegateClass
+                               originSelector:@selector(application:didRegisterForRemoteNotificationsWithDeviceToken:)
+                             swizzledSelector:@selector(xxx_application:didRegisterForRemoteNotificationsWithDeviceToken:)];
+        
+        [self swizzleInstanceMethodsFromClass:delegateClass
+                               originSelector:@selector(application:didReceiveRemoteNotification:)
+                             swizzledSelector:@selector(xxx_application:didReceiveRemoteNotification:)];
+        
+        [self swizzleInstanceMethodsFromClass:delegateClass
+                               originSelector:@selector(application:didReceiveRemoteNotification:)
+                             swizzledSelector:@selector(xxx_application:didReceiveRemoteNotification:)];
+        
+        [self swizzleInstanceMethodsFromClass:delegateClass
+                               originSelector:@selector(application:didRegisterUserNotificationSettings:)
+                             swizzledSelector:@selector(xxx_application:didRegisterUserNotificationSettings:)];
+    });
+}
+
+#pragma mark - helpers
+
+- (void)sendLog:(NSString*)log {
+    [self sendEvent:@"log" level:log];
+}
+
+- (void)sendEvent:(NSString*)code {
+    [self sendEvent:code level:@""];
+}
+
+- (void)sendEvent:(NSString*)code level:(NSString*)level {
+    FREDispatchStatusEventAsync(_context, (const uint8_t*)[code UTF8String], (const uint8_t*)[level UTF8String]);
+}
+
+- (void)swizzleInstanceMethodsFromClass:(Class)originClass originSelector:(SEL)originSelector swizzledSelector:(SEL)swizzledSelector {
+    
+    Class swizzleClass = [self class];
+    
+    Method originalMethod = class_getInstanceMethod(originClass, originSelector);
+    Method swizzledMethod = class_getInstanceMethod(swizzleClass, swizzledSelector);
+    
+    BOOL didAddMethod = class_addMethod(originClass,
+                                        originSelector,
+                                        method_getImplementation(swizzledMethod),
+                                        method_getTypeEncoding(swizzledMethod));
+    
+    if (didAddMethod) {
+        
+        class_replaceMethod(originClass,
+                            swizzledSelector,
+                            method_getImplementation(originalMethod),
+                            method_getTypeEncoding(originalMethod));
     }
+    else {
+        method_exchangeImplementations(originalMethod, swizzledMethod);
+    }
+}
+
++ (NSString*)convertToJSonString:(NSDictionary*)dict {
+    
+    if (!dict)
+        return @"{}";
+    
+    NSError* jsonError = nil;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&jsonError];
+    
     if (jsonError != nil) {
+        
         NSLog(@"[AirPushNotification] JSON stringify error: %@", jsonError.localizedDescription);
         return @"{}";
     }
+    
     return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
 }
 
-+ (void) cancelAllLocalNotificationsWithId:(NSNumber*) notifId
-{
+#pragma mark - notification registration events
+
+- (void)xxx_application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
+    
+    NSString* tokenString = [NSString stringWithFormat:@"%@", deviceToken];
+    [self sendEvent:@"TOKEN_SUCCESS" level:tokenString];
+}
+
+- (void)xxx_application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
+    
+    NSString* tokenString = [NSString stringWithFormat:@"Failed to get token, error: %@", error];
+    [self sendEvent:@"TOKEN_FAIL" level:tokenString];
+}
+
+- (void)xxx_application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo {
+    
+    NSString* stringInfo = [AirPushNotification convertToJSonString:userInfo];
+    
+    if (application.applicationState == UIApplicationStateActive)
+        [self sendEvent:@"NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND" level:stringInfo];
+    else if (application.applicationState == UIApplicationStateInactive)
+        [self sendEvent:@"APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION" level:stringInfo];
+    else if (application.applicationState == UIApplicationStateBackground)
+        [self sendEvent:@"APP_STARTED_IN_BACKGROUND_FROM_NOTIFICATION" level:stringInfo];
+}
+
+- (void)xxx_application:(UIApplication*)application didRegisterUserNotificationSettings:(UIUserNotificationSettings*)notificationSettings {
+
+    if (notificationSettings.types & UIUserNotificationTypeAlert) {
+        
+        [self sendEvent:@"NOTIFICATION_SETTINGS_ENABLED"];
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    }
+    else {
+        [self sendEvent:@"NOTIFICATION_SETTINGS_DISABLED"];
+    }
+}
+
+#pragma mark - other
+
+/**
+ 
+ */
+- (void)trackRemoteNofiticationFromApp:(UIApplication*)app andUserInfo:(NSDictionary*)userInfo {
+    
+    NSString* stringInfo = [AirPushNotification convertToJSonString:userInfo];
+    
+    if (app.applicationState == UIApplicationStateActive)
+        [self sendEvent:@"NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND" level:stringInfo];
+    else if (app.applicationState == UIApplicationStateInactive)
+        [self sendEvent:@"APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION" level:stringInfo];
+    else if (app.applicationState == UIApplicationStateBackground)
+        [self sendEvent:@"APP_STARTED_IN_BACKGROUND_FROM_NOTIFICATION" level:stringInfo];
+}
+
+/**
+
+ */
++ (void)cancelAllLocalNotificationsWithId:(NSNumber*) notifId {
+    
     // we remove all notifications with the localNotificationId
-    for (UILocalNotification* notif in [UIApplication sharedApplication].scheduledLocalNotifications)
-    {
-        if (notif.userInfo != nil)
-        {
+    for (UILocalNotification* notif in [UIApplication sharedApplication].scheduledLocalNotifications) {
+        
+        if (notif.userInfo != nil) {
+            
             if ([notif.userInfo objectForKey:[notifId stringValue]]) // also for migration
-            {
                 [[UIApplication sharedApplication] cancelLocalNotification:notif];
-            } else if ([notif.userInfo objectForKey:@"notifId"]) { // the current way of storing notifId
-                if([[notif.userInfo objectForKey:@"notifId"] intValue] == [notifId intValue]) {
+            else if ([notif.userInfo objectForKey:@"notifId"]) { // the current way of storing notifId
+               
+                if ([[notif.userInfo objectForKey:@"notifId"] intValue] == [notifId intValue])
                     [[UIApplication sharedApplication] cancelLocalNotification:notif];
-                }
             }
-        } else if ([notifId intValue] == 0) // for migration purpose (all the notifications without userInfo will be removed)
-        {
+        }
+        else if ([notifId intValue] == 0) { // for migration purpose (all the notifications without userInfo will be removed)
             [[UIApplication sharedApplication] cancelLocalNotification:notif];
         }
     }
 }
 
-+(void) trackRemoteNofiticationFromApp:(UIApplication*)app andUserInfo:(NSDictionary*)userInfo
-{
-    if ( myCtx != nil )
-    {
-        NSLog(@"trackRemoteNofiticationFromApp");
-        NSString *stringInfo = [AirPushNotification convertToJSonString:userInfo];
-        if (app.applicationState == UIApplicationStateActive)
-        {
-            NSLog(@"active");
-            FREDispatchStatusEventAsync(myCtx, (uint8_t*)"NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND", (uint8_t*)[stringInfo UTF8String]);
-        }
-        else if (app.applicationState == UIApplicationStateInactive)
-        {
-            NSLog(@"inactive");
-            FREDispatchStatusEventAsync(myCtx, (uint8_t*)"APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION", (uint8_t*)[stringInfo UTF8String]);
-        }
-        else if (app.applicationState == UIApplicationStateBackground)
-        {
-            NSLog(@"background");
-            FREDispatchStatusEventAsync(myCtx, (uint8_t*)"APP_STARTED_IN_BACKGROUND_FROM_NOTIFICATION", (uint8_t*)[stringInfo UTF8String]);
-        }
-    }
-
-}
-
-
 @end
 
-
-
-void didRegisterUserNotificationSettings(id self, SEL _cmd, UIApplication* application, UIUserNotificationSettings* notificationSettings)
-{
-    if(notificationSettings.types & UIUserNotificationTypeAlert) {
-        FREDispatchStatusEventAsync(myCtx, (uint8_t*)"NOTIFICATION_SETTINGS_ENABLED", (uint8_t*)"");
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
-    } else {
-        FREDispatchStatusEventAsync(myCtx, (uint8_t*)"NOTIFICATION_SETTINGS_DISABLED", (uint8_t*)"");
-    }
+/**
+    set the badge number (count around the app icon)
+ */
+DEFINE_ANE_FUNCTION(setBadgeNb) {
     
-}
-
-//custom implementations of empty signatures above. Used for push notification delegate implementation.
-void didRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIApplication* application, NSData* deviceToken)
-{
-    NSString* tokenString = [NSString stringWithFormat:@"%@", deviceToken];
-    NSLog(@"My token is: %@", deviceToken);
-
-    if ( myCtx != nil )
-    {
-        FREDispatchStatusEventAsync(myCtx, (uint8_t*)"TOKEN_SUCCESS", (uint8_t*)[tokenString UTF8String]); 
-    }
-}
-
-//custom implementations of empty signatures above. Used for push notification delegate implementation.
-void didFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, UIApplication* application, NSError* error)
-{
-    
-    NSString* tokenString = [NSString stringWithFormat:@"Failed to get token, error: %@",error];
-    
-    if ( myCtx != nil )
-    {
-        FREDispatchStatusEventAsync(myCtx, (uint8_t*)"TOKEN_FAIL", (uint8_t*)[tokenString UTF8String]); 
-    }
-}
-
-//custom implementations of empty signatures above. Used for push notification delegate implementation.
-void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application, NSDictionary *userInfo)
-{
-
-    [AirPushNotification trackRemoteNofiticationFromApp:application andUserInfo:userInfo];
-}
-
-
-// set the badge number (count around the app icon)
-DEFINE_ANE_FUNCTION(setBadgeNb)
-{
     int32_t value;
     if (FREGetObjectAsInt32(argv[0], &value) != FRE_OK)
-    {
         return nil;
-    }
     
-    NSNumber *newBadgeValue = [NSNumber numberWithInt:value]; 
+    NSNumber* newBadgeValue = [NSNumber numberWithInt:value];
+    UIApplication* application = [UIApplication sharedApplication];
+    application.applicationIconBadgeNumber = [newBadgeValue integerValue];
     
-    UIApplication *uiapplication = [UIApplication sharedApplication];
-    uiapplication.applicationIconBadgeNumber = [newBadgeValue integerValue];
-    return nil;
+    return NULL;
 }
 
 
-// register the device for push notification.
-DEFINE_ANE_FUNCTION(registerPush)
-{
-    // iOS8+ selector 
-    if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)]) {
-         UIUserNotificationSettings* notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil];
-        [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
-    } else { // iOS7 or less
-        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
-         (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
-    }
-    return nil;
+/**
+    register the device for push notification.
+ */
+DEFINE_ANE_FUNCTION(registerPush) {
+    
+    UIUserNotificationSettings* notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert |
+                                                                                                    UIUserNotificationTypeBadge |
+                                                                                                    UIUserNotificationTypeSound
+                                                                                         categories:nil];
+    
+    [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
+    
+    return NULL;
 }
 
-// register the device for push notification.
-DEFINE_ANE_FUNCTION(setIsAppInForeground)
-{    
-    return nil;
+/**
+ 
+ */
+DEFINE_ANE_FUNCTION(setIsAppInForeground) {
+    return NULL;
 }
 
-// register the device for push notification.
-DEFINE_ANE_FUNCTION(fetchStarterNotification)
-{
+/**
+ 
+ */
+DEFINE_ANE_FUNCTION(fetchStarterNotification) {
+    
     BOOL appStartedWithNotification = [StarterNotificationChecker applicationStartedWithNotification];
-    if(appStartedWithNotification)
-    {
-        NSDictionary *launchOptions = [StarterNotificationChecker getStarterNotification];
-        NSString *stringInfo = [AirPushNotification convertToJSonString:launchOptions];
-        FREDispatchStatusEventAsync(myCtx, (uint8_t*)"APP_STARTING_FROM_NOTIFICATION", (uint8_t*)[stringInfo UTF8String]);
+    
+    if (appStartedWithNotification) {
+        
+        NSDictionary* launchOptions = [StarterNotificationChecker getStarterNotification];
+        NSString* stringInfo = [AirPushNotification convertToJSonString:launchOptions];
+        FREDispatchStatusEventAsync(context, (uint8_t*)"APP_STARTING_FROM_NOTIFICATION", (uint8_t*)[stringInfo UTF8String]);
     }
-    return nil;
+    
+    return NULL;
 }
 
 
+/**
+    sends local notification to the device.
+ */
+DEFINE_ANE_FUNCTION(sendLocalNotification) {
 
-// sends local notification to the device.
-DEFINE_ANE_FUNCTION(sendLocalNotification)
-{
-
-    uint32_t string_length;
-    const uint8_t *utf8_message;
     // message
+    uint32_t string_length;
+    const uint8_t* utf8_message;
     if (FREGetObjectAsUTF8(argv[0], &string_length, &utf8_message) != FRE_OK)
-    {
-        return nil;
-    }
+        return NULL;
 
     NSString* message = [NSString stringWithUTF8String:(char*)utf8_message];
     
     // timestamp
     uint32_t timestamp;
-   if (FREGetObjectAsUint32(argv[1], &timestamp) != FRE_OK)
-   {
-       return nil;
-   }
+    if (FREGetObjectAsUint32(argv[1], &timestamp) != FRE_OK)
+        return NULL;
    
     // recurrence
     uint32_t recurrence = 0;
-    if (argc >= 4 )
-    {
+    if (argc >= 4)
         FREGetObjectAsUint32(argv[3], &recurrence);
-    }
     
     // local notif id: 0 is default
     uint32_t localNotificationId = 0;
-    if (argc >= 5)
-    {
-        if (FREGetObjectAsUint32(argv[4], &localNotificationId) != FRE_OK)
-        {
-            localNotificationId = 0;
-        }
-    }
-    
-    
-    
-    NSNumber *localNotifIdNumber =[NSNumber numberWithInt:localNotificationId];
-        
+    if (argc >= 5 && FREGetObjectAsUint32(argv[4], &localNotificationId) != FRE_OK)
+        localNotificationId = 0;
+
+    NSNumber* localNotifIdNumber = [NSNumber numberWithInt:localNotificationId];
     [AirPushNotification cancelAllLocalNotificationsWithId:localNotifIdNumber];
     
-    NSDate *itemDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
+    NSDate* itemDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
+    UILocalNotification* localNotif = [[UILocalNotification alloc] init];
     
-    UILocalNotification *localNotif = [[UILocalNotification alloc] init];
     if (localNotif == nil)
         return NULL;
+    
     localNotif.fireDate = itemDate;
     localNotif.timeZone = [NSTimeZone defaultTimeZone];
     
@@ -265,254 +307,177 @@ DEFINE_ANE_FUNCTION(sendLocalNotification)
     localNotif.alertAction = @"View Details";
     localNotif.soundName = UILocalNotificationDefaultSoundName;
     
-    if (argc == 6) // optional path for deep linking
-    {
+    if (argc == 6) { // optional path for deep linking
+        
         uint32_t path_len;
         const uint8_t *path_utf8;
         if (FREGetObjectAsUTF8(argv[5], &path_len, &path_utf8) == FRE_OK) {
+            
             NSString* pathString = [NSString stringWithUTF8String:(char*)path_utf8];
             localNotif.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:localNotifIdNumber, @"notifId", pathString, @"path", nil];
-        } else {
+        }
+        else {
             localNotif.userInfo = [NSDictionary dictionaryWithObject:localNotifIdNumber forKey:@"notifId"];
         }
         
-    } else {
+    }
+    else {
         localNotif.userInfo = [NSDictionary dictionaryWithObject:localNotifIdNumber forKey:@"notifId"];
     }
     
-    
-
-    if (recurrence > 0)
-    {
-        if (recurrence == 1)
-        {
-            localNotif.repeatInterval = NSDayCalendarUnit;
-        } else if (recurrence == 2)
-        {
-            localNotif.repeatInterval = NSWeekCalendarUnit;
-        } else if (recurrence == 3)
-        {
-            localNotif.repeatInterval = NSMonthCalendarUnit;
-        } else if (recurrence == 4)
-        {
-            localNotif.repeatInterval = NSYearCalendarUnit;
-        }
+    if (recurrence > 0) {
         
+        if (recurrence == 1)
+            localNotif.repeatInterval = NSDayCalendarUnit;
+        else if (recurrence == 2)
+            localNotif.repeatInterval = NSWeekCalendarUnit;
+        else if (recurrence == 3)
+            localNotif.repeatInterval = NSMonthCalendarUnit;
+        else if (recurrence == 4)
+            localNotif.repeatInterval = NSYearCalendarUnit;
     }
     
     [[UIApplication sharedApplication] scheduleLocalNotification:localNotif];
-    [localNotif release];
+//    [localNotif release];
+    
     return NULL;
 }
 
-// sends local notification to the device.
-DEFINE_ANE_FUNCTION(cancelLocalNotification)
-{
+/**
+ 
+ */
+DEFINE_ANE_FUNCTION(cancelLocalNotification) {
+    
     uint32_t localNotificationId;
-    if (argc == 1)
-    {
-        if (FREGetObjectAsUint32(argv[0], &localNotificationId) != FRE_OK)
-        {
-            return nil;
-        }
-    } else
-    {
+    
+    if (argc != 1)
         localNotificationId = 0;
-    }
+    else if (FREGetObjectAsUint32(argv[0], &localNotificationId) != FRE_OK)
+        return nil;
     
     [AirPushNotification cancelAllLocalNotificationsWithId:[NSNumber numberWithInt:localNotificationId]];
-    return nil;
-
+    
+    return NULL;
 }
 
-DEFINE_ANE_FUNCTION(cancelAllLocalNotifications)
-{
+/**
+ 
+ */
+DEFINE_ANE_FUNCTION(cancelAllLocalNotifications) {
+    
+//    if ([UNUserNotificationCenter class]) // ios 10
+//        [[UNUserNotificationCenter currentNotificationCenter] removeAllPendingNotificationRequests];
+//    else
+//        [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    
     [[UIApplication sharedApplication] cancelAllLocalNotifications];
-    return nil;
+    
+    return NULL;
 }
 
-DEFINE_ANE_FUNCTION(getCanSendUserToSettings)
-{
+/**
+ 
+ */
+DEFINE_ANE_FUNCTION(getCanSendUserToSettings) {
+    
     FREObject canSendObj = nil;
-    // if this selector is available the other feature is as well
-    uint32_t canSend = [[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)] ? 1 : 0;
-    FRENewObjectFromBool(canSend, &canSendObj);
+    FRENewObjectFromBool(1, &canSendObj);
     return canSendObj;
 }
 
-//TODO implement this for ios8 and return true for ios7
-DEFINE_ANE_FUNCTION(getNotificationsEnabled)
-{
-    BOOL enabled = true;
-    if ([[UIApplication sharedApplication] respondsToSelector:@selector(currentUserNotificationSettings)]){
-        UIUserNotificationSettings *notifSettings = [[UIApplication sharedApplication] currentUserNotificationSettings];
-        enabled = (notifSettings.types & UIUserNotificationTypeAlert);
-    }
+/**
+ 
+ */
+DEFINE_ANE_FUNCTION(getNotificationsEnabled) {
+    
+    UIUserNotificationSettings* notifSettings = [[UIApplication sharedApplication] currentUserNotificationSettings];
+    BOOL enabled = (notifSettings.types & UIUserNotificationTypeAlert);
     
     FREObject notifsEnabled = nil;
     FRENewObjectFromBool(enabled, &notifsEnabled);
     return notifsEnabled;
 }
 
-DEFINE_ANE_FUNCTION(openDeviceSettings)
-{
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
-    return nil;
-}
-
-
-DEFINE_ANE_FUNCTION(storeNotifTrackingInfo)
-{
-
-    NSLog(@"store notif tracking info");
-    // when receiving a notification, AS3 might be not available, so we store all the info we need here.
-
+/**
+    when receiving a notification, AS3 might be not available, so we store all the info we need here.
+ */
+DEFINE_ANE_FUNCTION(storeNotifTrackingInfo) {
+    
     uint32_t string_length;
     const uint8_t *utf8_message;
-    // message
     if (FREGetObjectAsUTF8(argv[0], &string_length, &utf8_message) != FRE_OK)
-    {
         return nil;
-    }
 
     NSString* url = [NSString stringWithUTF8String:(char*)utf8_message];
-
-    NSLog(@"about to store url %@", url);
     
     [[NSUserDefaults standardUserDefaults] setObject:url forKey:storedNotifTrackingUrl];
     [[NSUserDefaults standardUserDefaults] synchronize];
-
-    NSLog(@"url stored");
-
+    
     return nil;
 }
-
-
-// AirPushContextInitializer()
-//
-// The context initializer is called when the runtime creates the extension context instance.
-void AirPushContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx, 
-                        uint32_t* numFunctionsToTest, const FRENamedFunction** functionsToSet) 
-{
+/**
+ 
+ */
+DEFINE_ANE_FUNCTION(openDeviceNotificationSettings) {
     
-    //injects our modified delegate functions into the sharedApplication delegate
+    UIApplication* app = [UIApplication sharedApplication];
+    NSURL* appSettingsURL = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
     
-     id delegate = [[UIApplication sharedApplication] delegate];
-     
-     Class objectClass = object_getClass(delegate);
-     
-     NSString *newClassName = [NSString stringWithFormat:@"Custom_%@", NSStringFromClass(objectClass)];
-     Class modDelegate = NSClassFromString(newClassName);
-     if (modDelegate == nil) {
-         // this class doesn't exist; create it
-         // allocate a new class
-         modDelegate = objc_allocateClassPair(objectClass, [newClassName UTF8String], 0);
-         
-         SEL selectorToOverride1 = @selector(application:didRegisterForRemoteNotificationsWithDeviceToken:);
-         
-         SEL selectorToOverride2 = @selector(application:didFailToRegisterForRemoteNotificationsWithError:);
-         
-         SEL selectorToOverride3 = @selector(application:didReceiveRemoteNotification:);
-
-         // get the info on the method we're going to override
-         Method m1 = class_getInstanceMethod(objectClass, selectorToOverride1);
-         Method m2 = class_getInstanceMethod(objectClass, selectorToOverride2);
-         Method m3 = class_getInstanceMethod(objectClass, selectorToOverride3);
-
-         // add the method to the new class
-         class_addMethod(modDelegate, selectorToOverride1, (IMP)didRegisterForRemoteNotificationsWithDeviceToken, method_getTypeEncoding(m1));
-         class_addMethod(modDelegate, selectorToOverride2, (IMP)didFailToRegisterForRemoteNotificationsWithError, method_getTypeEncoding(m2));
-         class_addMethod(modDelegate, selectorToOverride3, (IMP)didReceiveRemoteNotification, method_getTypeEncoding(m3));
-
-         if ([[UIApplication sharedApplication] respondsToSelector:@selector(currentUserNotificationSettings)]){
-             SEL selectorToOverride4 = @selector(application:didRegisterUserNotificationSettings:);
-             Method m4 = class_getInstanceMethod(objectClass, selectorToOverride4);
-             class_addMethod(modDelegate, selectorToOverride4, (IMP)didRegisterUserNotificationSettings, method_getTypeEncoding(m4));
-         }
-
-         // register the new class with the runtime
-         objc_registerClassPair(modDelegate);
-     }
-     // change the class of the object
-     object_setClass(delegate, modDelegate);
+    if ([app respondsToSelector:@selector(openURL:options:completionHandler:)]) {  // ios 10
+        
+        [app openURL:appSettingsURL options:@{} completionHandler:^(BOOL success) {
+            // nothing
+        }];
+    }
+    else {
+        [app openURL:appSettingsURL];
+    }
     
-    ///////// end of delegate injection / modification code
-    
-    // Register the links btwn AS3 and ObjC. (dont forget to modify the nbFuntionsToLink integer if you are adding/removing functions)
-    NSInteger nbFuntionsToLink = 11;
-    *numFunctionsToTest = nbFuntionsToLink;
-    
-    FRENamedFunction* func = (FRENamedFunction*) malloc(sizeof(FRENamedFunction) * nbFuntionsToLink);
-    
-    func[0].name = (const uint8_t*) "registerPush";
-    func[0].functionData = NULL;
-    func[0].function = &registerPush;
-    
-    func[1].name = (const uint8_t*) "setBadgeNb";
-    func[1].functionData = NULL;
-    func[1].function = &setBadgeNb;
-    
-    func[2].name = (const uint8_t*) "sendLocalNotification";
-    func[2].functionData = NULL;
-    func[2].function = &sendLocalNotification;
-    
-    func[3].name = (const uint8_t*) "setIsAppInForeground";
-    func[3].functionData = NULL;
-    func[3].function = &setIsAppInForeground;
-
-    func[4].name = (const uint8_t*) "fetchStarterNotification";
-    func[4].functionData = NULL;
-    func[4].function = &fetchStarterNotification;
-
-    func[5].name = (const uint8_t*) "cancelLocalNotification";
-    func[5].functionData = NULL;
-    func[5].function = &cancelLocalNotification;
-    
-    func[6].name = (const uint8_t*) "cancelAllLocalNotifications";
-    func[6].functionData = NULL;
-    func[6].function = &cancelAllLocalNotifications;
-    
-    func[7].name = (const uint8_t*) "getCanSendUserToSettings";
-    func[7].functionData = NULL;
-    func[7].function = &getCanSendUserToSettings;
-    
-    func[8].name = (const uint8_t*) "getNotificationsEnabled";
-    func[8].functionData = NULL;
-    func[8].function = &getNotificationsEnabled;
-    
-    func[9].name = (const uint8_t*) "openDeviceNotificationSettings";
-    func[9].functionData = NULL;
-    func[9].function = &openDeviceSettings;
-
-    func[10].name = (const uint8_t*) "storeNotifTrackingInfo";
-    func[10].functionData = NULL;
-    func[10].function = &storeNotifTrackingInfo;
-
-
-    *functionsToSet = func;
-    
-    myCtx = ctx;
+    return NULL;
 }
 
-// AirPushContextFinalizer()
-//
-// Set when the context extension is created.
-
-void AirPushContextFinalizer(FREContext ctx) { 
+void AirPushNotificationContextInitializer(void* extData,
+                                           const uint8_t* ctxType,
+                                           FREContext ctx,
+                                           uint32_t* numFunctionsToTest,
+                                           const FRENamedFunction** functionsToSet) {
+    
+    [[AirPushNotification instance] setupWithContext:ctx];
+    
+    FRENamedFunction functions[] = {
+        MAP_FUNCTION(registerPush, NULL),
+        MAP_FUNCTION(setBadgeNb, NULL),
+        MAP_FUNCTION(sendLocalNotification, NULL),
+        MAP_FUNCTION(setIsAppInForeground, NULL),
+        MAP_FUNCTION(fetchStarterNotification, NULL),
+        MAP_FUNCTION(cancelLocalNotification, NULL),
+        MAP_FUNCTION(cancelAllLocalNotifications, NULL),
+        MAP_FUNCTION(getCanSendUserToSettings, NULL),
+        MAP_FUNCTION(getNotificationsEnabled, NULL),
+        MAP_FUNCTION(openDeviceNotificationSettings, NULL)
+    };
+    
+    *numFunctionsToTest = sizeof(functions) / sizeof(FRENamedFunction);
+    *functionsToSet = functions;
 }
 
+void AirPushNotificationContextFinalizer(FREContext ctx) {
+    
+    // nothing
+}
 
-
-// AirPushExtInitializer()
-//
-// The extension initializer is called the first time the ActionScript side of the extension
-// calls ExtensionContext.createExtensionContext() for any context.
-
-void AirPushExtInitializer(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet ) 
-{
+void AirPushNotificationInitializer(void** extDataToSet,
+                                    FREContextInitializer* ctxInitializerToSet,
+                                    FREContextFinalizer* ctxFinalizerToSet) {
+    
     *extDataToSet = NULL;
-    *ctxInitializerToSet = &AirPushContextInitializer; 
-    *ctxFinalizerToSet = &AirPushContextFinalizer;
+    *ctxInitializerToSet = &AirPushNotificationContextInitializer;
+    *ctxFinalizerToSet = &AirPushNotificationContextFinalizer;
 }
 
-void AirPushExtFinalizer(void *extData) { }
+void AirPushNotificationFinalizer(void *extData) {
+
+    // nothing
+}
+
+

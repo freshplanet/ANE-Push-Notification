@@ -10,6 +10,7 @@
 		165B62741EB1468E00389DCB /* AirPushNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 165B62731EB1468E00389DCB /* AirPushNotification.m */; };
 		165B62751EB1468E00389DCB /* AirPushNotification.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 165B62721EB1468E00389DCB /* AirPushNotification.h */; };
 		165B627E1EB146D100389DCB /* StarterNotificationChecker.m in Sources */ = {isa = PBXBuildFile; fileRef = 165B627D1EB146D100389DCB /* StarterNotificationChecker.m */; };
+		165B62811EBCF96100389DCB /* CTAppController+APNAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 165B62801EBCF96100389DCB /* CTAppController+APNAdditions.m */; };
 		6CAF42813F4C031CA9A08F7B /* libPods-AirPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 13B533587955FEB6587B30EF /* libPods-AirPushNotification.a */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +36,8 @@
 		165B627B1EB146D100389DCB /* FlashRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlashRuntimeExtensions.h; sourceTree = "<group>"; };
 		165B627C1EB146D100389DCB /* StarterNotificationChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StarterNotificationChecker.h; sourceTree = "<group>"; };
 		165B627D1EB146D100389DCB /* StarterNotificationChecker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StarterNotificationChecker.m; sourceTree = "<group>"; };
+		165B627F1EBCF96000389DCB /* CTAppController+APNAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CTAppController+APNAdditions.h"; sourceTree = "<group>"; };
+		165B62801EBCF96100389DCB /* CTAppController+APNAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CTAppController+APNAdditions.m"; sourceTree = "<group>"; };
 		B4A0BB4FFD8A25311C310619 /* Pods-AirPushNotification.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirPushNotification.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AirPushNotification/Pods-AirPushNotification.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -71,6 +74,8 @@
 		165B62711EB1468E00389DCB /* AirPushNotification */ = {
 			isa = PBXGroup;
 			children = (
+				165B627F1EBCF96000389DCB /* CTAppController+APNAdditions.h */,
+				165B62801EBCF96100389DCB /* CTAppController+APNAdditions.m */,
 				165B627B1EB146D100389DCB /* FlashRuntimeExtensions.h */,
 				165B627C1EB146D100389DCB /* StarterNotificationChecker.h */,
 				165B627D1EB146D100389DCB /* StarterNotificationChecker.m */,
@@ -189,6 +194,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				165B62811EBCF96100389DCB /* CTAppController+APNAdditions.m in Sources */,
 				165B627E1EB146D100389DCB /* StarterNotificationChecker.m in Sources */,
 				165B62741EB1468E00389DCB /* AirPushNotification.m in Sources */,
 			);
