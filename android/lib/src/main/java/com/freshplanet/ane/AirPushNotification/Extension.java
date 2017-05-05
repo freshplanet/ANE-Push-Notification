@@ -28,6 +28,9 @@ public class Extension implements FREExtension {
 
 	private static String TAG = "AirPushNotification";
 
+	public static final String PREFS_NAME = "UrlPrefFile";
+	public static final String PREFS_KEY = "trackUrl";
+
 	public static ExtensionContext context;
 	
 	public static boolean isInForeground = false;

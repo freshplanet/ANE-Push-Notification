@@ -194,6 +194,13 @@ package com.freshplanet.ane.AirPushNotification {
 			}
 		}
 
+
+        public function storeTrackingNotifUrl(url:String):void {
+
+            if (isSupported)
+                _context.call("storeNotifTrackingInfo", url);
+        }
+
         // --------------------------------------------------------------------------------------//
         //																						 //
         // 									 	PRIVATE API										 //

@@ -15,8 +15,10 @@
 package com.freshplanet.ane.AirPushNotification;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -26,6 +28,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -52,6 +55,9 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 	private Intent _intent;
 	private Bitmap _picture;
 
+	private String _notifSender;
+	private String _notifTrackingType;
+	
 	public CreateNotificationTask(Context context, Intent intent)
 	{
 		super();
@@ -68,6 +74,10 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 			// Get picture URL from parameters
 			String jsonParameters = _intent.getStringExtra("parameters");
 			String pictureUrl = null;
+			
+			_notifSender = _intent.getStringExtra("sender");
+			_notifTrackingType = _intent.getStringExtra("type");
+			
 			if (jsonParameters != null)
 			{
 				try
@@ -203,13 +213,47 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		
 		Notification notification = builder.build();
 		
-		
 		// Dispatch notification
 		NotificationManager notifManager = (NotificationManager)_context.getSystemService(Context.NOTIFICATION_SERVICE);
 		notifManager.notify(NOTIFICATION_ID, notification);
 		NOTIFICATION_ID++;
+		
+		trackNotification();
 	}
 	
+	private void trackNotification()
+	{
+
+		// retrieve stored url
+		SharedPreferences settings = _context.getSharedPreferences(Extension.PREFS_NAME, 0);
+		String trackingUrl = settings.getString(Extension.PREFS_KEY, null);
+		if (trackingUrl != null)
+		{
+			
+			String linkParam = "/?source_type=notif&source_ref="+_notifTrackingType;
+			if (_notifSender != null)
+			{
+				linkParam += "&source_userId="+_notifSender;
+			}
+			
+			try {
+				trackingUrl += "&link="+URLEncoder.encode(linkParam, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
+			
+			PingUrlTask task = new PingUrlTask();
+			task.execute(trackingUrl);
+			
+		} else
+		{
+			Extension.log("couldn't find stored tracking url");
+		}
+	}
 	
 	private Bitmap getCircleBitmap(Bitmap bitmap) 
 	{
