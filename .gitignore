@@ -36,3 +36,5 @@ android/lib/src/main/gen/
 
 android/full_libs/
 android/\.gradle/
+
+android/lib/build/

@@ -43,32 +43,15 @@ NSString* const storedNotifTrackingUrl = @"storedNotifTrackingUrl";
 }
 
 - (void)setupWithContext:(FREContext)extensionContext {
-    
     _context = extensionContext;
-    
-    id delegate = [[UIApplication sharedApplication] delegate];
-    Class delegateClass = [delegate class];
-    
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        
-        [self swizzleInstanceMethodsFromClass:delegateClass
-                               originSelector:@selector(application:didRegisterForRemoteNotificationsWithDeviceToken:)
-                             swizzledSelector:@selector(xxx_application:didRegisterForRemoteNotificationsWithDeviceToken:)];
-        
-        [self swizzleInstanceMethodsFromClass:delegateClass
-                               originSelector:@selector(application:didReceiveRemoteNotification:)
-                             swizzledSelector:@selector(xxx_application:didReceiveRemoteNotification:)];
-        
-        [self swizzleInstanceMethodsFromClass:delegateClass
-                               originSelector:@selector(application:didReceiveRemoteNotification:)
-                             swizzledSelector:@selector(xxx_application:didReceiveRemoteNotification:)];
-        
-        [self swizzleInstanceMethodsFromClass:delegateClass
-                               originSelector:@selector(application:didRegisterUserNotificationSettings:)
-                             swizzledSelector:@selector(xxx_application:didRegisterUserNotificationSettings:)];
-    });
 }
+
+#pragma mark - overriden notification event methods
+
+- (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {}
+- (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {}
+- (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo {}
+- (void)application:(UIApplication*)application didRegisterUserNotificationSettings:(UIUserNotificationSettings*)notificationSettings {}
 
 #pragma mark - helpers
 
@@ -82,30 +65,6 @@ NSString* const storedNotifTrackingUrl = @"storedNotifTrackingUrl";
 
 - (void)sendEvent:(NSString*)code level:(NSString*)level {
     FREDispatchStatusEventAsync(_context, (const uint8_t*)[code UTF8String], (const uint8_t*)[level UTF8String]);
-}
-
-- (void)swizzleInstanceMethodsFromClass:(Class)originClass originSelector:(SEL)originSelector swizzledSelector:(SEL)swizzledSelector {
-    
-    Class swizzleClass = [self class];
-    
-    Method originalMethod = class_getInstanceMethod(originClass, originSelector);
-    Method swizzledMethod = class_getInstanceMethod(swizzleClass, swizzledSelector);
-    
-    BOOL didAddMethod = class_addMethod(originClass,
-                                        originSelector,
-                                        method_getImplementation(swizzledMethod),
-                                        method_getTypeEncoding(swizzledMethod));
-    
-    if (didAddMethod) {
-        
-        class_replaceMethod(originClass,
-                            swizzledSelector,
-                            method_getImplementation(originalMethod),
-                            method_getTypeEncoding(originalMethod));
-    }
-    else {
-        method_exchangeImplementations(originalMethod, swizzledMethod);
-    }
 }
 
 + (NSString*)convertToJSonString:(NSDictionary*)dict {
@@ -123,44 +82,6 @@ NSString* const storedNotifTrackingUrl = @"storedNotifTrackingUrl";
     }
     
     return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-}
-
-#pragma mark - notification registration events
-
-- (void)xxx_application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
-    
-    NSString* tokenString = [NSString stringWithFormat:@"%@", deviceToken];
-    [self sendEvent:@"TOKEN_SUCCESS" level:tokenString];
-}
-
-- (void)xxx_application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
-    
-    NSString* tokenString = [NSString stringWithFormat:@"Failed to get token, error: %@", error];
-    [self sendEvent:@"TOKEN_FAIL" level:tokenString];
-}
-
-- (void)xxx_application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo {
-    
-    NSString* stringInfo = [AirPushNotification convertToJSonString:userInfo];
-    
-    if (application.applicationState == UIApplicationStateActive)
-        [self sendEvent:@"NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND" level:stringInfo];
-    else if (application.applicationState == UIApplicationStateInactive)
-        [self sendEvent:@"APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION" level:stringInfo];
-    else if (application.applicationState == UIApplicationStateBackground)
-        [self sendEvent:@"APP_STARTED_IN_BACKGROUND_FROM_NOTIFICATION" level:stringInfo];
-}
-
-- (void)xxx_application:(UIApplication*)application didRegisterUserNotificationSettings:(UIUserNotificationSettings*)notificationSettings {
-
-    if (notificationSettings.types & UIUserNotificationTypeAlert) {
-        
-        [self sendEvent:@"NOTIFICATION_SETTINGS_ENABLED"];
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
-    }
-    else {
-        [self sendEvent:@"NOTIFICATION_SETTINGS_DISABLED"];
-    }
 }
 
 #pragma mark - other
@@ -206,6 +127,44 @@ NSString* const storedNotifTrackingUrl = @"storedNotifTrackingUrl";
 
 @end
 
+#pragma mark - overrides
+
+void didRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIApplication* application, NSData* deviceToken) {
+    
+    NSString* tokenString = [NSString stringWithFormat:@"%@", deviceToken];
+    [[AirPushNotification instance] sendEvent:@"TOKEN_SUCCESS" level:tokenString];
+}
+
+void didFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, UIApplication* application, NSError* error) {
+    
+    NSString* tokenString = [NSString stringWithFormat:@"Failed to get token, error: %@", error];
+    [[AirPushNotification instance] sendEvent:@"TOKEN_FAIL" level:tokenString];
+}
+
+void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application, NSDictionary *userInfo) {
+    
+    NSString* stringInfo = [AirPushNotification convertToJSonString:userInfo];
+    
+    if (application.applicationState == UIApplicationStateActive)
+        [[AirPushNotification instance] sendEvent:@"NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND" level:stringInfo];
+    else if (application.applicationState == UIApplicationStateInactive)
+        [[AirPushNotification instance] sendEvent:@"APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION" level:stringInfo];
+    else if (application.applicationState == UIApplicationStateBackground)
+        [[AirPushNotification instance] sendEvent:@"APP_STARTED_IN_BACKGROUND_FROM_NOTIFICATION" level:stringInfo];
+}
+
+void didRegisterUserNotificationSettings(id self, SEL _cmd, UIApplication* application, UIUserNotificationSettings* notificationSettings) {
+    
+    if (notificationSettings.types & UIUserNotificationTypeAlert) {
+        
+        [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_ENABLED"];
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    }
+    else {
+        [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_DISABLED"];
+    }
+}
+
 /**
     set the badge number (count around the app icon)
  */
@@ -242,6 +201,7 @@ DEFINE_ANE_FUNCTION(registerPush) {
  
  */
 DEFINE_ANE_FUNCTION(setIsAppInForeground) {
+    
     return NULL;
 }
 
@@ -267,7 +227,7 @@ DEFINE_ANE_FUNCTION(fetchStarterNotification) {
     sends local notification to the device.
  */
 DEFINE_ANE_FUNCTION(sendLocalNotification) {
-
+    
     // message
     uint32_t string_length;
     const uint8_t* utf8_message;
@@ -371,7 +331,6 @@ DEFINE_ANE_FUNCTION(cancelAllLocalNotifications) {
 //        [[UIApplication sharedApplication] cancelAllLocalNotifications];
     
     [[UIApplication sharedApplication] cancelAllLocalNotifications];
-    
     return NULL;
 }
 
@@ -415,6 +374,7 @@ DEFINE_ANE_FUNCTION(storeNotifTrackingInfo) {
     
     return nil;
 }
+
 /**
  
  */
@@ -444,7 +404,43 @@ void AirPushNotificationContextInitializer(void* extData,
     
     [[AirPushNotification instance] setupWithContext:ctx];
     
-    FRENamedFunction functions[] = {
+    id delegate = [[UIApplication sharedApplication] delegate];
+    Class objectClass = object_getClass(delegate);
+    
+    NSString* newClassName = [NSString stringWithFormat:@"Custom_%@", NSStringFromClass(objectClass)];
+    Class modDelegate = NSClassFromString(newClassName);
+    
+    if (modDelegate == nil) {
+        
+        // this class doesn't exist; create it
+        // allocate a new class
+        modDelegate = objc_allocateClassPair(objectClass, [newClassName UTF8String], 0);
+        
+        SEL selectorToOverride1 = @selector(application:didRegisterForRemoteNotificationsWithDeviceToken:);
+        SEL selectorToOverride2 = @selector(application:didFailToRegisterForRemoteNotificationsWithError:);
+        SEL selectorToOverride3 = @selector(application:didReceiveRemoteNotification:);
+        SEL selectorToOverride4 = @selector(application:didRegisterUserNotificationSettings:);
+        
+        // get the info on the method we're going to override
+        Method m1 = class_getInstanceMethod(objectClass, selectorToOverride1);
+        Method m2 = class_getInstanceMethod(objectClass, selectorToOverride2);
+        Method m3 = class_getInstanceMethod(objectClass, selectorToOverride3);
+        Method m4 = class_getInstanceMethod(objectClass, selectorToOverride4);
+        
+        // add the method to the new class
+        class_addMethod(modDelegate, selectorToOverride1, (IMP)didRegisterForRemoteNotificationsWithDeviceToken, method_getTypeEncoding(m1));
+        class_addMethod(modDelegate, selectorToOverride2, (IMP)didFailToRegisterForRemoteNotificationsWithError, method_getTypeEncoding(m2));
+        class_addMethod(modDelegate, selectorToOverride3, (IMP)didReceiveRemoteNotification, method_getTypeEncoding(m3));
+        class_addMethod(modDelegate, selectorToOverride4, (IMP)didRegisterUserNotificationSettings, method_getTypeEncoding(m4));
+        
+        // register the new class with the runtime
+        objc_registerClassPair(modDelegate);
+    }
+    
+    // change the class of the object
+    object_setClass(delegate, modDelegate);
+    
+    static FRENamedFunction functions[] = {
         MAP_FUNCTION(registerPush, NULL),
         MAP_FUNCTION(setBadgeNb, NULL),
         MAP_FUNCTION(sendLocalNotification, NULL),
@@ -454,11 +450,13 @@ void AirPushNotificationContextInitializer(void* extData,
         MAP_FUNCTION(cancelAllLocalNotifications, NULL),
         MAP_FUNCTION(getCanSendUserToSettings, NULL),
         MAP_FUNCTION(getNotificationsEnabled, NULL),
-        MAP_FUNCTION(openDeviceNotificationSettings, NULL)
+        MAP_FUNCTION(openDeviceNotificationSettings, NULL),
+        MAP_FUNCTION(storeNotifTrackingInfo, NULL)
     };
     
     *numFunctionsToTest = sizeof(functions) / sizeof(FRENamedFunction);
     *functionsToSet = functions;
+    
 }
 
 void AirPushNotificationContextFinalizer(FREContext ctx) {
@@ -476,7 +474,7 @@ void AirPushNotificationInitializer(void** extDataToSet,
 }
 
 void AirPushNotificationFinalizer(void *extData) {
-
+    
     // nothing
 }
 
