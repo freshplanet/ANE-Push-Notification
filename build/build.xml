@@ -4,6 +4,13 @@
     <!-- Config -->
     <property file="build.config"/>
 
+    <!-- Load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="ant-contrib-0.6.jar"/>
+        </classpath>
+    </taskdef>
+
     <!-- All -->
     <target name="all" depends="ios, android, swc, package" description="Full build of extension"/>
 
@@ -73,15 +80,24 @@
         <!-- get the jar -->
         <copy file="${build.release}/classes.jar" tofile="temp/android/lib${name}.jar"/>
 
-        <!-- Copy over required resources -->
-        <copy todir="temp/android/res" failonerror="false">
-            <fileset dir="${build.intermediates}/res/merged/release"/>
-        </copy>
+        <!-- in a condition so assets can be included in another ANE also using default res directory -->
+        <if>
+        	<equals arg1="${include.res}" arg2="true"/>
+        	<then>
 
-        <!-- copy over additional assets -->
-        <copy todir="temp/android/res/" overwrite="true">
-			<fileset dir="${android.res}"/>
-		</copy>
+        		<echo message="copying resources"/>
+
+		        <!-- Copy over required resources -->
+		        <copy todir="temp/android/res" failonerror="false">
+		            <fileset dir="${build.intermediates}/res/merged/release"/>
+		        </copy>
+
+		        <!-- copy over additional assets -->
+		        <copy todir="temp/android/res/" overwrite="true" failonerror="false">
+					<fileset dir="${android.res}"/>
+				</copy>
+        	</then>
+        </if>
 
         <!-- Copy over the bundled libs -->
         <copy todir="temp/android">
