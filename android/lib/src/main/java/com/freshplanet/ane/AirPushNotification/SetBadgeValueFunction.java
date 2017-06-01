@@ -12,9 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.freshplanet.ane.AirPushNotification;
 
-#import "AirPushNotification.m"
+import com.adobe.fre.FREContext;
+import com.adobe.fre.FREFunction;
+import com.adobe.fre.FREObject;
 
-@interface CTAppController : NSObject <UIApplicationDelegate>
+/**
+ * Set the bage value around the app icon
+ * Used only in IOS.
+ * This method doesnt do anything.
+ * @author titi
+ *
+ */
+public class SetBadgeValueFunction implements FREFunction {
 
-@end
+	public FREObject call(FREContext arg0, FREObject[] arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

@@ -12,9 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.freshplanet.ane.AirPushNotification;
 
-#import "AirPushNotification.m"
+import com.adobe.fre.FREContext;
+import com.adobe.fre.FREFunction;
+import com.adobe.fre.FREObject;
 
-@interface CTAppController : NSObject <UIApplicationDelegate>
+/**
+ * Created by peter on 5/15/15.
+ */
+public class CancelAllLocalNotificationsFunction implements FREFunction {
 
-@end
+    @Override
+    public FREObject call(FREContext freContext, FREObject[] freObjects) {
+        //TODO implement this; may need to store ids somewhere
+        return null;
+    }
+}

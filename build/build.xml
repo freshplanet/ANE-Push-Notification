@@ -1,126 +1,176 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Air Native Extension Build Scripts" default="all">
 
-	<!-- Config -->
-	<property file="build.config"/>
+    <!-- Config -->
+    <property file="build.config"/>
 
-	<!-- All -->
-	<target name="all" depends="ios,android,swc,package" description="Full build of extension"/>
-	<target name="all-android-debug" depends="ios,android-debug,swc,package" description="Full build of extension w/debugging on Android"/>
+    <!-- Load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="ant-contrib-0.6.jar"/>
+        </classpath>
+    </taskdef>
 
-	<!-- iOS -->
-	<target name="ios" description="Build iOS Library">
-		<mkdir dir="../temp/ios/build/"/>
+    <!-- All -->
+    <target name="all" depends="ios, android, swc, package" description="Full build of extension"/>
 
-		<exec executable="xcodebuild" failonerror="true" dir="../ios/">
-			<arg line="-project ${name}.xcodeproj"/>
-			<arg line="-alltargets clean"/>
-		</exec>
+    <!-- iOS -->
+    <target name="ios" description="Build iOS Library">
 
-		<exec executable="xcodebuild" failonerror="true" dir="../ios/">
-			<arg line="-project ${name}.xcodeproj"/>
-			<arg line="-sdk ${ios.sdkversion}"/>
-			<arg line="-alltargets"/>
-			<arg line="-configuration Release"/>
-			<arg line="SYMROOT=../temp/ios/build/"/>
-		</exec>
+        <!-- make the build directory for the objc code -->
+        <mkdir dir="temp/ios"/>
 
-		<copy file="../temp/ios/build/Release-iphoneos/lib${name}.a" todir="../temp/ios" overwrite="true"/>
+        <!-- clean the build -->
+        <exec executable="xcodebuild" failonerror="true" dir="../ios">
+            <arg line="-workspace ${name}.xcworkspace"/>
+            <arg line="-scheme ${name}"/>
+            <arg line="clean"/>
+        </exec>
 
-		<delete dir="../temp/ios/build/"/>
-	</target>
+        <!-- compile the ios lib -->
+        <exec executable="xcodebuild" failonerror="true" dir="../ios">
+            <arg line="-workspace ${name}.xcworkspace"/>
+            <arg line="-scheme ${name}"/>
+            <arg line="-sdk iphoneos"/>
+            <arg line="-configuration Release"/>
+            <arg line="SYMROOT=$(PWD)/../ios/build"/>
+        </exec>
 
-	<!-- Android -->
-    <target name="android" description="Build Android Library with debugging disabled">
-        <property name="ANDROID_DEBUG" value="false"/>
-        <antcall target="android-build"/>
+        <!-- copy the ios lib to the base temp ios directory -->
+        <copy todir="temp/ios" overwrite="true" includeEmptyDirs="false" flatten="true">
+            <fileset dir="../ios/build/Release-iphoneos" includes="**/*.a" excludes="*Pods-${name}*"/>
+        </copy>
+
+        <copy todir="temp/ios" overwrite="true" includeEmptyDirs="false">
+            <fileset dir="../ios/build/Release-iphoneos" includes="**/*.bundle/"/>
+        </copy>
+
+        <!-- remove the build directory -->
+        <delete dir="../ios/build"/>
     </target>
-    <target name="android-debug" description="Build Android Library with debugging enabled">
-        <property name="ANDROID_DEBUG" value="true"/>
-        <antcall target="android-build"/>
+
+    <!-- Android -->
+    <target name="android" description="Build Android Library">
+
+        <!-- paths -->
+        <property name="build.intermediates" value="../android/lib/build/intermediates"/>
+        <property name="build.release" value="${build.intermediates}/bundles/release"/>
+        <property name="build.exploded-aar" value="${build.intermediates}/exploded-aar"/>
+
+        <!-- make the build directory -->
+        <mkdir dir="temp/android"/>
+
+        <exec executable="/usr/libexec/java_home" outputproperty="java.home">
+            <!-- <arg line="-v 1.8" /> -->
+        </exec>
+
+        <!-- clean the build -->
+        <exec executable="./gradlew" dir="../android">
+            <env key="JAVA_HOME" path="${java.home}"/>
+            <arg line="clean"/>
+        </exec>
+
+        <!-- compile the java code -->
+        <exec executable="./gradlew" dir="../android">
+            <env key="JAVA_HOME" path="${java.home}"/>
+            <env key="ANDROID_HOME" path="${android.sdk.home}"/>
+            <arg line=":lib:assembleRelease"/>
+        </exec>
+
+        <!-- get the jar -->
+        <copy file="${build.release}/classes.jar" tofile="temp/android/lib${name}.jar"/>
+
+        <!-- in a condition so assets can be included in another ANE also using default res directory -->
+        <if>
+        	<equals arg1="${include.res}" arg2="true"/>
+        	<then>
+
+        		<echo message="copying resources"/>
+
+		        <!-- Copy over required resources -->
+		        <copy todir="temp/android/res" failonerror="false">
+		            <fileset dir="${build.intermediates}/res/merged/release"/>
+		        </copy>
+
+		        <!-- copy over additional assets -->
+		        <copy todir="temp/android/res/" overwrite="true" failonerror="false">
+					<fileset dir="${android.res}"/>
+				</copy>
+        	</then>
+        </if>
+
+        <!-- Copy over the bundled libs -->
+        <copy todir="temp/android">
+            <fileset dir="${build.release}/libs" excludes="FlashRuntimeExtensions.jar, runtimeClasses.jar"/>
+        </copy>
+
+        <!-- Copy over the exploded aar libs -->
+        <exec executable="/bin/bash">
+            <arg value="extractJars.sh"/>
+        </exec>
+
+        <!-- remove the build classes -->
+        <delete dir="../android/lib/build"/>
     </target>
 
-	<target name="android-build" description="Build Android Library">
-		<fail message="Property 'android.res' must be set in build config" unless="android.res"/>
-		<delete dir="../android/temp"/>
-		<mkdir dir="../android/temp/classes"/>
+    <!-- Actionscript -->
+    <target name="swc" description="Build SWC library">
+        <mkdir dir="temp/swc/content"/>
 
-		<echo message="========== Modifying source file to set USE_MULTI_MSG = ${useMultiMsg} ============"/>
-        <replaceregexp file="../android/src/com/freshplanet/nativeExtensions/C2DMBroadcastReceiver.java" 
-            match="public static final boolean USE_MULTI_MSG = ([^;]+);" 
-            replace="public static final boolean USE_MULTI_MSG = ${useMultiMsg};"/>
+        <fileset dir="../actionscript/src" casesensitive="yes" id="classfiles">
+            <include name="**/*.as"/>
+        </fileset>
 
-		<javac srcdir="../android/src" source="1.6" target="1.6" destdir="../android/temp/classes" includeantruntime="false" debug="${ANDROID_DEBUG}">
-			<classpath>
-				<pathelement location="${android.sdk}/android.jar"/>
-				<pathelement location="../android/libs/FlashRuntimeExtensions.jar"/>
-				<pathelement location="../android/libs/android-support-v4.jar"/>
-			</classpath>
-		</javac>
+        <pathconvert property="classlist" refid="classfiles" pathsep=" " dirsep=".">
+            <regexpmapper from=".*src.(.*)\.as" to="\1"/>
+        </pathconvert>
 
-		<echo message="========== Modifying source file to set back USE_MULTI_MSG = false ============"/>
-		<replaceregexp file="../android/src/com/freshplanet/nativeExtensions/C2DMBroadcastReceiver.java" 
-            match="public static final boolean USE_MULTI_MSG = ([^;]+);" 
-            replace="public static final boolean USE_MULTI_MSG = false;"/>
+        <exec executable="${air.sdk.home}/bin/compc" failonerror="true">
+            <env key="AIR_SDK_HOME" value="${air.sdk.home}"/>
+            <arg line='-source-path ../actionscript/src'/>
+            <arg line='-output temp/swc/${name}.swc'/>
+            <arg line='-swf-version=29'/>
+            <arg line='-external-library-path+="${air.sdk.home}/frameworks/libs/air/airglobal.swc"'/>
+            <arg line='-include-classes ${classlist}'/>
+        </exec>
 
-		<mkdir dir="../temp/android/"/>
-		<jar basedir="../android/temp/classes" destfile="../temp/android/lib${name}.jar"/>
-		<copy todir="../temp/android/res/">
-			<fileset dir="../android/res"/>
-		</copy>
-		<copy todir="../temp/android/res/" overwrite="true">
-			<fileset dir="${android.res}"/>
-		</copy>
-		<delete dir="../android/temp"/>
-	</target>
+        <unzip src="temp/swc/${name}.swc" dest="temp/swc/content" overwrite="true"/>
 
-	<!-- Actionscript -->
-	<target name="swc" description="Build SWC library">
-		<mkdir dir="../temp/swc/content/"/>
+        <copy file="temp/swc/content/library.swf" todir="temp/ios" overwrite="true"/>
+        <copy file="temp/swc/content/library.swf" todir="temp/ios-simulator" overwrite="true"/>
+        <copy file="temp/swc/content/library.swf" todir="temp/android" overwrite="true"/>
+        <copy file="temp/swc/content/library.swf" todir="temp/default" overwrite="true"/>
+    </target>
 
-		<fileset dir="../actionscript/src" casesensitive="yes" id="classfiles">
-			<include name="**/*.as"/>
-		</fileset>
+    <!-- Package -->
+    <target name="package" description="Create the extension package">
 
-		<pathconvert property="classlist" refid="classfiles" pathsep=" " dirsep=".">
-			<regexpmapper from=".*src.(.*)\.as" to="\1"/>
-		</pathconvert>
+        <exec executable="${air.sdk.home}/bin/adt" failonerror="true" dir="temp">
+            <arg value="-package"/>
+            <arg value="-target"/>
+            <arg value="ane"/>
+            <arg value="${name}.ane"/>
+            <arg value="../extension.xml"/>
+            <arg line="-swc swc/${name}.swc"/>
+            <arg line="-platform iPhone-ARM -platformoptions ../platform-ios.xml -C ios/ ."/>
+            <arg line="-platform Android-ARM -platformoptions ../platform-android.xml -C android/ ."/>
+            <arg line="-platform default -C default/ ."/>
+        </exec>
 
-		<exec executable="${flex.sdk}/bin/compc${bin.ext}" failonerror="true">
-			<arg line='-source-path ../actionscript/src'/>
-			<arg line='-output ../temp/swc/${name}.swc'/>
-			<arg line='-swf-version=14'/>
-			<arg line='-external-library-path+="${flex.sdk}/frameworks/libs/air/airglobal.swc"'/>
-			<arg line='-include-classes ${classlist}'/>
-		</exec>
+        <move file="temp/${name}.ane" todir="../bin"/>
+        <delete dir="temp"/>
+    </target>
 
-		<unzip src="../temp/swc/${name}.swc" dest="../temp/swc/content" overwrite="true"/>
-		<copy file="../temp/swc/content/library.swf" todir="../temp/ios" overwrite="true"/>
-		<copy file="../temp/swc/content/library.swf" todir="../temp/android" overwrite="true"/>
-		<copy file="../temp/swc/content/library.swf" todir="../temp/default" overwrite="true"/>
-		<delete dir="../temp/swc/content/"/>
-	</target>
-
-	<!-- Package -->
-	<target name="package" description="Create the extension package">
-		<condition property="OUTPUT_FILENAME" value="${name}_multiMsg" else="${name}">
-            <istrue value="${useMultiMsg}"/>
-        </condition>
-
-		<exec executable="${flex.sdk}/bin/adt${bin.ext}" failonerror="true" dir="../temp">
-			<arg value="-package"/>
-			<arg value="-target"/>
-			<arg value="ane"/>
-			<arg value="${OUTPUT_FILENAME}.ane"/>
-			<arg value="../build/extension.xml"/>
-			<arg line="-swc swc/${name}.swc"/>
-			<arg line="-platform iPhone-ARM -platformoptions ../build/platform.xml -C ios/ ."/>
-			<arg line="-platform Android-ARM -C android/ ."/>
-			<arg line="-platform default -C default/ ."/>
-		</exec>
-
-		<move file="../temp/${OUTPUT_FILENAME}.ane" todir="../bin"/>
-		<delete dir="../temp"/>
-	</target>
+    <!-- HTML Documentation (must be run manually) -->
+    <target name="asdoc" description="generate the asdoc in readable html">
+        <exec executable="${air.sdk.home}/bin/asdoc" failonerror="true">
+            <env key="FLEX_HOME" value="${air.sdk.home}"/>
+            <env key="FALCON_HOME" value="${air.sdk.home}"/>
+            <arg line='-source-path ../actionscript/src'/>
+            <arg line='-doc-sources ../actionscript/src'/>
+            <arg line='-output ../docs'/>
+            <arg line='-library-path+="${air.sdk.home}/frameworks/libs/air/airglobal.swc"'/>
+        </exec>
+    </target>
 
 </project>

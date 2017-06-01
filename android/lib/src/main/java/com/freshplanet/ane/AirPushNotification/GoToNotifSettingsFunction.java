@@ -12,9 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.freshplanet.ane.AirPushNotification;
 
-#import "AirPushNotification.m"
+import android.app.Activity;
+import android.content.Intent;
+import com.adobe.fre.FREContext;
+import com.adobe.fre.FREFunction;
+import com.adobe.fre.FREObject;
 
-@interface CTAppController : NSObject <UIApplicationDelegate>
-
-@end
+public class GoToNotifSettingsFunction implements FREFunction
+{
+    @Override
+    public FREObject call(FREContext freContext, FREObject[] freObjects) {
+        Activity activity = freContext.getActivity();
+        activity.startActivity(new Intent(activity.getApplicationContext(), SettingsLauncherActivity.class));
+        return null;
+    }
+}
