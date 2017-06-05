@@ -43,7 +43,7 @@ static NotifCenterDelegate * _delegate = nil;
 + (NSDictionary *) getAndClearDelegateStarterNotif {
     if(_delegate != nil) {
         NSDictionary * notif = _delegate.starterNotif;
-        _delegate.starterNotif = null;
+        _delegate.starterNotif = nil;
         return notif;
     }
     return nil;
