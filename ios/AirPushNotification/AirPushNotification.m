@@ -223,7 +223,7 @@ DEFINE_ANE_FUNCTION(registerPush) {
                                   if( !error ){
                                       if(granted) {
                                           [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_ENABLED"];
-                                          [[UIApplication sharedApplication] registerForRemoteNotifications];
+                                          //[[UIApplication sharedApplication] registerForRemoteNotifications];
                                       } else {
                                           [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_DISABLED"];
                                       }
@@ -233,13 +233,14 @@ DEFINE_ANE_FUNCTION(registerPush) {
                                       [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_DISABLED"];
                                   }  
                               }];
-    } else {
-        UIUserNotificationSettings* notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert |
-                                                            UIUserNotificationTypeBadge |
-                                                            UIUserNotificationTypeSound
-                                                            categories:nil];
-        [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
     }
+    
+    UIUserNotificationSettings* notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert |
+                                                        UIUserNotificationTypeBadge |
+                                                        UIUserNotificationTypeSound
+                                                        categories:nil];
+    [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
+    
     
     return NULL;
 }
