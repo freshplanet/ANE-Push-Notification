@@ -24,7 +24,6 @@
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler {
     NSDictionary * notifDict = response.notification.request.content.userInfo;
-    NSString * stringInfo = [AirPushNotification convertToJSonString:notifDict];
     
     if ([[AirPushNotification instance] isInitialized]) {
         // we can dispatch an event
@@ -36,4 +35,15 @@
     
     completionHandler();
 }
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification
+         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
+{
+    if ([[AirPushNotification instance] isInitialized]) {
+        [[AirPushNotification instance] trackRemoteNofiticationFromApp:[UIApplication sharedApplication] andUserInfo:notification.request.content.userInfo];
+    }
+    completionHandler(UNNotificationPresentationOptionNone);
+}
+
 @end
