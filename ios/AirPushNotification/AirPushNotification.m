@@ -20,6 +20,7 @@
 #import <objc/runtime.h>
 #import <objc/message.h>
 #import "StarterNotificationChecker.h"
+#import "NotifCenterDelegate.h"
 
 #define DEFINE_ANE_FUNCTION(fn) FREObject (fn)(FREContext context, void* functionData, uint32_t argc, FREObject argv[])
 #define MAP_FUNCTION(fn, data) { (const uint8_t*)(#fn), (data), &(fn) }
@@ -27,6 +28,27 @@
 NSString* const storedNotifTrackingUrl = @"storedNotifTrackingUrl";
 
 @implementation AirPushNotification
+
+static NotifCenterDelegate * _delegate = nil;
+
+
++ (void)load {
+    // on iOS 10+, only use UNUserNotificationCenter to handle incoming notifications
+    if ([UNUserNotificationCenter class]) {
+        _delegate = [[NotifCenterDelegate alloc] init];
+        [[UNUserNotificationCenter currentNotificationCenter] setDelegate:_delegate];
+    }
+}
+
++ (NSDictionary *) getAndClearDelegateStarterNotif {
+    if(_delegate != nil) {
+        NSDictionary * notif = _delegate.starterNotif;
+        _delegate.starterNotif = nil;
+        return notif;
+    }
+    return nil;
+}
+
 
 #pragma mark - init
 
@@ -40,6 +62,10 @@ NSString* const storedNotifTrackingUrl = @"storedNotifTrackingUrl";
     });
     
     return _sharedInstance;
+}
+
+- (BOOL)isInitialized {
+    return (_context != nil);
 }
 
 - (void)setupWithContext:(FREContext)extensionContext {
@@ -145,12 +171,15 @@ void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application,
     
     NSString* stringInfo = [AirPushNotification convertToJSonString:userInfo];
     
-    if (application.applicationState == UIApplicationStateActive)
-        [[AirPushNotification instance] sendEvent:@"NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND" level:stringInfo];
-    else if (application.applicationState == UIApplicationStateInactive)
+    if (application.applicationState == UIApplicationStateActive) {
+         [[AirPushNotification instance] sendEvent:@"NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND" level:stringInfo];
+    } else if ([UNUserNotificationCenter class]) {
+        return; // UNUserNotificationCenter will handle non-foreground notifs on iOS 10+
+    } else if (application.applicationState == UIApplicationStateInactive) {
         [[AirPushNotification instance] sendEvent:@"APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION" level:stringInfo];
-    else if (application.applicationState == UIApplicationStateBackground)
+    } else if (application.applicationState == UIApplicationStateBackground) {
         [[AirPushNotification instance] sendEvent:@"APP_STARTED_IN_BACKGROUND_FROM_NOTIFICATION" level:stringInfo];
+    }
 }
 
 void didRegisterUserNotificationSettings(id self, SEL _cmd, UIApplication* application, UIUserNotificationSettings* notificationSettings) {
@@ -187,12 +216,31 @@ DEFINE_ANE_FUNCTION(setBadgeNb) {
  */
 DEFINE_ANE_FUNCTION(registerPush) {
     
-    UIUserNotificationSettings* notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert |
-                                                                                                    UIUserNotificationTypeBadge |
-                                                                                                    UIUserNotificationTypeSound
-                                                                                         categories:nil];
+    if( [UNUserNotificationCenter class] ) {
+        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+        [center requestAuthorizationWithOptions:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge)
+                              completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                                  if( !error ){
+                                      if(granted) {
+                                          [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_ENABLED"];
+                                          //[[UIApplication sharedApplication] registerForRemoteNotifications];
+                                      } else {
+                                          [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_DISABLED"];
+                                      }
+        
+                                  } else {
+                                      //todo maybe dispatch an error event here instead?
+                                      [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_DISABLED"];
+                                  }  
+                              }];
+    }
     
+    UIUserNotificationSettings* notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert |
+                                                        UIUserNotificationTypeBadge |
+                                                        UIUserNotificationTypeSound
+                                                        categories:nil];
     [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
+    
     
     return NULL;
 }
@@ -209,6 +257,16 @@ DEFINE_ANE_FUNCTION(setIsAppInForeground) {
  
  */
 DEFINE_ANE_FUNCTION(fetchStarterNotification) {
+    
+    if ([UNUserNotificationCenter class]) {
+        NSDictionary * receivedNotif = [AirPushNotification getAndClearDelegateStarterNotif];
+        if (receivedNotif != nil) {
+            NSString* receivedNotifString = [AirPushNotification convertToJSonString:receivedNotif];
+            FREDispatchStatusEventAsync(context, (uint8_t*)"APP_STARTING_FROM_NOTIFICATION", (uint8_t*)[receivedNotifString UTF8String]);
+        }
+        
+        return NULL;
+    }
     
     BOOL appStartedWithNotification = [StarterNotificationChecker applicationStartedWithNotification];
     

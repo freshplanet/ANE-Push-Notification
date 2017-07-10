@@ -15,6 +15,7 @@
 
 #import "StarterNotificationChecker.h"
 #import <UIKit/UIKit.h>
+#import <UserNotifications/UserNotifications.h>
 
 static BOOL _startedWithNotification = NO;
 static NSDictionary *_notification = nil;
@@ -24,10 +25,13 @@ static NSDictionary *_notification = nil;
 // hack, this is called before UIApplicationDidFinishLaunching
 + (void)load {
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(createStarterNotificationChecker:)
-                                                 name:@"UIApplicationDidFinishLaunchingNotification"
-                                               object:nil];
+    //Only use this on iOS < 10
+    if ([UNUserNotificationCenter class] == nil) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(createStarterNotificationChecker:)
+                                                     name:@"UIApplicationDidFinishLaunchingNotification"
+                                                   object:nil];
+    }
 }
 
 + (void)createStarterNotificationChecker:(NSNotification *)notification {
@@ -37,7 +41,6 @@ static NSDictionary *_notification = nil;
     // This code will be called immediately after application:didFinishLaunchingWithOptions:.
     NSDictionary *remoteNotification = [launchOptions objectForKey: UIApplicationLaunchOptionsRemoteNotificationKey];
     if (notification) {
-        
         _startedWithNotification = YES;
         _notification = remoteNotification;
     }

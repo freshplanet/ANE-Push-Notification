@@ -20,8 +20,11 @@
 @implementation CTAppController (APNAdditions)
 
 + (void)load {
-    
+    if([UNUserNotificationCenter class] != nil) {
+        return;
+    }
     static dispatch_once_t onceToken;
+    
     dispatch_once(&onceToken, ^{
     
         [self swizzleMethodWithOriginalSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
