@@ -22,6 +22,9 @@
 }
 
 + (AirPushNotification*)instance;
++ (NSString*)convertToJSonString:(NSDictionary*)dict;
+
+- (BOOL) isInitialized;
 - (void)trackRemoteNofiticationFromApp:(UIApplication*)app andUserInfo:(NSDictionary*)userInfo;
 
 @end
@@ -30,3 +33,4 @@ void AirPushNotificationContextInitializer(void* extData, const uint8_t* ctxType
 void AirPushNotificationContextFinalizer(FREContext ctx);
 void AirPushNotificationInitializer(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet);
 void AirPushNotificationFinalizer(void *extData);
+
