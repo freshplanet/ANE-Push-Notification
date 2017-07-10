@@ -23,13 +23,9 @@ import com.adobe.fre.FREObject;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 
-
-
 /**
  * Set the bage value around the app icon
- * Used only in IOS.
- * This method doesnt do anything.
- * @author titi
+ * @author titi, mateo-kozomara
  *
  */
 public class SetBadgeValueFunction implements FREFunction {
@@ -37,7 +33,6 @@ public class SetBadgeValueFunction implements FREFunction {
 	private static String TAG = "setBadgeNb";
 
 	public FREObject call(FREContext context, FREObject[] args) {
-		// TODO Auto-generated method stub
 
 		if (args == null || args.length == 0)
 		{
@@ -50,6 +45,11 @@ public class SetBadgeValueFunction implements FREFunction {
 		} catch (Exception e) {
 			Log.e(TAG, "Wrong object passed for badge number. Object expected : int. Cannot set badge number.");
 			return null;
+		}
+
+		if (badgeNumber < 0)
+		{
+			badgeNumber = 0;
 		}
 
 		Context appContext = context.getActivity().getApplicationContext();
