@@ -99,18 +99,42 @@
         	</then>
         </if>
 
-        <!-- Copy over the bundled libs -->
-        <copy todir="temp/android">
-            <fileset dir="${build.release}/libs" excludes="FlashRuntimeExtensions.jar, runtimeClasses.jar"/>
-        </copy>
-
-        <!-- Copy over the exploded aar libs -->
-        <exec executable="/bin/bash">
-            <arg value="extractJars.sh"/>
+        <!-- Copy dependencies into temp folder -->
+        <exec executable="./gradlew" dir="../android">
+            <env key="JAVA_HOME" path="${java.home}"/>
+            <env key="ANDROID_HOME" path="${android.sdk.home}"/>
+            <arg line="copyDependencies"/>
         </exec>
 
-        <!-- remove the build classes -->
+        <!-- Extract aar files -->
+        <foreach target="unzipAAR" param="aarFile">
+            <fileset dir="../android/lib/dependencies">
+                <include name="*.aar"/>
+            </fileset>
+        </foreach>
+
+        <!-- Copy to build folder -->
+        <copy todir="temp/android">
+            <fileset dir="../android/lib/dependencies" excludes="FlashRuntimeExtensions.jar, runtimeClasses.jar">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+
+        <delete dir="../android/lib/dependencies"/>
         <delete dir="../android/lib/build"/>
+
+    </target>
+
+    <target name="unzipAAR">
+        <basename property="aarFileName" file="${aarFile}"
+            suffix=".aar"/>
+        <unzip src="${aarFile}" dest="../android/lib/dependencies/${aarFileName}" overwrite="true"/>
+        <if>
+            <available file="../android/lib/dependencies/${aarFileName}/classes.jar"/>
+            <then>
+                <move file="../android/lib/dependencies/${aarFileName}/classes.jar" tofile="../android/lib/dependencies/${aarFileName}.jar"/>
+            </then>
+        </if>
     </target>
 
     <!-- Actionscript -->
