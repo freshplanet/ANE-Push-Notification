@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -38,7 +39,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -198,23 +198,34 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		notificationIntent.putExtra("params", Extension.getParametersFromIntent(_intent));
 		PendingIntent contentIntent = PendingIntent.getActivity(_context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-		// Create notification
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(_context)
-			.setContentTitle(contentTitle)
-			.setContentText(contentText)
-			.setTicker(tickerText)
-			.setSmallIcon(smallIconId)
-			.setLargeIcon(largeIcon)
-			.setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
-			.setWhen(System.currentTimeMillis())
-			.setAutoCancel(true)
-			.setColor(0xFF2DA9F9)
-			.setContentIntent(contentIntent);
-		
-		Notification notification = builder.build();
+
 		
 		// Dispatch notification
 		NotificationManager notifManager = (NotificationManager)_context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+			int importance = NotificationManager.IMPORTANCE_HIGH;
+			NotificationChannel notificationChannel = new NotificationChannel("sp2-channel", "songpop2" ,importance);
+			notificationChannel.enableLights(true);
+			notificationChannel.enableVibration(true);
+			notifManager.createNotificationChannel(notificationChannel);
+		}
+
+
+		// Create notification
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(_context, "sp2-channel")
+				.setContentTitle(contentTitle)
+				.setContentText(contentText)
+				.setTicker(tickerText)
+				.setSmallIcon(smallIconId)
+				.setLargeIcon(largeIcon)
+				.setSound(soundUri)
+				.setWhen(System.currentTimeMillis())
+				.setAutoCancel(true)
+				.setColor(0xFF2DA9F9)
+				.setContentIntent(contentIntent);
+
+		Notification notification = builder.build();
 		notifManager.notify(NOTIFICATION_ID, notification);
 		NOTIFICATION_ID++;
 		
