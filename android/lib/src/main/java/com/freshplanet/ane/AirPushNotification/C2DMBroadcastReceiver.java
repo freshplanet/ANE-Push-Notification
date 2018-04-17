@@ -44,7 +44,8 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver
 		{ 
 			handleMessage(context, intent); // display the notification only when in background
 		}
-		setResultCode(Activity.RESULT_OK);
+		if(isOrderedBroadcast())
+			setResultCode(Activity.RESULT_OK);
 	}
 
 	/** Check if there is a registration_id, and pass it to the AS. Send a TOKEN_FAIL event if there is an error. */
