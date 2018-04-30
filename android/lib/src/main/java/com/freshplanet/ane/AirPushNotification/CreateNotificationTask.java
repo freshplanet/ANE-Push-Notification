@@ -44,6 +44,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 import com.distriqt.extension.util.Resources;
 
@@ -198,10 +199,9 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		notificationIntent.putExtra("params", Extension.getParametersFromIntent(_intent));
 		PendingIntent contentIntent = PendingIntent.getActivity(_context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-
-		
 		// Dispatch notification
 		NotificationManager notifManager = (NotificationManager)_context.getSystemService(Context.NOTIFICATION_SERVICE);
+		NotificationCompat.Builder builder;
 
 		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
 			int importance = NotificationManager.IMPORTANCE_HIGH;
@@ -209,12 +209,14 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 			notificationChannel.enableLights(true);
 			notificationChannel.enableVibration(true);
 			notifManager.createNotificationChannel(notificationChannel);
+			builder = new NotificationCompat.Builder(_context, "sp2-channel");
+		}
+		else {
+			builder = new NotificationCompat.Builder(_context);
 		}
 
-
 		// Create notification
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(_context, "sp2-channel")
-				.setContentTitle(contentTitle)
+		builder.setContentTitle(contentTitle)
 				.setContentText(contentText)
 				.setTicker(tickerText)
 				.setSmallIcon(smallIconId)
@@ -228,7 +230,7 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		Notification notification = builder.build();
 		notifManager.notify(NOTIFICATION_ID, notification);
 		NOTIFICATION_ID++;
-		
+
 		trackNotification();
 	}
 	
