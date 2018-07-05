@@ -118,7 +118,7 @@ package com.freshplanet.ane.AirPushNotification {
 		 * @param recurrenceType
          * @param notificationId
          * @param deepLinkPath
-         * @param androidLargeIconResourceId
+         * @param iconPath
 		 */
 		public function sendLocalNotification(message:String,
                                               timestamp:int,
@@ -126,25 +126,19 @@ package com.freshplanet.ane.AirPushNotification {
                                               recurrenceType:int = RECURRENCE_NONE,
 											  notificationId:int = DEFAULT_LOCAL_NOTIFICATION_ID,
                                               deepLinkPath:String = null,
-                                              androidLargeIconResourceId:String = null):void {
+                                              iconPath:String = null):void {
 
 			if (!isSupported)
 				return;
 
-            if (notificationId == DEFAULT_LOCAL_NOTIFICATION_ID)
-                _context.call("sendLocalNotification", message, timestamp, title, recurrenceType);
-            else {
+			if(!iconPath)
+				iconPath = "";
 
-                if (Capabilities.manufacturer.search('Android') > -1)
-                    _context.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath, androidLargeIconResourceId);
-                else { // iOS doesn't support null params
+			if(!deepLinkPath)
+				deepLinkPath = "";
 
-                    if (deepLinkPath === null)
-                        _context.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId);
-                    else
-                        _context.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath);
-                }
-            }
+			_context.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath, iconPath);
+
 		}
 
 		/**

@@ -13,6 +13,7 @@
 		165B62811EBCF96100389DCB /* CTAppController+APNAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 165B62801EBCF96100389DCB /* CTAppController+APNAdditions.m */; };
 		6CAF42813F4C031CA9A08F7B /* libPods-AirPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 13B533587955FEB6587B30EF /* libPods-AirPushNotification.a */; };
 		B3C35D141EE0BD810036F826 /* NotifCenterDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B3C35D131EE0BD810036F826 /* NotifCenterDelegate.m */; };
+		FA6FA7B020EC0F6A0059BC6B /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA6FA7AF20EC0F6A0059BC6B /* MobileCoreServices.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -42,6 +43,10 @@
 		B3C35D121EE0BD810036F826 /* NotifCenterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotifCenterDelegate.h; sourceTree = "<group>"; };
 		B3C35D131EE0BD810036F826 /* NotifCenterDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotifCenterDelegate.m; sourceTree = "<group>"; };
 		B4A0BB4FFD8A25311C310619 /* Pods-AirPushNotification.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirPushNotification.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AirPushNotification/Pods-AirPushNotification.debug.xcconfig"; sourceTree = "<group>"; };
+		FA6FA7A920EC0F1B0059BC6B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		FA6FA7AB20EC0F3F0059BC6B /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
+		FA6FA7AC20EC0F3F0059BC6B /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
+		FA6FA7AF20EC0F6A0059BC6B /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA6FA7B020EC0F6A0059BC6B /* MobileCoreServices.framework in Frameworks */,
 				6CAF42813F4C031CA9A08F7B /* libPods-AirPushNotification.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -102,6 +108,10 @@
 		C8A2A6F413090BD1EB74CFC2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FA6FA7AF20EC0F6A0059BC6B /* MobileCoreServices.framework */,
+				FA6FA7AC20EC0F3F0059BC6B /* UserNotifications.framework */,
+				FA6FA7AB20EC0F3F0059BC6B /* UserNotificationsUI.framework */,
+				FA6FA7A920EC0F1B0059BC6B /* CoreGraphics.framework */,
 				13B533587955FEB6587B30EF /* libPods-AirPushNotification.a */,
 			);
 			name = Frameworks;

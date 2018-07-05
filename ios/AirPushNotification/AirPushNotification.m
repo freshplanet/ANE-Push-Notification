@@ -21,6 +21,7 @@
 #import <objc/message.h>
 #import "StarterNotificationChecker.h"
 #import "NotifCenterDelegate.h"
+#import <MobileCoreServices/MobileCoreServices.h>
 
 #define DEFINE_ANE_FUNCTION(fn) FREObject (fn)(FREContext context, void* functionData, uint32_t argc, FREObject argv[])
 #define MAP_FUNCTION(fn, data) { (const uint8_t*)(#fn), (data), &(fn) }
@@ -132,15 +133,17 @@ static NotifCenterDelegate * _delegate = nil;
  */
 + (void)cancelAllLocalNotificationsWithId:(NSNumber*) notifId {
     
-    // we remove all notifications with the localNotificationId
+    [[UNUserNotificationCenter currentNotificationCenter] removePendingNotificationRequestsWithIdentifiers:@[[[NSString alloc] initWithFormat:@"%@", notifId]]];
+
+    // leaving this in for migration purposes
     for (UILocalNotification* notif in [UIApplication sharedApplication].scheduledLocalNotifications) {
-        
+
         if (notif.userInfo != nil) {
-            
+
             if ([notif.userInfo objectForKey:[notifId stringValue]]) // also for migration
                 [[UIApplication sharedApplication] cancelLocalNotification:notif];
             else if ([notif.userInfo objectForKey:@"notifId"]) { // the current way of storing notifId
-               
+
                 if ([[notif.userInfo objectForKey:@"notifId"] intValue] == [notifId intValue])
                     [[UIApplication sharedApplication] cancelLocalNotification:notif];
             }
@@ -299,64 +302,97 @@ DEFINE_ANE_FUNCTION(sendLocalNotification) {
     if (FREGetObjectAsUint32(argv[1], &timestamp) != FRE_OK)
         return NULL;
    
+    // title
+    const uint8_t* utf8_title;
+    NSString* title = nil;
+    if (FREGetObjectAsUTF8(argv[2], &string_length, &utf8_title) == FRE_OK) {
+        title = [NSString stringWithUTF8String:(char*)utf8_title];
+    }
+    
     // recurrence
     uint32_t recurrence = 0;
-    if (argc >= 4)
-        FREGetObjectAsUint32(argv[3], &recurrence);
+    FREGetObjectAsUint32(argv[3], &recurrence);
     
     // local notif id: 0 is default
     uint32_t localNotificationId = 0;
-    if (argc >= 5 && FREGetObjectAsUint32(argv[4], &localNotificationId) != FRE_OK)
+    if (FREGetObjectAsUint32(argv[4], &localNotificationId) != FRE_OK)
         localNotificationId = 0;
 
     NSNumber* localNotifIdNumber = [NSNumber numberWithInt:localNotificationId];
     [AirPushNotification cancelAllLocalNotificationsWithId:localNotifIdNumber];
     
     NSDate* itemDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
-    UILocalNotification* localNotif = [[UILocalNotification alloc] init];
     
-    if (localNotif == nil)
-        return NULL;
+    UNMutableNotificationContent *content = [UNMutableNotificationContent new];
     
-    localNotif.fireDate = itemDate;
-    localNotif.timeZone = [NSTimeZone defaultTimeZone];
-    
-    localNotif.alertBody = message;
-    localNotif.alertAction = @"View Details";
-    localNotif.soundName = UILocalNotificationDefaultSoundName;
-    
-    if (argc == 6) { // optional path for deep linking
+    uint32_t path_len;
+    const uint8_t *path_utf8;
+    if (FREGetObjectAsUTF8(argv[5], &path_len, &path_utf8) == FRE_OK) {
         
-        uint32_t path_len;
-        const uint8_t *path_utf8;
-        if (FREGetObjectAsUTF8(argv[5], &path_len, &path_utf8) == FRE_OK) {
-            
-            NSString* pathString = [NSString stringWithUTF8String:(char*)path_utf8];
-            localNotif.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:localNotifIdNumber, @"notifId", pathString, @"path", nil];
+        NSString* pathString = [NSString stringWithUTF8String:(char*)path_utf8];
+        if(pathString.length > 0){
+            content.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:localNotifIdNumber, @"notifId", pathString, @"path", nil];
         }
         else {
-            localNotif.userInfo = [NSDictionary dictionaryWithObject:localNotifIdNumber forKey:@"notifId"];
+            content.userInfo = [NSDictionary dictionaryWithObject:localNotifIdNumber forKey:@"notifId"];
         }
         
     }
     else {
-        localNotif.userInfo = [NSDictionary dictionaryWithObject:localNotifIdNumber forKey:@"notifId"];
+        content.userInfo = [NSDictionary dictionaryWithObject:localNotifIdNumber forKey:@"notifId"];
     }
+    
+    unsigned units = NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;
+    BOOL repeat = false;
     
     if (recurrence > 0) {
         
         if (recurrence == 1)
-            localNotif.repeatInterval = NSDayCalendarUnit;
+            units = units | NSCalendarUnitDay;
         else if (recurrence == 2)
-            localNotif.repeatInterval = NSWeekCalendarUnit;
+            units = units | NSCalendarUnitWeekday;
         else if (recurrence == 3)
-            localNotif.repeatInterval = NSMonthCalendarUnit;
+            units = units | NSCalendarUnitMonth;
         else if (recurrence == 4)
-            localNotif.repeatInterval = NSYearCalendarUnit;
+            units = units | NSCalendarUnitYear;
+        
+        repeat = true;
+    }
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    calendar.timeZone = [NSTimeZone defaultTimeZone];
+    NSDateComponents *components = [calendar components:units fromDate:itemDate];
+    UNCalendarNotificationTrigger *trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:components repeats:repeat];
+    
+    uint32_t iconURL_len;
+    const uint8_t *iconURL_utf8;
+    if (FREGetObjectAsUTF8(argv[6], &iconURL_len, &iconURL_utf8) == FRE_OK) {
+        
+        NSString* iconPath = [NSString stringWithUTF8String:(char*)iconURL_utf8];
+        UIImage *img = [UIImage imageNamed:iconPath];
+        NSURL *temporaryFileLocation = [[NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES] URLByAppendingPathComponent:@"notification_icon"];
+        NSError *error;
+        [UIImagePNGRepresentation(img) writeToFile:temporaryFileLocation.path options:0 error:&error];
+        if (error)
+        {
+            NSLog(@"Error while creating temp file: %@", error);
+        }
+        UNNotificationAttachment *icon = [UNNotificationAttachment attachmentWithIdentifier:@"thumbnail" URL:temporaryFileLocation
+                                                                                    options:@{UNNotificationAttachmentOptionsTypeHintKey: (NSString*)kUTTypePNG }
+                                                                                      error:&error];
+        if (icon)
+        {
+            content.attachments = @[icon];
+        }
     }
     
-    [[UIApplication sharedApplication] scheduleLocalNotification:localNotif];
-//    [localNotif release];
+    content.body = message;
+    if(title != nil) {
+        content.title = title;
+    }
+    content.sound = [UNNotificationSound defaultSound];
+    
+    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:[[NSString alloc] initWithFormat:@"%@", localNotifIdNumber] content:content trigger:trigger];
+    [UNUserNotificationCenter.currentNotificationCenter addNotificationRequest:request withCompletionHandler:nil];
     
     return NULL;
 }
@@ -383,12 +419,11 @@ DEFINE_ANE_FUNCTION(cancelLocalNotification) {
  */
 DEFINE_ANE_FUNCTION(cancelAllLocalNotifications) {
     
-//    if ([UNUserNotificationCenter class]) // ios 10
-//        [[UNUserNotificationCenter currentNotificationCenter] removeAllPendingNotificationRequests];
-//    else
-//        [[UIApplication sharedApplication] cancelAllLocalNotifications];
-    
+
+    [[UNUserNotificationCenter currentNotificationCenter] removeAllPendingNotificationRequests];
+    // leaving this in for migration purposes
     [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    
     return NULL;
 }
 
