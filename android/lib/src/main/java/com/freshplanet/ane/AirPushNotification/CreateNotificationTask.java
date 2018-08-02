@@ -19,6 +19,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Random;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -43,6 +45,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
@@ -51,7 +54,8 @@ import com.distriqt.extension.util.Resources;
 public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 {
 	private static int NOTIFICATION_ID = 1;
-	
+	private static final int TYPE_STACK = 0;
+
 	private Context _context;
 	private Intent _intent;
 	private Bitmap _picture;
@@ -164,9 +168,13 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		}
 		CharSequence contentText = _intent.getStringExtra("contentText");
 		CharSequence tickerText = _intent.getStringExtra("tickerText");
-		
+
 		String largeIconResourceId = _intent.getStringExtra("largeIconResourceId");
-		
+		String groupId = _intent.getStringExtra("groupId");
+		if(groupId.equals("")) {
+			groupId = null;
+		}
+
 		// Notification images
 		int smallIconId = Resources.getResourseIdByName(_context.getPackageName(), "drawable", "status_icon");
 		int largeIconId = Resources.getResourseIdByName(_context.getPackageName(), "drawable", "app_icon");
@@ -174,7 +182,7 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		{
 			largeIconId = Resources.getResourseIdByName(_context.getPackageName(), "drawable", largeIconResourceId);
 		}
-		
+
 		Bitmap largeIcon;
 		if (downloadSuccess)
 		{
@@ -184,17 +192,17 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		{
 			largeIcon = BitmapFactory.decodeResource(_context.getResources(), largeIconId);
 		}
-		
+
 		// rounded picture for lollipop
 		if (largeIcon != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 		{
 			largeIcon = getCircleBitmap(largeIcon);
 		}
-		
+
 		// Notification sound
 		Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-		
-		// Notification action
+
+
 		Intent notificationIntent = new Intent(_context, NotificationActivity.class);;
 		notificationIntent.putExtra("params", Extension.getParametersFromIntent(_intent));
 		PendingIntent contentIntent = PendingIntent.getActivity(_context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -225,15 +233,57 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 				.setWhen(System.currentTimeMillis())
 				.setAutoCancel(true)
 				.setColor(0xFF2DA9F9)
+				.setGroup(groupId)
 				.setContentIntent(contentIntent);
 
+
 		Notification notification = builder.build();
+
 		notifManager.notify(NOTIFICATION_ID, notification);
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && groupId != null) {
+			ArrayList<StatusBarNotification> groupedNotifications = new ArrayList<>();
+			for (StatusBarNotification sbn : notifManager.getActiveNotifications()) {
+				// add any previously sent notifications with a group that matches our RemoteNotification
+				// and exclude any previously sent stack notifications
+				if (groupId != null &&
+						groupId.equals(sbn.getNotification().getGroup()) && sbn.getId() != TYPE_STACK) {
+					groupedNotifications.add(sbn);
+				}
+			}
+
+			if (groupedNotifications.size() >= 1) {
+				NotificationCompat.InboxStyle inbox = new NotificationCompat.InboxStyle();
+				for (StatusBarNotification activeSbn : groupedNotifications) {
+					String stackNotificationLine = (String)activeSbn.getNotification().extras.get(NotificationCompat.EXTRA_TITLE);
+					if (stackNotificationLine != null) {
+						inbox.addLine(stackNotificationLine);
+					}
+				}
+//				inbox.setSummaryText(String.format("%d new activities", groupedNotifications.size()));
+				builder = new NotificationCompat.Builder(_context, "sp2-channel");
+				builder.setContentTitle(contentTitle);
+				builder.setContentText(contentText);
+				builder.setStyle(inbox)
+						.setSmallIcon(smallIconId)
+						.setLargeIcon(largeIcon)
+						.setSound(soundUri)
+						.setWhen(System.currentTimeMillis())
+						.setAutoCancel(true)
+						.setColor(0xFF2DA9F9)
+						.setGroup(groupId)
+						.setGroupSummary(true);
+				notifManager.notify(TYPE_STACK, builder.build());
+
+			}
+		}
+
 		NOTIFICATION_ID++;
 
 		trackNotification();
+
 	}
-	
+
 	private void trackNotification()
 	{
 
