@@ -102,11 +102,6 @@
 
         		<echo message="copying resources"/>
 
-		        <!-- Copy over required resources -->
-		        <copy todir="temp/android/res" failonerror="false">
-		            <fileset dir="${build.intermediates}/res/merged/release"/>
-		        </copy>
-
 		        <!-- copy over additional assets -->
 		        <copy todir="temp/android/" overwrite="true" failonerror="false">
 					<fileset dir="${include.res.location}"/>
