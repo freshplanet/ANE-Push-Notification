@@ -171,7 +171,7 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 
 		String largeIconResourceId = _intent.getStringExtra("largeIconResourceId");
 		String groupId = _intent.getStringExtra("groupId");
-		if(groupId.equals("")) {
+		if(groupId != null && groupId.equals("")) {
 			groupId = null;
 		}
 
