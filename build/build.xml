@@ -47,19 +47,6 @@
             <fileset dir="../ios/build/Release-iphoneos" includes="**/*.bundle/"/>
         </copy>
 
-        <if>
-            <equals arg1="${include.res}" arg2="true"/>
-            <then>
-
-                <echo message="copying resources"/>
-
-                <!-- copy over additional assets -->
-                <copy todir="temp/ios/" overwrite="true" failonerror="false">
-                    <fileset dir="${include.res.location}"/>
-                </copy>
-            </then>
-        </if>
-
         <!-- remove the build directory -->
         <delete dir="../ios/build"/>
     </target>
@@ -94,21 +81,7 @@
 
         <!-- get the jar -->
         <copy file="${build.release}/classes.jar" tofile="temp/android/lib${name}.jar"/>
-
-        <!-- in a condition so assets can be included in another ANE also using default res directory -->
-        <if>
-        	<equals arg1="${include.res}" arg2="true"/>
-        	<then>
-
-        		<echo message="copying resources"/>
-
-		        <!-- copy over additional assets -->
-		        <copy todir="temp/android/" overwrite="true" failonerror="false">
-					<fileset dir="${include.res.location}"/>
-				</copy>
-        	</then>
-        </if>
-
+        
         <!-- Copy dependencies into temp folder -->
         <exec executable="./gradlew" dir="../android">
             <env key="JAVA_HOME" path="${java.home}"/>
