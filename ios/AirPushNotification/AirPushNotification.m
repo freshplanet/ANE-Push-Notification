@@ -342,7 +342,7 @@ DEFINE_ANE_FUNCTION(sendLocalNotification) {
         content.userInfo = [NSDictionary dictionaryWithObject:localNotifIdNumber forKey:@"notifId"];
     }
     
-    unsigned units = NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;
+    unsigned units = NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;
     BOOL repeat = false;
     
     if (recurrence > 0) {
@@ -358,6 +358,8 @@ DEFINE_ANE_FUNCTION(sendLocalNotification) {
         
         repeat = true;
     }
+    
+    
     NSCalendar *calendar = [NSCalendar currentCalendar];
     calendar.timeZone = [NSTimeZone defaultTimeZone];
     NSDateComponents *components = [calendar components:units fromDate:itemDate];
