@@ -120,6 +120,7 @@ package com.freshplanet.ane.AirPushNotification {
          * @param deepLinkPath
          * @param iconPath
          * @param groupId  used to group notifications together
+         * @param categoryId  used to display custom summaries on iOS
 		 */
 		public function sendLocalNotification(message:String,
                                               timestamp:int,
@@ -128,7 +129,9 @@ package com.freshplanet.ane.AirPushNotification {
 											  notificationId:int = DEFAULT_LOCAL_NOTIFICATION_ID,
                                               deepLinkPath:String = null,
                                               iconPath:String = null,
-                                              groupId:String = null):void {
+                                              groupId:String = null,
+											  categoryId:String = null
+		):void {
 
 			if (!isSupported)
 				return;
@@ -142,7 +145,10 @@ package com.freshplanet.ane.AirPushNotification {
 			if(!groupId)
 				groupId = "";
 
-			_context.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath, iconPath, groupId);
+			if(!categoryId)
+				categoryId = "";
+
+			_context.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath, iconPath, groupId, categoryId);
 
 		}
 

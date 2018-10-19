@@ -394,12 +394,26 @@ DEFINE_ANE_FUNCTION(sendLocalNotification) {
         groupId = [NSString stringWithUTF8String:(char*)groupId_utf8];
     }
     
+    uint32_t categoryId_len;
+    const uint8_t *categoryId_utf8;
+    NSString* categoryId = nil;
+    if (FREGetObjectAsUTF8(argv[8], &categoryId_len, &categoryId_utf8) == FRE_OK) {
+        categoryId = [NSString stringWithUTF8String:(char*)categoryId_utf8];
+    }
+    
+    if ((groupId == nil || [groupId isEqualToString:@""]) && categoryId != nil) {
+        groupId = categoryId;
+    }
+    
     content.body = message;
     if(title != nil) {
         content.title = title;
     }
+    
+    
     content.sound = [UNNotificationSound defaultSound];
     content.threadIdentifier = groupId;
+    content.categoryIdentifier = categoryId;
     
     UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:[[NSString alloc] initWithFormat:@"%@", localNotifIdNumber] content:content trigger:trigger];
     [UNUserNotificationCenter.currentNotificationCenter addNotificationRequest:request withCompletionHandler:nil];
