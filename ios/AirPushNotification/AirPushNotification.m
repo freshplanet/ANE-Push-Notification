@@ -19,7 +19,6 @@
 #import <UserNotifications/UserNotifications.h>
 #import <objc/runtime.h>
 #import <objc/message.h>
-#import "StarterNotificationChecker.h"
 #import "NotifCenterDelegate.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 
@@ -260,25 +259,6 @@ DEFINE_ANE_FUNCTION(setIsAppInForeground) {
  
  */
 DEFINE_ANE_FUNCTION(fetchStarterNotification) {
-    
-    if ([UNUserNotificationCenter class]) {
-        NSDictionary * receivedNotif = [AirPushNotification getAndClearDelegateStarterNotif];
-        if (receivedNotif != nil) {
-            NSString* receivedNotifString = [AirPushNotification convertToJSonString:receivedNotif];
-            FREDispatchStatusEventAsync(context, (uint8_t*)"APP_STARTING_FROM_NOTIFICATION", (uint8_t*)[receivedNotifString UTF8String]);
-        }
-        
-        return NULL;
-    }
-    
-    BOOL appStartedWithNotification = [StarterNotificationChecker applicationStartedWithNotification];
-    
-    if (appStartedWithNotification) {
-        
-        NSDictionary* launchOptions = [StarterNotificationChecker getStarterNotification];
-        NSString* stringInfo = [AirPushNotification convertToJSonString:launchOptions];
-        FREDispatchStatusEventAsync(context, (uint8_t*)"APP_STARTING_FROM_NOTIFICATION", (uint8_t*)[stringInfo UTF8String]);
-    }
     
     return NULL;
 }
