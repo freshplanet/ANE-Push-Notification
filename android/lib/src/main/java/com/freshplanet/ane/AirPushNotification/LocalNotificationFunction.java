@@ -65,6 +65,7 @@ public class LocalNotificationFunction implements FREFunction {
 		int notificationId = DEFAULT_NOTIFICATION_ID;
 		String largeIconResourceId = null;
 		String groupId = null;
+		String categoryId = null;
 		try {
 			message = arg1[0].getAsString();
 			timestamp = (long) arg1[1].getAsInt();
@@ -89,6 +90,11 @@ public class LocalNotificationFunction implements FREFunction {
 			{
 				groupId = arg1[7].getAsString();
 			}
+
+			if (arg1.length >= 9 && arg1[8] != null)
+			{
+				categoryId = arg1[8].getAsString();
+			}
 			
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
@@ -101,8 +107,11 @@ public class LocalNotificationFunction implements FREFunction {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
+
+		if ((groupId == null || groupId.equals("")) && categoryId != null) {
+			groupId = categoryId;
+		}
+
 		
 		if (message != null && timestamp > 0)
 		{
@@ -131,6 +140,12 @@ public class LocalNotificationFunction implements FREFunction {
 			{
 				intent.putExtra("groupId", groupId);
 			}
+
+			if (categoryId != null)
+			{
+				intent.putExtra("categoryId", categoryId);
+			}
+
 			
 			PendingIntent sender = PendingIntent.getBroadcast(appContext, notificationId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 			

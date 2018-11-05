@@ -48,6 +48,7 @@ import android.os.Build;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.util.Log;
 
 import com.distriqt.extension.util.Resources;
 
@@ -175,6 +176,18 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 			groupId = null;
 		}
 
+		String categoryId = _intent.getStringExtra("categoryId");
+		if(categoryId != null && categoryId.equals("")) {
+			categoryId = "sp2-channel"; // must not be null
+		}
+
+		String categoryName = "SongPop2";
+
+		if(!categoryId.equals("sp2-channel")) {
+			int categoryNameResourceId = Resources.getResourseIdByName(_context.getPackageName(), "string", "sp2_"+categoryId);
+			categoryName = _context.getString(categoryNameResourceId);
+		}
+
 		// Notification images
 		int smallIconId = Resources.getResourseIdByName(_context.getPackageName(), "drawable", "status_icon");
 		int largeIconId = Resources.getResourseIdByName(_context.getPackageName(), "drawable", "app_icon");
@@ -213,11 +226,12 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 
 		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
 			int importance = NotificationManager.IMPORTANCE_HIGH;
-			NotificationChannel notificationChannel = new NotificationChannel("sp2-channel", "songpop2" ,importance);
+			NotificationChannel notificationChannel = new NotificationChannel(categoryId, categoryName ,importance);
 			notificationChannel.enableLights(true);
 			notificationChannel.enableVibration(true);
 			notifManager.createNotificationChannel(notificationChannel);
-			builder = new NotificationCompat.Builder(_context, "sp2-channel");
+
+			builder = new NotificationCompat.Builder(_context, categoryId);
 		}
 		else {
 			builder = new NotificationCompat.Builder(_context);
@@ -260,8 +274,10 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 						inbox.addLine(stackNotificationLine);
 					}
 				}
-//				inbox.setSummaryText(String.format("%d new activities", groupedNotifications.size()));
-				builder = new NotificationCompat.Builder(_context, "sp2-channel");
+
+				inbox.setSummaryText(categoryName);
+
+				builder = new NotificationCompat.Builder(_context, categoryId);
 				builder.setContentTitle(contentTitle);
 				builder.setContentText(contentText);
 				builder.setStyle(inbox)
@@ -276,6 +292,7 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 				notifManager.notify(TYPE_STACK, builder.build());
 
 			}
+
 		}
 
 		NOTIFICATION_ID++;
