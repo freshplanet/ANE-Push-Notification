@@ -15,6 +15,7 @@
 package com.freshplanet.ane.AirPushNotification;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.adobe.fre.FREContext;
@@ -67,7 +68,7 @@ public class StoreNotifTrackingInfo implements FREFunction {
 		
 		// We need an Editor object to make preference changes.
 		// All objects are from android.context.Context
-		SharedPreferences settings = act.getSharedPreferences(Extension.PREFS_NAME, 0);
+		SharedPreferences settings = act.getSharedPreferences(Extension.PREFS_NAME, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString(Extension.PREFS_KEY, url);
 	

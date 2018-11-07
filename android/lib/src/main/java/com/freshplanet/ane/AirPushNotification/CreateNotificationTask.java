@@ -20,7 +20,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Random;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -47,15 +46,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.util.Log;
 
 import com.distriqt.extension.util.Resources;
 
 public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 {
-	private static int NOTIFICATION_ID = 1;
-	private static final int TYPE_STACK = 0;
 
 	private Context _context;
 	private Intent _intent;
@@ -160,6 +155,8 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 			Extension.log("Couldn't create push notification: _context or _intent was null (CreateNotificationTask.onPostExecute)");
 			return;
 		}
+
+
 		
 		// Notification texts
 		CharSequence contentTitle = _intent.getStringExtra("contentTitle");
@@ -251,22 +248,24 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 				.setContentIntent(contentIntent);
 
 
-		Notification notification = builder.build();
+		int notificationId = Extension.getNotificationID(_context);
 
-		notifManager.notify(NOTIFICATION_ID, notification);
+		Notification notification = builder.build();
+		notifManager.notify(notificationId, notification);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && groupId != null) {
+
 			ArrayList<StatusBarNotification> groupedNotifications = new ArrayList<>();
 			for (StatusBarNotification sbn : notifManager.getActiveNotifications()) {
 				// add any previously sent notifications with a group that matches our RemoteNotification
 				// and exclude any previously sent stack notifications
-				if (groupId != null &&
-						groupId.equals(sbn.getNotification().getGroup()) && sbn.getId() != TYPE_STACK) {
+
+				if (groupId.equals(sbn.getNotification().getGroup())) {
 					groupedNotifications.add(sbn);
 				}
 			}
 
-			if (groupedNotifications.size() >= 1) {
+			if (groupedNotifications.size() > 1) {
 				NotificationCompat.InboxStyle inbox = new NotificationCompat.InboxStyle();
 				for (StatusBarNotification activeSbn : groupedNotifications) {
 					String stackNotificationLine = (String)activeSbn.getNotification().extras.get(NotificationCompat.EXTRA_TITLE);
@@ -289,13 +288,13 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 						.setColor(0xFF2DA9F9)
 						.setGroup(groupId)
 						.setGroupSummary(true);
-				notifManager.notify(TYPE_STACK, builder.build());
+
+				notifManager.notify(Extension.getNotificationID(_context), builder.build());
 
 			}
 
 		}
 
-		NOTIFICATION_ID++;
 
 		trackNotification();
 
@@ -305,7 +304,7 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 	{
 
 		// retrieve stored url
-		SharedPreferences settings = _context.getSharedPreferences(Extension.PREFS_NAME, 0);
+		SharedPreferences settings = _context.getSharedPreferences(Extension.PREFS_NAME, Context.MODE_PRIVATE);
 		String trackingUrl = settings.getString(Extension.PREFS_KEY, null);
 		if (trackingUrl != null)
 		{

@@ -17,12 +17,19 @@ package com.freshplanet.ane.AirPushNotification;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREExtension;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Extension implements FREExtension {
 
@@ -31,13 +38,41 @@ public class Extension implements FREExtension {
 	public static final String PREFS_NAME = "UrlPrefFile";
 	public static final String PREFS_KEY = "trackUrl";
 
+	public static final String PREFS_NOTIFICATION_NAME = "notifIdsFile";
+	public static final String PREFS_NOTIFICATION_ID = "notificationId";
+	private static AtomicInteger atomicInt;
 	public static ExtensionContext context;
 	
 	public static boolean isInForeground = false;
+
+	public static int getNotificationID(Context context) {
+
+		SharedPreferences settings = context.getSharedPreferences(Extension.PREFS_NOTIFICATION_NAME, Context.MODE_PRIVATE);
+		if(atomicInt == null) {
+			String notificationIdString = settings.getString(Extension.PREFS_NOTIFICATION_ID, null);
+			if(notificationIdString != null) {
+				atomicInt = new AtomicInteger(Integer.valueOf(notificationIdString));
+			}
+			else{
+				atomicInt = new AtomicInteger(1);
+			}
+
+		}
+
+		int id = atomicInt.incrementAndGet();
+		SharedPreferences.Editor editor = settings.edit();
+		if(id > 1000000) { // do not grow too much
+			id = 0;
+		}
+		editor.putString(Extension.PREFS_NOTIFICATION_ID, Integer.toString((id+1)));
+		editor.commit();
+		return id;
+	}
 	
 	public FREContext createContext(String extId)
 	{
-		return context = new ExtensionContext();
+		context = new ExtensionContext();
+		return context;
 	}
 
 	public void dispose()
@@ -45,7 +80,9 @@ public class Extension implements FREExtension {
 		context = null;
 	}
 	
-	public void initialize() {}
+	public void initialize() {
+
+	}
 	
 	public static void log(String message)
 	{
