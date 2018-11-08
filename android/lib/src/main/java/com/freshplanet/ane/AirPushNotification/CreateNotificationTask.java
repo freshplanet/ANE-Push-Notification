@@ -173,15 +173,15 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 			groupId = null;
 		}
 
-		String categoryId = _intent.getStringExtra("categoryId");
-		if(categoryId != null && categoryId.equals("")) {
-			categoryId = "sp2-channel"; // must not be null
+		String categoryId = _intent.getStringExtra("android_channel_id");
+		if(categoryId == null || categoryId.equals("")) {
+			categoryId = _context.getString(Resources.getResourseIdByName(_context.getPackageName(), "string", "notification_channel_id_default"));
 		}
 
-		String categoryName = "SongPop2";
+		String categoryName = null;
 
-		if(!categoryId.equals("sp2-channel")) {
-			int categoryNameResourceId = Resources.getResourseIdByName(_context.getPackageName(), "string", "sp2_"+categoryId);
+		if(categoryId != null) {
+			int categoryNameResourceId = Resources.getResourseIdByName(_context.getPackageName(), "string", "notification_channel_name_"+categoryId);
 			categoryName = _context.getString(categoryNameResourceId);
 		}
 
@@ -221,7 +221,7 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		NotificationManager notifManager = (NotificationManager)_context.getSystemService(Context.NOTIFICATION_SERVICE);
 		NotificationCompat.Builder builder;
 
-		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && categoryId != null && categoryName != null){
 			int importance = NotificationManager.IMPORTANCE_HIGH;
 			NotificationChannel notificationChannel = new NotificationChannel(categoryId, categoryName ,importance);
 			notificationChannel.enableLights(true);

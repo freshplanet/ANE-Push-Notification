@@ -143,7 +143,7 @@ public class LocalNotificationFunction implements FREFunction {
 
 			if (categoryId != null)
 			{
-				intent.putExtra("categoryId", categoryId);
+				intent.putExtra("android_channel_id", categoryId);
 			}
 
 			
