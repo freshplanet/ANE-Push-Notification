@@ -206,7 +206,22 @@ package com.freshplanet.ane.AirPushNotification {
                 _context.call("storeNotifTrackingInfo", url);
         }
 
-        // --------------------------------------------------------------------------------------//
+		/**
+		 * Create Android notification channel
+		 * @param channelId
+		 * @param channelName
+		 * @param importance
+		 * @param enableLights
+		 * @param enableVibration
+		 */
+		public function createNotificationChannel(channelId:String, channelName:String, importance:int, enableLights:Boolean, enableVibration:Boolean):void {
+
+			if (_isAndroid())
+				_context.call("createNotificationChannel", channelId, channelName, importance, enableLights, enableVibration);
+		}
+
+
+		// --------------------------------------------------------------------------------------//
         //																						 //
         // 									 	PRIVATE API										 //
         // 																						 //
