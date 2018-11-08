@@ -1,9 +1,0 @@
-<resources>
-    <string name="sp2_dailyBonus">Daily Bonus</string>
-    <string name="sp2_chat">Chat</string>
-    <string name="sp2_PvP_yourTurn">Challenges</string>
-    <string name="sp2_playlist">Playlist</string>
-    <string name="sp2_party">Party</string>
-    <string name="sp2_specialEvent">Special Events</string>
-    <string name="sp2_signup">SongPop2</string>
-</resources>
