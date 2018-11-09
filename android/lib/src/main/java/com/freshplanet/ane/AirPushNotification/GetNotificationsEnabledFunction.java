@@ -14,6 +14,9 @@
  */
 package com.freshplanet.ane.AirPushNotification;
 
+import android.content.Context;
+import android.support.v4.app.NotificationManagerCompat;
+
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
@@ -28,9 +31,9 @@ public class GetNotificationsEnabledFunction implements FREFunction
 	
     @Override
     public FREObject call(FREContext freContext, FREObject[] freObjects) {        
-        Boolean notifsEnabled = true;
         try {
-            return FREObject.newObject(notifsEnabled);
+            Context appContext = freContext.getActivity().getApplicationContext();
+            return FREObject.newObject(NotificationManagerCompat.from(appContext).areNotificationsEnabled());
         } catch (FREWrongThreadException e) {
             e.printStackTrace();
         }
