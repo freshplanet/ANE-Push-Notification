@@ -24,18 +24,49 @@ import android.util.Log;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
+import com.adobe.fre.FREInvalidObjectException;
 import com.adobe.fre.FREObject;
+import com.adobe.fre.FRETypeMismatchException;
+import com.adobe.fre.FREWrongThreadException;
 
 public class GoToNotifSettingsFunction implements FREFunction
 {
     @Override
     public FREObject call(FREContext freContext, FREObject[] freObjects) {
 
+        String channelId = null;
+        if (freObjects.length > 0) {
+            try {
+                channelId = freObjects[0].getAsString();
+                if(channelId.equals("")) {
+                    channelId = null;
+                }
+
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } catch (FRETypeMismatchException e) {
+                e.printStackTrace();
+            } catch (FREInvalidObjectException e) {
+                e.printStackTrace();
+            } catch (FREWrongThreadException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         Context appContext = freContext.getActivity().getApplicationContext();
         Intent intent = new Intent();
         if(android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1){
-            intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-            intent.putExtra(Settings.EXTRA_APP_PACKAGE, appContext.getPackageName());
+            if(channelId != null) {
+                intent.setAction(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, appContext.getPackageName());
+                intent.putExtra(Settings.EXTRA_CHANNEL_ID, channelId);
+            }
+            else {
+                intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, appContext.getPackageName());
+            }
         }else if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
             intent.putExtra("app_package", appContext.getPackageName());

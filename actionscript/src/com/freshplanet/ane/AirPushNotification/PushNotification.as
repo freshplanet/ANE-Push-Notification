@@ -100,10 +100,13 @@ package com.freshplanet.ane.AirPushNotification {
         /**
          *
          */
-		public function openDeviceNotificationSettings():void {
+		public function openDeviceNotificationSettings(channelId:String = null):void {
+
+			if(!channelId)
+				channelId = "";
 
 			if (isSupported)
-                _context.call("openDeviceNotificationSettings");
+                _context.call("openDeviceNotificationSettings", channelId);
 		}
 
         /**
