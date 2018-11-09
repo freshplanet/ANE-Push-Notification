@@ -70,6 +70,23 @@ package com.freshplanet.ane.AirPushNotification {
 		}
 
 		/**
+		 * Check if notificationChannel is enabled in Android notification settings
+		 * @param channelId
+		 * @return
+		 */
+		public function isNotificationChannelEnabled(channelId:String):Boolean {
+
+			if (!isSupported)
+				return false;
+
+			if(_isIOS())
+				return true;
+
+
+			return _context.call("checkNotificationChannelEnabled", channelId);
+		}
+
+		/**
 		 * return true if OS permits sending user to settings (iOS 8, Android
 		 */
 		public function get canSendUserToSettings():Boolean {
