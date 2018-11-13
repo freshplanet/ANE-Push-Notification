@@ -17,7 +17,7 @@
 
 @interface StarterNotificationChecker : NSObject
 
-+ (void) load;
+
 + (void) createStarterNotificationChecker:(NSNotification*) notification;
 + (BOOL) applicationStartedWithNotification;
 + (NSDictionary*) getStarterNotification;

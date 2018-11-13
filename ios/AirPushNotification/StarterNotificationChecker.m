@@ -22,18 +22,6 @@ static NSDictionary *_notification = nil;
 
 @implementation StarterNotificationChecker
 
-// hack, this is called before UIApplicationDidFinishLaunching
-+ (void)load {
-    
-    //Only use this on iOS < 10
-    if ([UNUserNotificationCenter class] == nil) {
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(createStarterNotificationChecker:)
-                                                     name:@"UIApplicationDidFinishLaunchingNotification"
-                                                   object:nil];
-    }
-}
-
 + (void)createStarterNotificationChecker:(NSNotification *)notification {
     
     NSDictionary *launchOptions = [notification userInfo];
