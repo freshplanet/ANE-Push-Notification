@@ -34,11 +34,8 @@ static NotifCenterDelegate * _delegate = nil;
 
 
 + (void)load {
-    // on iOS 10+, only use UNUserNotificationCenter to handle incoming notifications
-    if ([UNUserNotificationCenter class]) {
-        _delegate = [[NotifCenterDelegate alloc] init];
-        [[UNUserNotificationCenter currentNotificationCenter] setDelegate:_delegate];
-    }
+    _delegate = [[NotifCenterDelegate alloc] init];
+    [[UNUserNotificationCenter currentNotificationCenter] setDelegate:_delegate];
 }
 
 + (NSDictionary *) getAndClearDelegateStarterNotif {
@@ -176,12 +173,6 @@ void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application,
     
     if (application.applicationState == UIApplicationStateActive) {
          [[AirPushNotification instance] sendEvent:@"NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND" level:stringInfo];
-    } else if ([UNUserNotificationCenter class]) {
-        return; // UNUserNotificationCenter will handle non-foreground notifs on iOS 10+
-    } else if (application.applicationState == UIApplicationStateInactive) {
-        [[AirPushNotification instance] sendEvent:@"APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION" level:stringInfo];
-    } else if (application.applicationState == UIApplicationStateBackground) {
-        [[AirPushNotification instance] sendEvent:@"APP_STARTED_IN_BACKGROUND_FROM_NOTIFICATION" level:stringInfo];
     }
 }
 
@@ -219,24 +210,24 @@ DEFINE_ANE_FUNCTION(setBadgeNb) {
  */
 DEFINE_ANE_FUNCTION(registerPush) {
     
-    if( [UNUserNotificationCenter class] ) {
-        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-        [center requestAuthorizationWithOptions:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge)
-                              completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                                  if( !error ){
-                                      if(granted) {
-                                          [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_ENABLED"];
-                                          //[[UIApplication sharedApplication] registerForRemoteNotifications];
-                                      } else {
-                                          [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_DISABLED"];
-                                      }
-        
+    
+    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+    [center requestAuthorizationWithOptions:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge)
+                          completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                              if( !error ){
+                                  if(granted) {
+                                      [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_ENABLED"];
+                                      //[[UIApplication sharedApplication] registerForRemoteNotifications];
                                   } else {
-                                      //todo maybe dispatch an error event here instead?
                                       [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_DISABLED"];
-                                  }  
-                              }];
-    }
+                                  }
+    
+                              } else {
+                                  //todo maybe dispatch an error event here instead?
+                                  [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_DISABLED"];
+                              }
+                          }];
+    
     
     UIUserNotificationSettings* notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert |
                                                         UIUserNotificationTypeBadge |
@@ -260,26 +251,11 @@ DEFINE_ANE_FUNCTION(setIsAppInForeground) {
  
  */
 DEFINE_ANE_FUNCTION(fetchStarterNotification) {
-    
-    if ([UNUserNotificationCenter class]) {
-        NSDictionary * receivedNotif = [AirPushNotification getAndClearDelegateStarterNotif];
-        if (receivedNotif != nil) {
-            NSString* receivedNotifString = [AirPushNotification convertToJSonString:receivedNotif];
-            FREDispatchStatusEventAsync(context, (uint8_t*)"APP_STARTING_FROM_NOTIFICATION", (uint8_t*)[receivedNotifString UTF8String]);
-        }
-        
-        return NULL;
+    NSDictionary * receivedNotif = [AirPushNotification getAndClearDelegateStarterNotif];
+    if (receivedNotif != nil) {
+        NSString* receivedNotifString = [AirPushNotification convertToJSonString:receivedNotif];
+        FREDispatchStatusEventAsync(context, (uint8_t*)"APP_STARTING_FROM_NOTIFICATION", (uint8_t*)[receivedNotifString UTF8String]);
     }
-    
-    BOOL appStartedWithNotification = [StarterNotificationChecker applicationStartedWithNotification];
-    
-    if (appStartedWithNotification) {
-        
-        NSDictionary* launchOptions = [StarterNotificationChecker getStarterNotification];
-        NSString* stringInfo = [AirPushNotification convertToJSonString:launchOptions];
-        FREDispatchStatusEventAsync(context, (uint8_t*)"APP_STARTING_FROM_NOTIFICATION", (uint8_t*)[stringInfo UTF8String]);
-    }
-    
     return NULL;
 }
 
@@ -500,16 +476,10 @@ DEFINE_ANE_FUNCTION(openDeviceNotificationSettings) {
     UIApplication* app = [UIApplication sharedApplication];
     NSURL* appSettingsURL = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
     
-    if ([app respondsToSelector:@selector(openURL:options:completionHandler:)]) {  // ios 10
-        
-        [app openURL:appSettingsURL options:@{} completionHandler:^(BOOL success) {
-            // nothing
-        }];
-    }
-    else {
-        [app openURL:appSettingsURL];
-    }
-    
+    [app openURL:appSettingsURL options:@{} completionHandler:^(BOOL success) {
+        // nothing
+    }];
+   
     return NULL;
 }
 
