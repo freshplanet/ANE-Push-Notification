@@ -160,10 +160,6 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		
 		// Notification texts
 		CharSequence contentTitle = _intent.getStringExtra("contentTitle");
-		if (contentTitle.length() > 22)
-		{
-			contentTitle = contentTitle.subSequence(0, 20) + "...";
-		}
 		CharSequence contentText = _intent.getStringExtra("contentText");
 		CharSequence tickerText = _intent.getStringExtra("tickerText");
 
