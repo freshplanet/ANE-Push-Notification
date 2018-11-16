@@ -19,7 +19,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -46,6 +45,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.distriqt.extension.util.Resources;
 
@@ -171,14 +171,25 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 
 		String categoryId = _intent.getStringExtra("android_channel_id");
 		if(categoryId == null || categoryId.equals("")) {
-			categoryId = _context.getString(Resources.getResourseIdByName(_context.getPackageName(), "string", "notification_channel_id_default"));
+			try{
+				categoryId = _context.getString(Resources.getResourseIdByName(_context.getPackageName(), "string", "notification_channel_id_default"));
+			}
+			catch (Exception e) {
+				Log.d("AirPushNotification", "Unable to retrieve default category id");
+			}
+
 		}
 
 		String categoryName = null;
 
 		if(categoryId != null) {
-			int categoryNameResourceId = Resources.getResourseIdByName(_context.getPackageName(), "string", "notification_channel_name_"+categoryId);
-			categoryName = _context.getString(categoryNameResourceId);
+			try {
+				int categoryNameResourceId = Resources.getResourseIdByName(_context.getPackageName(), "string", "notification_channel_name_" + categoryId);
+				categoryName = _context.getString(categoryNameResourceId);
+			}
+			catch (Exception e) {
+				Log.d("AirPushNotification", "Unable to retrieve category name");
+			}
 		}
 
 		// Notification images
@@ -230,6 +241,24 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 			builder = new NotificationCompat.Builder(_context);
 		}
 
+		NotificationCompat.InboxStyle inbox = new NotificationCompat.InboxStyle();
+		CharSequence summaryArg = _intent.getStringExtra("summaryArg");
+		String summaryText = null;
+		int summaryId = -1;
+		if(categoryId != null) {
+			try{
+				summaryId = Resources.getResourseIdByName(_context.getPackageName(), "plurals", categoryId);
+				if(summaryId >= 0) {
+					summaryText = _context.getResources().getQuantityString(summaryId, 1, 1, summaryArg);
+					inbox.setSummaryText(summaryText);
+				}
+			}
+			catch (Exception e) {
+				Log.d("AirPushNotification", "Unable to retrieve summary text");
+			}
+
+		}
+		
 		// Create notification
 		builder.setContentTitle(contentTitle)
 				.setContentText(contentText)
@@ -241,7 +270,9 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 				.setAutoCancel(true)
 				.setColor(0xFF2DA9F9)
 				.setGroup(groupId)
-				.setContentIntent(contentIntent);
+				.setContentIntent(contentIntent)
+				.setStyle(inbox)
+				.setGroupSummary(false);
 
 
 		int notificationId = Extension.getNotificationID(_context);
@@ -249,48 +280,46 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		Notification notification = builder.build();
 		notifManager.notify(notificationId, notification);
 
+
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && groupId != null) {
 
-			ArrayList<StatusBarNotification> groupedNotifications = new ArrayList<>();
+			int numNotifs = 0;
 			for (StatusBarNotification sbn : notifManager.getActiveNotifications()) {
-				// add any previously sent notifications with a group that matches our RemoteNotification
 				// and exclude any previously sent stack notifications
-
-				if (groupId.equals(sbn.getNotification().getGroup())) {
-					groupedNotifications.add(sbn);
+				if (groupId.equals(sbn.getNotification().getGroup()) && !Extension.isSummaryID(_context, groupId, sbn.getId())) {
+					numNotifs++;
 				}
 			}
 
-			if (groupedNotifications.size() > 1) {
-				NotificationCompat.InboxStyle inbox = new NotificationCompat.InboxStyle();
-				for (StatusBarNotification activeSbn : groupedNotifications) {
-					String stackNotificationLine = (String)activeSbn.getNotification().extras.get(NotificationCompat.EXTRA_TITLE);
-					if (stackNotificationLine != null) {
-						inbox.addLine(stackNotificationLine);
-					}
+			inbox = new NotificationCompat.InboxStyle();
+			try {
+				if(summaryId >= 0) {
+					summaryText = _context.getResources().getQuantityString(summaryId, numNotifs, numNotifs, summaryArg);
+					inbox.setSummaryText(summaryText);
 				}
-
-				inbox.setSummaryText(categoryName);
-
-				builder = new NotificationCompat.Builder(_context, categoryId);
-				builder.setContentTitle(contentTitle);
-				builder.setContentText(contentText);
-				builder.setStyle(inbox)
-						.setSmallIcon(smallIconId)
-						.setLargeIcon(largeIcon)
-						.setSound(soundUri)
-						.setWhen(System.currentTimeMillis())
-						.setAutoCancel(true)
-						.setColor(0xFF2DA9F9)
-						.setGroup(groupId)
-						.setGroupSummary(true);
-
-				notifManager.notify(Extension.getNotificationID(_context), builder.build());
-
 			}
+			catch (Exception e) {
+				Log.d("AirPushNotification", "Unable to retrieve summary text");
+			}
+
+
+			builder = new NotificationCompat.Builder(_context, categoryId);
+			builder.setContentTitle(contentTitle);
+			builder.setContentText(contentText);
+			builder
+					.setStyle(inbox)
+					.setSmallIcon(smallIconId)
+					.setLargeIcon(largeIcon)
+					.setSound(soundUri)
+					.setWhen(System.currentTimeMillis())
+					.setAutoCancel(true)
+					.setColor(0xFF2DA9F9)
+					.setGroup(groupId)
+					.setGroupSummary(true);
+
+			notifManager.notify(Extension.getSummaryID(_context, groupId), builder.build());
 
 		}
-
 
 		trackNotification();
 
