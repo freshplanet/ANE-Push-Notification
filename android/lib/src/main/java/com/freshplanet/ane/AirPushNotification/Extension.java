@@ -40,6 +40,8 @@ public class Extension implements FREExtension {
 
 	public static final String PREFS_NOTIFICATION_NAME = "notifIdsFile";
 	public static final String PREFS_NOTIFICATION_ID = "notificationId";
+
+
 	private static AtomicInteger atomicInt;
 	public static ExtensionContext context;
 	
@@ -68,7 +70,34 @@ public class Extension implements FREExtension {
 		editor.commit();
 		return id;
 	}
-	
+
+	public static int getSummaryID(Context context, String groupId) {
+
+		SharedPreferences settings = context.getSharedPreferences(Extension.PREFS_NOTIFICATION_NAME, Context.MODE_PRIVATE);
+		// check saved notification ID based on groupId
+		String summaryIdString = settings.getString(groupId, null);
+
+		// if it exists - return that one
+		if(summaryIdString != null) {
+			return Integer.valueOf(summaryIdString);
+		}
+		// if none exists - get new one and save it
+		int newID = getNotificationID(context);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString(groupId, Integer.toString((newID)));
+		editor.commit();
+
+		return newID;
+	}
+
+	public static Boolean isSummaryID(Context context, String groupId, int notificationId) {
+
+		SharedPreferences settings = context.getSharedPreferences(Extension.PREFS_NOTIFICATION_NAME, Context.MODE_PRIVATE);
+		// check saved notification ID based on groupId
+		String summaryIdString = settings.getString(groupId, null);
+		return summaryIdString != null && Integer.valueOf(summaryIdString) == notificationId;
+	}
+
 	public FREContext createContext(String extId)
 	{
 		context = new ExtensionContext();
