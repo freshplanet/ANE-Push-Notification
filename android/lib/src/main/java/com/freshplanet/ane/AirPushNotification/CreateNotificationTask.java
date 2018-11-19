@@ -241,17 +241,13 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 			builder = new NotificationCompat.Builder(_context);
 		}
 
-		NotificationCompat.InboxStyle inbox = new NotificationCompat.InboxStyle();
+		NotificationCompat.InboxStyle inbox;
 		CharSequence summaryArg = _intent.getStringExtra("summaryArg");
 		String summaryText = null;
 		int summaryId = -1;
 		if(categoryId != null) {
 			try{
 				summaryId = Resources.getResourseIdByName(_context.getPackageName(), "plurals", categoryId);
-				if(summaryId >= 0) {
-					summaryText = _context.getResources().getQuantityString(summaryId, 1, 1, summaryArg);
-					inbox.setSummaryText(summaryText);
-				}
 			}
 			catch (Exception e) {
 				Log.d("AirPushNotification", "Unable to retrieve summary text");
@@ -271,7 +267,6 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 				.setColor(0xFF2DA9F9)
 				.setGroup(groupId)
 				.setContentIntent(contentIntent)
-				.setStyle(inbox)
 				.setGroupSummary(false);
 
 
