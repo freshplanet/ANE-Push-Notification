@@ -20,8 +20,6 @@
         <!-- make the build directory for the objc code -->
         <mkdir dir="temp/ios"/>
 
-
-
         <!-- clean the build -->
         <exec executable="xcodebuild" failonerror="true" dir="../ios">
             <arg line="-workspace ${name}.xcworkspace"/>
@@ -37,6 +35,29 @@
             <arg line="-configuration Release"/>
             <arg line="SYMROOT=$(PWD)/../ios/build"/>
         </exec>
+
+        <if>
+            <equals arg1="${include.res}" arg2="true"/>
+            <then>
+
+                <echo message="copying resources"/>
+
+                <if>
+                    <available file="${ios.res}" type="dir" />
+                    <then>
+                        <echo message="copying files from ${ios.res}" />
+                    </then>
+                    <else>
+                        <fail message="Directory ${ios.res} does not exist" />
+                    </else>
+                </if>
+
+                <!-- copy over additional assets -->
+                <copy todir="temp/ios/" overwrite="true" failonerror="true">
+                    <fileset dir="${ios.res}"/>
+                </copy>
+            </then>
+        </if>
 
         <!-- copy the ios lib to the base temp ios directory -->
         <copy todir="temp/ios" overwrite="true" includeEmptyDirs="false" flatten="true">

@@ -13,6 +13,7 @@
 		6CAF42813F4C031CA9A08F7B /* libPods-AirPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 13B533587955FEB6587B30EF /* libPods-AirPushNotification.a */; };
 		B3C35D141EE0BD810036F826 /* NotifCenterDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B3C35D131EE0BD810036F826 /* NotifCenterDelegate.m */; };
 		FA6FA7B020EC0F6A0059BC6B /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA6FA7AF20EC0F6A0059BC6B /* MobileCoreServices.framework */; };
+		FAE485A521ADF4C100D8F939 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA6FA7AC20EC0F3F0059BC6B /* UserNotifications.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -51,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAE485A521ADF4C100D8F939 /* UserNotifications.framework in Frameworks */,
 				FA6FA7B020EC0F6A0059BC6B /* MobileCoreServices.framework in Frameworks */,
 				6CAF42813F4C031CA9A08F7B /* libPods-AirPushNotification.a in Frameworks */,
 			);
@@ -257,7 +259,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -299,7 +301,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -310,6 +312,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B4A0BB4FFD8A25311C310619 /* Pods-AirPushNotification.debug.xcconfig */;
 			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -320,6 +323,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 06B8B79C5BACF57B805B463B /* Pods-AirPushNotification.release.xcconfig */;
 			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

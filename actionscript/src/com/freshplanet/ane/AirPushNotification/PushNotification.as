@@ -113,11 +113,17 @@ package com.freshplanet.ane.AirPushNotification {
 		 * Needs Project id for Android Notifications.
 		 * The project id is the one the developer used to register to gcm.
 		 * @param projectId: project id to use
+		 * @param iOSNotificationCategories: notification categories used on iOS (PushNotificationCategoryiOS)
 		 */
-		public function registerForPushNotification(projectId:String = null):void {
+		public function registerForPushNotification(projectId:String = null, iOSNotificationCategories:Array = null):void {
 
-			if (isSupported)
+			if(!isSupported)
+				return;
+
+			if (_isAndroid())
                 _context.call("registerPush", projectId);
+			else if(_isIOS())
+				_context.call("registerPush", iOSNotificationCategories != null ? JSON.stringify(iOSNotificationCategories) : null);
 		}
 
         /**
