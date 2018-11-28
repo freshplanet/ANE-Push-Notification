@@ -47,6 +47,16 @@ static NotifCenterDelegate * _delegate = nil;
     return nil;
 }
 
++ (void) checkDelegateAppNotifRequest {
+    if(_delegate != nil) {
+        BOOL isPending = _delegate.pendingOpenAppNotificationSettings;
+        _delegate.pendingOpenAppNotificationSettings = false;
+        if(isPending) {
+            [[AirPushNotification instance] sendEvent:@"OPEN_APP_NOTIFICATION_SETTINGS"];
+        }
+    }
+}
+
 
 #pragma mark - init
 
@@ -212,7 +222,11 @@ DEFINE_ANE_FUNCTION(registerPush) {
     
     
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-    [center requestAuthorizationWithOptions:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge)
+    NSUInteger authOptions = UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge;
+    if (@available(iOS 12.0, *)) {
+        authOptions = authOptions | UNAuthorizationOptionProvidesAppNotificationSettings;
+    }
+    [center requestAuthorizationWithOptions:(authOptions)
                           completionHandler:^(BOOL granted, NSError * _Nullable error) {
                               if( !error ){
                                   if(granted) {
@@ -221,7 +235,7 @@ DEFINE_ANE_FUNCTION(registerPush) {
                                   } else {
                                       [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_DISABLED"];
                                   }
-    
+                                  
                               } else {
                                   //todo maybe dispatch an error event here instead?
                                   [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_DISABLED"];
@@ -229,11 +243,111 @@ DEFINE_ANE_FUNCTION(registerPush) {
                           }];
     
     
-    UIUserNotificationSettings* notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert |
-                                                        UIUserNotificationTypeBadge |
-                                                        UIUserNotificationTypeSound
-                                                        categories:nil];
-    [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
+    uint32_t string_length;
+    const uint8_t* utf8_categories;
+    if(argc > 0) {
+        if (FREGetObjectAsUTF8(argv[0], &string_length, &utf8_categories) == FRE_OK) {
+            
+            NSString* categoriesJSONString = [NSString stringWithUTF8String:(char*)utf8_categories];
+            NSData *data = [categoriesJSONString dataUsingEncoding:NSUTF8StringEncoding];
+            NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+            NSMutableArray *categories = [[NSMutableArray alloc] init];
+            for (NSDictionary *catElement in array) {
+                
+                NSString *categoryId = [catElement objectForKey:@"id"];
+                NSString *hiddenSummaryKey = [catElement objectForKey:@"hiddenSummaryKey"];
+                NSString *hiddenSummaryKeyFile = [catElement objectForKey:@"hiddenSummaryKeyFile"];
+                NSString *summaryKey = [catElement objectForKey:@"summaryKey"];
+                NSString *summaryKeyFile = [catElement objectForKey:@"summaryKeyFile"];
+                NSDictionary *action = [catElement objectForKey:@"action"];
+                NSString *actionId = [action objectForKey:@"id"];
+                NSString *actionTitleKey = [action objectForKey:@"titleKey"];
+    
+                if ([hiddenSummaryKey isEqualToString:@""]) {
+                    hiddenSummaryKey = nil;
+                }
+                if ([summaryKey isEqualToString:@""]) {
+                    summaryKey = nil;
+                }
+                
+                UNNotificationAction *notificationAction = [UNNotificationAction actionWithIdentifier:actionId title:NSLocalizedString(actionTitleKey, nil) options:UNNotificationActionOptionForeground];
+                UNNotificationCategory *notificationCategory;
+                if (@available(iOS 12.0, *)) {
+                    notificationCategory = [UNNotificationCategory categoryWithIdentifier:categoryId actions:@[notificationAction] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:hiddenSummaryKey != nil ? NSLocalizedStringFromTable(hiddenSummaryKey,hiddenSummaryKeyFile, @"") : nil categorySummaryFormat:summaryKey != nil ?  NSLocalizedStringFromTable(summaryKey,summaryKeyFile, @"") : nil options:UNNotificationCategoryOptionNone];
+                }
+                else {
+                    notificationCategory = [UNNotificationCategory categoryWithIdentifier:categoryId actions:@[notificationAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+                }
+                
+                if(notificationCategory != nil) {
+                    [categories addObject:notificationCategory];
+                }
+            }
+            [center setNotificationCategories:[NSSet setWithArray:categories]];
+        }
+    }
+    
+    
+    
+    
+    
+//    UNNotificationAction *showChallengeAction = [UNNotificationAction actionWithIdentifier:@"showChallenge" title:NSLocalizedString(@"PLAY_YOUR_TURN", nil) options:UNNotificationActionOptionForeground];
+//    UNNotificationCategory *yourTurnCategory = nil;
+//
+//    UNNotificationAction *showChatAction = [UNNotificationAction actionWithIdentifier:@"showChat" title:NSLocalizedString(@"REPLY_IN_SONGPOP", nil) options:UNNotificationActionOptionForeground];
+//    UNNotificationCategory *chatCategory = nil;
+//
+//    UNNotificationAction *playlistAction = [UNNotificationAction actionWithIdentifier:@"showPlaylist" title:NSLocalizedString(@"CHECK_IT_OUT", nil) options:UNNotificationActionOptionForeground];
+//    UNNotificationCategory *playlistCategory = nil;
+//
+//    UNNotificationAction *partyAction = [UNNotificationAction actionWithIdentifier:@"showParty" title:NSLocalizedString(@"CHECK_IT_OUT", nil) options:UNNotificationActionOptionForeground];
+//    UNNotificationCategory *partyCategory = nil;
+//
+//    UNNotificationAction *specialEventAction = [UNNotificationAction actionWithIdentifier:@"showEvent" title:NSLocalizedString(@"CHECK_IT_OUT", nil) options:UNNotificationActionOptionForeground];
+//    UNNotificationCategory *specialEventCategory = nil;
+//
+//    UNNotificationAction *dailyBonusAction = [UNNotificationAction actionWithIdentifier:@"claimDailyBonus" title:NSLocalizedString(@"CLAIM_DAILY_BONUS", nil) options:UNNotificationActionOptionForeground];
+//    UNNotificationCategory *dailyBonusCategory = nil;
+//
+//    UNNotificationAction *signUpAction = [UNNotificationAction actionWithIdentifier:@"playNow" title:NSLocalizedString(@"PLAY_NOW", nil) options:UNNotificationActionOptionForeground];
+//    UNNotificationCategory *signUpCategory = nil;
+//
+//    if (@available(iOS 12.0, *)) {
+//        // use custom summaries on iOS 12
+//        chatCategory = [UNNotificationCategory categoryWithIdentifier:@"chat" actions:@[showChatAction] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:NSLocalizedStringFromTable(@"MORE_MESSAGES",@"LocalizableDict", @"") categorySummaryFormat:NSLocalizedStringFromTable(@"MORE_MESSAGES_FROM",@"LocalizableDict", @"") options:UNNotificationCategoryOptionNone];
+//
+//        yourTurnCategory = [UNNotificationCategory categoryWithIdentifier:@"PvP_yourTurn" actions:@[showChallengeAction] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:NSLocalizedStringFromTable(@"CHALLENGES",@"LocalizableDict", @"") categorySummaryFormat:NSLocalizedStringFromTable(@"MORE_CHALLENGES",@"LocalizableDict", @"") options:UNNotificationCategoryOptionNone];
+//
+//        playlistCategory = [UNNotificationCategory categoryWithIdentifier:@"playlist" actions:@[playlistAction] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:NSLocalizedStringFromTable(@"PLAYLISTS",@"LocalizableDict", @"") categorySummaryFormat:NSLocalizedStringFromTable(@"MORE_PLAYLISTS",@"LocalizableDict", @"") options:UNNotificationCategoryOptionNone];
+//
+//        partyCategory = [UNNotificationCategory categoryWithIdentifier:@"party" actions:@[partyAction] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:NSLocalizedStringFromTable(@"PARTIES",@"LocalizableDict", @"") categorySummaryFormat:NSLocalizedStringFromTable(@"MORE_PARTIES",@"LocalizableDict", @"") options:UNNotificationCategoryOptionNone];
+//
+//        specialEventCategory = [UNNotificationCategory categoryWithIdentifier:@"specialEvent" actions:@[specialEventAction] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:NSLocalizedStringFromTable(@"EVENTS",@"LocalizableDict", @"") categorySummaryFormat:NSLocalizedStringFromTable(@"MORE_EVENTS",@"LocalizableDict", @"") options:UNNotificationCategoryOptionNone];
+//
+//        dailyBonusCategory = [UNNotificationCategory categoryWithIdentifier:@"dailyBonus" actions:@[dailyBonusAction] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:NSLocalizedStringFromTable(@"DAILY_BONUS",@"LocalizableDict", @"") categorySummaryFormat:NSLocalizedStringFromTable(@"MORE_DAILY_BONUS",@"LocalizableDict", @"") options:UNNotificationCategoryOptionNone];
+//
+//        signUpCategory = [UNNotificationCategory categoryWithIdentifier:@"signup" actions:@[signUpAction] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:nil categorySummaryFormat:nil options:UNNotificationCategoryOptionNone];
+//
+//    } else {
+//        // Fallback on earlier versions
+//        chatCategory = [UNNotificationCategory categoryWithIdentifier:@"chat" actions:@[showChatAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+//
+//        yourTurnCategory = [UNNotificationCategory categoryWithIdentifier:@"PvP_yourTurn" actions:@[showChallengeAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+//
+//        playlistCategory = [UNNotificationCategory categoryWithIdentifier:@"playlist" actions:@[playlistAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+//
+//        partyCategory = [UNNotificationCategory categoryWithIdentifier:@"party" actions:@[partyAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+//
+//        specialEventCategory = [UNNotificationCategory categoryWithIdentifier:@"specialEvent" actions:@[specialEventAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+//
+//        dailyBonusCategory = [UNNotificationCategory categoryWithIdentifier:@"dailyBonus" actions:@[specialEventAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+//
+//        signUpCategory = [UNNotificationCategory categoryWithIdentifier:@"signup" actions:@[signUpAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+//    }
+//
+//    NSSet *categories = [NSSet setWithObjects:chatCategory, yourTurnCategory, playlistCategory, partyCategory, specialEventCategory, dailyBonusCategory, signUpCategory, nil];
+//
+//    [center setNotificationCategories:categories];
     
     
     return NULL;
@@ -483,6 +597,11 @@ DEFINE_ANE_FUNCTION(openDeviceNotificationSettings) {
     return NULL;
 }
 
+DEFINE_ANE_FUNCTION(checkAppNotificationSettingsRequest) {
+    [AirPushNotification checkDelegateAppNotifRequest];
+    return NULL;
+}
+
 void AirPushNotificationContextInitializer(void* extData,
                                            const uint8_t* ctxType,
                                            FREContext ctx,
@@ -538,7 +657,8 @@ void AirPushNotificationContextInitializer(void* extData,
         MAP_FUNCTION(getCanSendUserToSettings, NULL),
         MAP_FUNCTION(getNotificationsEnabled, NULL),
         MAP_FUNCTION(openDeviceNotificationSettings, NULL),
-        MAP_FUNCTION(storeNotifTrackingInfo, NULL)
+        MAP_FUNCTION(storeNotifTrackingInfo, NULL),
+        MAP_FUNCTION(checkAppNotificationSettingsRequest, NULL)
     };
     
     *numFunctionsToTest = sizeof(functions) / sizeof(FRENamedFunction);

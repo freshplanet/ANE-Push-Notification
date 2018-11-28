@@ -46,4 +46,16 @@
     completionHandler(UNNotificationPresentationOptionNone);
 }
 
+-(void)userNotificationCenter:(UNUserNotificationCenter *)center openSettingsForNotification:(UNNotification *)notification {
+    
+    if ([[AirPushNotification instance] isInitialized]) {
+        // we can dispatch an event
+        self.pendingOpenAppNotificationSettings = false;
+        [[AirPushNotification instance] sendEvent:@"OPEN_APP_NOTIFICATION_SETTINGS"];
+    } else {
+        // wait for ane initialized
+        self.pendingOpenAppNotificationSettings = true;
+    }
+}
+
 @end

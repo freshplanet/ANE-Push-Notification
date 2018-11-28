@@ -26,6 +26,9 @@
 
 - (BOOL) isInitialized;
 - (void)trackRemoteNofiticationFromApp:(UIApplication*)app andUserInfo:(NSDictionary*)userInfo;
+- (void)sendEvent:(NSString*)code;
+- (void)sendLog:(NSString*)log;
+- (void)sendEvent:(NSString*)code level:(NSString*)level;
 
 @end
 

@@ -219,6 +219,14 @@ package com.freshplanet.ane.AirPushNotification {
 			}
 		}
 
+		public function checkAppNotificationSettingsRequest():void {
+
+			if (_isIOS()) {
+				_context.call("checkAppNotificationSettingsRequest");
+			}
+		}
+
+
 
         public function storeTrackingNotifUrl(url:String):void {
 
@@ -234,11 +242,13 @@ package com.freshplanet.ane.AirPushNotification {
 		 * @param enableLights
 		 * @param enableVibration
 		 */
-		public function createNotificationChannel(channelId:String, channelName:String, importance:int, enableLights:Boolean, enableVibration:Boolean):void {
+		public function createAndroidNotificationChannel(channelId:String, channelName:String, importance:int, enableLights:Boolean, enableVibration:Boolean):void {
 
 			if (_isAndroid())
 				_context.call("createNotificationChannel", channelId, channelName, importance, enableLights, enableVibration);
 		}
+
+
 
 
 		// --------------------------------------------------------------------------------------//
@@ -403,6 +413,10 @@ package com.freshplanet.ane.AirPushNotification {
                 case "NOTIFICATION_SETTINGS_DISABLED":
                     event = new PushNotificationEvent(PushNotificationEvent.NOTIFICATION_SETTINGS_DISABLED);
                     break;
+
+				case "OPEN_APP_NOTIFICATION_SETTINGS":
+					event = new PushNotificationEvent(PushNotificationEvent.OPEN_APP_NOTIFICATION_SETTINGS);
+					break;
 
                 case "LOGGING":
                     trace(e, e.level);
