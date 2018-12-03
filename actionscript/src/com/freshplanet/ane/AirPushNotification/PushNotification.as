@@ -61,12 +61,12 @@ package com.freshplanet.ane.AirPushNotification {
 		 *  return true if notifs are enabled for this app in device settings
 		 *  If iOS < 8 or android < 4.1 this isn't available, so will always return true.
 		 */
-		public function get notificationsEnabled():Boolean {
+		public function getNotificationsEnabled():void {
             
 			if (!isSupported)
-				return false;
+				return;
 
-			return _context.call("getNotificationsEnabled");
+			_context.call("getNotificationsEnabled");
 		}
 
 		/**

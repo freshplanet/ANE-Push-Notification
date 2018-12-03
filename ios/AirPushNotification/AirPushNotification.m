@@ -85,7 +85,6 @@ static NotifCenterDelegate * _delegate = nil;
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {}
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {}
 - (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo {}
-- (void)application:(UIApplication*)application didRegisterUserNotificationSettings:(UIUserNotificationSettings*)notificationSettings {}
 
 #pragma mark - helpers
 
@@ -141,24 +140,6 @@ static NotifCenterDelegate * _delegate = nil;
 + (void)cancelAllLocalNotificationsWithId:(NSNumber*) notifId {
     
     [[UNUserNotificationCenter currentNotificationCenter] removePendingNotificationRequestsWithIdentifiers:@[[[NSString alloc] initWithFormat:@"%@", notifId]]];
-
-    // leaving this in for migration purposes
-    for (UILocalNotification* notif in [UIApplication sharedApplication].scheduledLocalNotifications) {
-
-        if (notif.userInfo != nil) {
-
-            if ([notif.userInfo objectForKey:[notifId stringValue]]) // also for migration
-                [[UIApplication sharedApplication] cancelLocalNotification:notif];
-            else if ([notif.userInfo objectForKey:@"notifId"]) { // the current way of storing notifId
-
-                if ([[notif.userInfo objectForKey:@"notifId"] intValue] == [notifId intValue])
-                    [[UIApplication sharedApplication] cancelLocalNotification:notif];
-            }
-        }
-        else if ([notifId intValue] == 0) { // for migration purpose (all the notifications without userInfo will be removed)
-            [[UIApplication sharedApplication] cancelLocalNotification:notif];
-        }
-    }
 }
 
 @end
@@ -186,17 +167,6 @@ void didReceiveRemoteNotification(id self, SEL _cmd, UIApplication* application,
     }
 }
 
-void didRegisterUserNotificationSettings(id self, SEL _cmd, UIApplication* application, UIUserNotificationSettings* notificationSettings) {
-    
-    if (notificationSettings.types & UIUserNotificationTypeAlert) {
-        
-        [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_ENABLED"];
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
-    }
-    else {
-        [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_DISABLED"];
-    }
-}
 
 /**
     set the badge number (count around the app icon)
@@ -231,7 +201,7 @@ DEFINE_ANE_FUNCTION(registerPush) {
                               if( !error ){
                                   if(granted) {
                                       [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_ENABLED"];
-                                      //[[UIApplication sharedApplication] registerForRemoteNotifications];
+                                      [[UIApplication sharedApplication] registerForRemoteNotifications];
                                   } else {
                                       [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_DISABLED"];
                                   }
@@ -287,69 +257,6 @@ DEFINE_ANE_FUNCTION(registerPush) {
         }
     }
     
-    
-    
-    
-    
-//    UNNotificationAction *showChallengeAction = [UNNotificationAction actionWithIdentifier:@"showChallenge" title:NSLocalizedString(@"PLAY_YOUR_TURN", nil) options:UNNotificationActionOptionForeground];
-//    UNNotificationCategory *yourTurnCategory = nil;
-//
-//    UNNotificationAction *showChatAction = [UNNotificationAction actionWithIdentifier:@"showChat" title:NSLocalizedString(@"REPLY_IN_SONGPOP", nil) options:UNNotificationActionOptionForeground];
-//    UNNotificationCategory *chatCategory = nil;
-//
-//    UNNotificationAction *playlistAction = [UNNotificationAction actionWithIdentifier:@"showPlaylist" title:NSLocalizedString(@"CHECK_IT_OUT", nil) options:UNNotificationActionOptionForeground];
-//    UNNotificationCategory *playlistCategory = nil;
-//
-//    UNNotificationAction *partyAction = [UNNotificationAction actionWithIdentifier:@"showParty" title:NSLocalizedString(@"CHECK_IT_OUT", nil) options:UNNotificationActionOptionForeground];
-//    UNNotificationCategory *partyCategory = nil;
-//
-//    UNNotificationAction *specialEventAction = [UNNotificationAction actionWithIdentifier:@"showEvent" title:NSLocalizedString(@"CHECK_IT_OUT", nil) options:UNNotificationActionOptionForeground];
-//    UNNotificationCategory *specialEventCategory = nil;
-//
-//    UNNotificationAction *dailyBonusAction = [UNNotificationAction actionWithIdentifier:@"claimDailyBonus" title:NSLocalizedString(@"CLAIM_DAILY_BONUS", nil) options:UNNotificationActionOptionForeground];
-//    UNNotificationCategory *dailyBonusCategory = nil;
-//
-//    UNNotificationAction *signUpAction = [UNNotificationAction actionWithIdentifier:@"playNow" title:NSLocalizedString(@"PLAY_NOW", nil) options:UNNotificationActionOptionForeground];
-//    UNNotificationCategory *signUpCategory = nil;
-//
-//    if (@available(iOS 12.0, *)) {
-//        // use custom summaries on iOS 12
-//        chatCategory = [UNNotificationCategory categoryWithIdentifier:@"chat" actions:@[showChatAction] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:NSLocalizedStringFromTable(@"MORE_MESSAGES",@"LocalizableDict", @"") categorySummaryFormat:NSLocalizedStringFromTable(@"MORE_MESSAGES_FROM",@"LocalizableDict", @"") options:UNNotificationCategoryOptionNone];
-//
-//        yourTurnCategory = [UNNotificationCategory categoryWithIdentifier:@"PvP_yourTurn" actions:@[showChallengeAction] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:NSLocalizedStringFromTable(@"CHALLENGES",@"LocalizableDict", @"") categorySummaryFormat:NSLocalizedStringFromTable(@"MORE_CHALLENGES",@"LocalizableDict", @"") options:UNNotificationCategoryOptionNone];
-//
-//        playlistCategory = [UNNotificationCategory categoryWithIdentifier:@"playlist" actions:@[playlistAction] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:NSLocalizedStringFromTable(@"PLAYLISTS",@"LocalizableDict", @"") categorySummaryFormat:NSLocalizedStringFromTable(@"MORE_PLAYLISTS",@"LocalizableDict", @"") options:UNNotificationCategoryOptionNone];
-//
-//        partyCategory = [UNNotificationCategory categoryWithIdentifier:@"party" actions:@[partyAction] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:NSLocalizedStringFromTable(@"PARTIES",@"LocalizableDict", @"") categorySummaryFormat:NSLocalizedStringFromTable(@"MORE_PARTIES",@"LocalizableDict", @"") options:UNNotificationCategoryOptionNone];
-//
-//        specialEventCategory = [UNNotificationCategory categoryWithIdentifier:@"specialEvent" actions:@[specialEventAction] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:NSLocalizedStringFromTable(@"EVENTS",@"LocalizableDict", @"") categorySummaryFormat:NSLocalizedStringFromTable(@"MORE_EVENTS",@"LocalizableDict", @"") options:UNNotificationCategoryOptionNone];
-//
-//        dailyBonusCategory = [UNNotificationCategory categoryWithIdentifier:@"dailyBonus" actions:@[dailyBonusAction] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:NSLocalizedStringFromTable(@"DAILY_BONUS",@"LocalizableDict", @"") categorySummaryFormat:NSLocalizedStringFromTable(@"MORE_DAILY_BONUS",@"LocalizableDict", @"") options:UNNotificationCategoryOptionNone];
-//
-//        signUpCategory = [UNNotificationCategory categoryWithIdentifier:@"signup" actions:@[signUpAction] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:nil categorySummaryFormat:nil options:UNNotificationCategoryOptionNone];
-//
-//    } else {
-//        // Fallback on earlier versions
-//        chatCategory = [UNNotificationCategory categoryWithIdentifier:@"chat" actions:@[showChatAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
-//
-//        yourTurnCategory = [UNNotificationCategory categoryWithIdentifier:@"PvP_yourTurn" actions:@[showChallengeAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
-//
-//        playlistCategory = [UNNotificationCategory categoryWithIdentifier:@"playlist" actions:@[playlistAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
-//
-//        partyCategory = [UNNotificationCategory categoryWithIdentifier:@"party" actions:@[partyAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
-//
-//        specialEventCategory = [UNNotificationCategory categoryWithIdentifier:@"specialEvent" actions:@[specialEventAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
-//
-//        dailyBonusCategory = [UNNotificationCategory categoryWithIdentifier:@"dailyBonus" actions:@[specialEventAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
-//
-//        signUpCategory = [UNNotificationCategory categoryWithIdentifier:@"signup" actions:@[signUpAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
-//    }
-//
-//    NSSet *categories = [NSSet setWithObjects:chatCategory, yourTurnCategory, playlistCategory, partyCategory, specialEventCategory, dailyBonusCategory, signUpCategory, nil];
-//
-//    [center setNotificationCategories:categories];
-    
-    
     return NULL;
 }
 
@@ -368,7 +275,7 @@ DEFINE_ANE_FUNCTION(fetchStarterNotification) {
     NSDictionary * receivedNotif = [AirPushNotification getAndClearDelegateStarterNotif];
     if (receivedNotif != nil) {
         NSString* receivedNotifString = [AirPushNotification convertToJSonString:receivedNotif];
-        FREDispatchStatusEventAsync(context, (uint8_t*)"APP_STARTING_FROM_NOTIFICATION", (uint8_t*)[receivedNotifString UTF8String]);
+        [[AirPushNotification instance] sendEvent:@"APP_STARTING_FROM_NOTIFICATION" level:receivedNotifString];
     }
     return NULL;
 }
@@ -533,10 +440,7 @@ DEFINE_ANE_FUNCTION(cancelLocalNotification) {
  */
 DEFINE_ANE_FUNCTION(cancelAllLocalNotifications) {
     
-
     [[UNUserNotificationCenter currentNotificationCenter] removeAllPendingNotificationRequests];
-    // leaving this in for migration purposes
-    [[UIApplication sharedApplication] cancelAllLocalNotifications];
     
     return NULL;
 }
@@ -556,12 +460,18 @@ DEFINE_ANE_FUNCTION(getCanSendUserToSettings) {
  */
 DEFINE_ANE_FUNCTION(getNotificationsEnabled) {
     
-    UIUserNotificationSettings* notifSettings = [[UIApplication sharedApplication] currentUserNotificationSettings];
-    BOOL enabled = (notifSettings.types & UIUserNotificationTypeAlert);
-    
-    FREObject notifsEnabled = nil;
-    FRENewObjectFromBool(enabled, &notifsEnabled);
-    return notifsEnabled;
+    [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+        BOOL enabled = settings.alertStyle != UNAlertStyleNone;
+        if(enabled) {
+            [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_ENABLED"];
+        }
+        else {
+            [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_DISABLED"];
+        }
+        
+        
+    }];
+    return nil;
 }
 
 /**
@@ -625,19 +535,19 @@ void AirPushNotificationContextInitializer(void* extData,
         SEL selectorToOverride1 = @selector(application:didRegisterForRemoteNotificationsWithDeviceToken:);
         SEL selectorToOverride2 = @selector(application:didFailToRegisterForRemoteNotificationsWithError:);
         SEL selectorToOverride3 = @selector(application:didReceiveRemoteNotification:);
-        SEL selectorToOverride4 = @selector(application:didRegisterUserNotificationSettings:);
+        
         
         // get the info on the method we're going to override
         Method m1 = class_getInstanceMethod(objectClass, selectorToOverride1);
         Method m2 = class_getInstanceMethod(objectClass, selectorToOverride2);
         Method m3 = class_getInstanceMethod(objectClass, selectorToOverride3);
-        Method m4 = class_getInstanceMethod(objectClass, selectorToOverride4);
+        
         
         // add the method to the new class
         class_addMethod(modDelegate, selectorToOverride1, (IMP)didRegisterForRemoteNotificationsWithDeviceToken, method_getTypeEncoding(m1));
         class_addMethod(modDelegate, selectorToOverride2, (IMP)didFailToRegisterForRemoteNotificationsWithError, method_getTypeEncoding(m2));
         class_addMethod(modDelegate, selectorToOverride3, (IMP)didReceiveRemoteNotification, method_getTypeEncoding(m3));
-        class_addMethod(modDelegate, selectorToOverride4, (IMP)didRegisterUserNotificationSettings, method_getTypeEncoding(m4));
+        
         
         // register the new class with the runtime
         objc_registerClassPair(modDelegate);
