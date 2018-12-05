@@ -147,6 +147,7 @@ package com.freshplanet.ane.AirPushNotification {
          * @param iconPath
          * @param groupId  used to group notifications together
          * @param categoryId  used to display custom summaries on iOS
+         * @param makeSquare  used to display square icons on Android, will default to round 
 		 */
 		public function sendLocalNotification(message:String,
                                               timestamp:int,
@@ -156,7 +157,8 @@ package com.freshplanet.ane.AirPushNotification {
                                               deepLinkPath:String = null,
                                               iconPath:String = null,
                                               groupId:String = null,
-											  categoryId:String = null
+											  categoryId:String = null,
+											  makeSquare:Boolean = false
 		):void {
 
 			if (!isSupported)
@@ -174,7 +176,7 @@ package com.freshplanet.ane.AirPushNotification {
 			if(!categoryId)
 				categoryId = "";
 
-			_context.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath, iconPath, groupId, categoryId);
+			_context.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath, iconPath, groupId, categoryId, makeSquare);
 
 		}
 

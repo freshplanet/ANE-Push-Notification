@@ -210,8 +210,11 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 			largeIcon = BitmapFactory.decodeResource(_context.getResources(), largeIconId);
 		}
 
+
+		boolean makeSquare = _intent.getBooleanExtra("makeSquare", false);
+
 		// rounded picture for lollipop
-		if (largeIcon != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+		if (!makeSquare && largeIcon != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 		{
 			largeIcon = getCircleBitmap(largeIcon);
 		}

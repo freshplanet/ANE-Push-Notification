@@ -66,6 +66,7 @@ public class LocalNotificationFunction implements FREFunction {
 		String largeIconResourceId = null;
 		String groupId = null;
 		String categoryId = null;
+		boolean makeSquare = false;
 		try {
 			message = arg1[0].getAsString();
 			timestamp = (long) arg1[1].getAsInt();
@@ -94,6 +95,11 @@ public class LocalNotificationFunction implements FREFunction {
 			if (arg1.length >= 9 && arg1[8] != null)
 			{
 				categoryId = arg1[8].getAsString();
+			}
+
+			if (arg1.length >= 10 && arg1[9] != null)
+			{
+				makeSquare = arg1[9].getAsBool();
 			}
 			
 		} catch (IllegalStateException e) {
@@ -146,7 +152,8 @@ public class LocalNotificationFunction implements FREFunction {
 				intent.putExtra("android_channel_id", categoryId);
 			}
 
-			
+			intent.putExtra("makeSquare", makeSquare);
+
 			PendingIntent sender = PendingIntent.getBroadcast(appContext, notificationId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 			
 			// Get the AlarmManager service
