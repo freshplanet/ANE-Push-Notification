@@ -147,7 +147,7 @@ package com.freshplanet.ane.AirPushNotification {
          * @param iconPath
          * @param groupId  used to group notifications together
          * @param categoryId  used to display custom summaries on iOS
-         * @param makeSquare  used to display square icons on Android, will default to round 
+         * @param makeSquare  used to display square icons on Android, will default to round
 		 */
 		public function sendLocalNotification(message:String,
                                               timestamp:int,
