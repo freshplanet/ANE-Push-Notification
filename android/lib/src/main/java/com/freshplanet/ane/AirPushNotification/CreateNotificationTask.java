@@ -270,7 +270,8 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 				.setColor(0xFF2DA9F9)
 				.setGroup(groupId)
 				.setContentIntent(contentIntent)
-				.setGroupSummary(false);
+				.setGroupSummary(false)
+				.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
 
 
 		int notificationId = Extension.getNotificationID(_context);
