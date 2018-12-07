@@ -201,7 +201,9 @@ DEFINE_ANE_FUNCTION(registerPush) {
                               if( !error ){
                                   if(granted) {
                                       [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_ENABLED"];
-                                      [[UIApplication sharedApplication] registerForRemoteNotifications];
+                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                          [[UIApplication sharedApplication] registerForRemoteNotifications];
+                                      });
                                   } else {
                                       [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_DISABLED"];
                                   }
