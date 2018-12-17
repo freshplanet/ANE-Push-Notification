@@ -32,18 +32,25 @@
         // wait for it to be fetched
         self.starterNotif = notifDict;
     }
-    
-    completionHandler();
+
+    [self performTracking:response.notification.request.content withCompletionHander:completionHandler];
+
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
 {
+    
     if ([[AirPushNotification instance] isInitialized]) {
         [[AirPushNotification instance] trackRemoteNofiticationFromApp:[UIApplication sharedApplication] andUserInfo:notification.request.content.userInfo];
     }
-    completionHandler(UNNotificationPresentationOptionNone);
+   void (^simpleBlock)(void) = ^{
+      completionHandler(UNNotificationPresentationOptionNone);
+    };
+    
+    [self performTracking:notification.request.content withCompletionHander:simpleBlock];
+
 }
 
 -(void)userNotificationCenter:(UNUserNotificationCenter *)center openSettingsForNotification:(UNNotification *)notification {
@@ -55,6 +62,73 @@
     } else {
         // wait for ane initialized
         self.pendingOpenAppNotificationSettings = true;
+    }
+}
+
+- (void) performTracking:(UNNotificationContent *)notificationContent withCompletionHander:(void (^)(void))completionHandler {
+    
+    NSDictionary *userInfo = notificationContent.userInfo;
+    NSString* notifTrackingURL = [[NSUserDefaults standardUserDefaults] stringForKey:storedNotifTrackingUrl];
+    
+    if (!notifTrackingURL || !userInfo)
+        completionHandler();
+    else {
+        
+        NSString* link = nil;
+        
+        if ([userInfo objectForKey:@"type"] != NULL)
+            link = [@"/?source_type=notif&source_ref=" stringByAppendingString:[userInfo objectForKey:@"type"]];
+        else {
+            
+            completionHandler();
+            return;
+        }
+        
+        if ([userInfo objectForKey:@"sender"] != NULL)
+            link = [[link stringByAppendingString:@"&source_userId="] stringByAppendingString:[userInfo objectForKey:@"sender"]];
+        
+//        NSString *appState = nil;
+//        UIApplication *app = [UIApplication sharedApplication];
+//        if (app.applicationState == UIApplicationStateActive)
+//            appState = @"open";
+//        else if (app.applicationState == UIApplicationStateInactive)
+//            appState = @"closed";
+//        else if (app.applicationState == UIApplicationStateBackground)
+//            appState = @"background";
+//
+//        link = [[link stringByAppendingString:@"&appState="] stringByAppendingString:appState];
+//
+//        if(notificationContent.categoryIdentifier)
+//            link = [[link stringByAppendingString:@"&categoryId="] stringByAppendingString:notificationContent.categoryIdentifier];
+//
+//        if ([userInfo objectForKey:@"trackingId"] != NULL)
+//            link = [[link stringByAppendingString:@"&trackingId="] stringByAppendingString:[userInfo objectForKey:@"trackingId"]];
+        
+        
+        // we url-encode the link (with special cases for '&' and '=')
+        link = [link stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
+        link = [link stringByReplacingOccurrencesOfString:@"&" withString:@"%26"];
+        link = [link stringByReplacingOccurrencesOfString:@"=" withString:@"%3D"];
+        
+        link = [@"&link=" stringByAppendingString:link];
+        
+        notifTrackingURL = [notifTrackingURL stringByAppendingString:link];
+        
+        NSURL* url = [[NSURL alloc] initWithString:notifTrackingURL];
+        
+        if (!url)
+            completionHandler();
+        else {
+            
+            [[AirPushNotification instance] sendLog:[@"MATEO performing tracking " stringByAppendingString:url.absoluteString]];
+            NSURLSessionDataTask* task = [[NSURLSession sharedSession] dataTaskWithURL:url
+                                                                     completionHandler:^(NSData *data, NSURLResponse *response,NSError *error) {
+                                                                         completionHandler();
+                                                                         
+                                                                     }];
+            
+            [task resume];
+        }
     }
 }
 

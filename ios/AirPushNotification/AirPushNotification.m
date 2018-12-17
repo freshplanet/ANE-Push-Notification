@@ -19,14 +19,13 @@
 #import <UserNotifications/UserNotifications.h>
 #import <objc/runtime.h>
 #import <objc/message.h>
-#import "StarterNotificationChecker.h"
 #import "NotifCenterDelegate.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 
 #define DEFINE_ANE_FUNCTION(fn) FREObject (fn)(FREContext context, void* functionData, uint32_t argc, FREObject argv[])
 #define MAP_FUNCTION(fn, data) { (const uint8_t*)(#fn), (data), &(fn) }
 
-NSString* const storedNotifTrackingUrl = @"storedNotifTrackingUrl";
+
 
 @implementation AirPushNotification
 
@@ -89,7 +88,7 @@ static NotifCenterDelegate * _delegate = nil;
 #pragma mark - helpers
 
 - (void)sendLog:(NSString*)log {
-    [self sendEvent:@"log" level:log];
+    [self sendEvent:@"LOGGING" level:log];
 }
 
 - (void)sendEvent:(NSString*)code {

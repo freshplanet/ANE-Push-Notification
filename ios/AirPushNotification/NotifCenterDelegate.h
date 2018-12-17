@@ -28,4 +28,6 @@
 
 -(void)userNotificationCenter:(UNUserNotificationCenter *)center openSettingsForNotification:(UNNotification *)notification;
 
+- (void) performTracking:(UNNotificationContent *)notificationContent withCompletionHander:(void (^)(void))completionHandler;
+
 @end

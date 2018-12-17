@@ -17,9 +17,12 @@
 #import <UIKit/UIKit.h>
 #import "FlashRuntimeExtensions.h"
 
+static NSString* const storedNotifTrackingUrl = @"storedNotifTrackingUrl";
+
 @interface  AirPushNotification : NSObject <UIApplicationDelegate> {
     FREContext _context;
 }
+
 
 + (AirPushNotification*)instance;
 + (NSString*)convertToJSonString:(NSDictionary*)dict;
