@@ -368,7 +368,18 @@ DEFINE_ANE_FUNCTION(sendLocalNotification) {
     if (FREGetObjectAsUTF8(argv[6], &iconURL_len, &iconURL_utf8) == FRE_OK) {
         
         NSString* iconPath = [NSString stringWithUTF8String:(char*)iconURL_utf8];
-        UIImage *img = [UIImage imageNamed:iconPath];
+        NSURL *url = [NSURL URLWithString:iconPath];
+        UIImage *img = nil;
+        if (url && url.scheme && url.host)
+        {
+            NSData * imageData = [[NSData alloc] initWithContentsOfURL: url];
+            img = [UIImage imageWithData: imageData];
+            
+        }
+        else {
+            img = [UIImage imageNamed:iconPath];
+        }
+
         NSURL *temporaryFileLocation = [[NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES] URLByAppendingPathComponent:@"notification_icon"];
         NSError *error;
         [UIImagePNGRepresentation(img) writeToFile:temporaryFileLocation.path options:0 error:&error];
