@@ -101,16 +101,20 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 					e.printStackTrace();
 				}
 			}
-			if (pictureUrl == null) return false;
-			
+			if (pictureUrl == null) {
+				pictureUrl = _intent.getStringExtra("pictureUrl");
+				if(pictureUrl == null) {
+					return false;
+				}
+			}
+
+
 			// Download picture
 			HttpURLConnection connection = (HttpURLConnection)(new URL(pictureUrl)).openConnection();
 			connection.setDoInput(true);
 			connection.connect();
 			InputStream input = connection.getInputStream();
 			Bitmap rawPicture = BitmapFactory.decodeStream(input);
-			
-			
 			
 			// Center-crop the picture as a square
 			if (rawPicture.getWidth() >= rawPicture.getHeight())
@@ -137,7 +141,7 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 			{
 				_picture = Bitmap.createScaledBitmap(_picture, finalSize, finalSize, false);
 			}
-			
+
 			return true;
 		}
 		catch (Exception e)

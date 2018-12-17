@@ -27,6 +27,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
+import android.webkit.URLUtil;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
@@ -140,7 +141,12 @@ public class LocalNotificationFunction implements FREFunction {
 			
 			if (largeIconResourceId != null)
 			{
-				intent.putExtra("largeIconResourceId", largeIconResourceId);
+				if(URLUtil.isHttpUrl(largeIconResourceId) || URLUtil.isHttpsUrl(largeIconResourceId)) {
+					intent.putExtra("pictureUrl", largeIconResourceId);
+				}
+				else {
+					intent.putExtra("largeIconResourceId", largeIconResourceId);
+				}
 			}
 			if (groupId != null)
 			{
