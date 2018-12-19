@@ -63,13 +63,6 @@ public class CheckNotificationChannelEnabled implements FREFunction {
 				if(!TextUtils.isEmpty(channelId)) {
 					NotificationManager manager = (NotificationManager) appContext.getSystemService(Context.NOTIFICATION_SERVICE);
 					NotificationChannel channel = manager.getNotificationChannel(channelId);
-
-					List<NotificationChannel> list = manager.getNotificationChannels();
-					for (int i=0; i<list.size(); i++) {
-						NotificationChannel c = list.get(i);
-						Log.d("MATEO", "channelId is " + c.getId());
-					}
-
 					isEnabled = channel.getImportance() != NotificationManager.IMPORTANCE_NONE;
 				}
 				else
