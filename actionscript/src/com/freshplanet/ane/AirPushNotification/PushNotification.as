@@ -208,10 +208,10 @@ package com.freshplanet.ane.AirPushNotification {
          *
          * @param value
          */
-		public function setIsAppInForeground(value:Boolean):void {
+		public function setIsAppInForeground(value:Boolean, appGroupId:String):void {
 
 			if (isSupported)
-                _context.call("setIsAppInForeground", value);
+                _context.call("setIsAppInForeground", value, appGroupId);
 		}
 
         /**
@@ -236,10 +236,10 @@ package com.freshplanet.ane.AirPushNotification {
 
 
 
-        public function storeTrackingNotifUrl(url:String):void {
+        public function storeTrackingNotifUrl(url:String, appGroupId:String):void {
 
             if (isSupported)
-                _context.call("storeNotifTrackingInfo", url);
+                _context.call("storeNotifTrackingInfo", url, appGroupId);
         }
 
 		/**
