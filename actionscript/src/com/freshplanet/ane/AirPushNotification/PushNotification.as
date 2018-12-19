@@ -422,6 +422,10 @@ package com.freshplanet.ane.AirPushNotification {
                     event = new PushNotificationEvent(PushNotificationEvent.NOTIFICATION_SETTINGS_DISABLED);
                     break;
 
+				case "GET_NOTIFICATIONS_ENABLED_RESULT":
+					event = new PushNotificationEvent(PushNotificationEvent.GET_NOTIFICATIONS_ENABLED_RESULT, e.level == "true");
+					break;
+
 				case "OPEN_APP_NOTIFICATION_SETTINGS":
 					event = new PushNotificationEvent(PushNotificationEvent.OPEN_APP_NOTIFICATION_SETTINGS);
 					break;

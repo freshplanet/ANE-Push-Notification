@@ -32,13 +32,7 @@ public class GetNotificationsEnabledFunction implements FREFunction
     @Override
     public FREObject call(FREContext freContext, FREObject[] freObjects) {
         Context appContext = freContext.getActivity().getApplicationContext();
-        if(NotificationManagerCompat.from(appContext).areNotificationsEnabled()) {
-            Extension.context.dispatchStatusEventAsync("NOTIFICATION_SETTINGS_ENABLED", "");
-        }
-        else {
-            Extension.context.dispatchStatusEventAsync("NOTIFICATION_SETTINGS_DISABLED", "");
-        }
-
+        Extension.context.dispatchStatusEventAsync("GET_NOTIFICATIONS_ENABLED_RESULT", (NotificationManagerCompat.from(appContext).areNotificationsEnabled() ? "true" : "false"));
         return null;
     }
 }

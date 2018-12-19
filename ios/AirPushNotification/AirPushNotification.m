@@ -491,14 +491,7 @@ DEFINE_ANE_FUNCTION(getNotificationsEnabled) {
     
     [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
         BOOL enabled = settings.alertStyle != UNAlertStyleNone;
-        if(enabled) {
-            [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_ENABLED"];
-        }
-        else {
-            [[AirPushNotification instance] sendEvent:@"NOTIFICATION_SETTINGS_DISABLED"];
-        }
-        
-        
+        [[AirPushNotification instance] sendEvent:@"GET_NOTIFICATIONS_ENABLED_RESULT" level:(enabled ? @"true" : @"false")];
     }];
     return nil;
 }
