@@ -23,6 +23,7 @@ import java.net.URLEncoder;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -49,6 +50,8 @@ import android.util.Log;
 
 import com.distriqt.extension.util.Resources;
 
+import static android.content.Context.ACTIVITY_SERVICE;
+
 public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 {
 
@@ -56,9 +59,6 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 	private Intent _intent;
 	private Bitmap _picture;
 
-	private String _notifSender;
-	private String _notifTrackingType;
-	
 	public CreateNotificationTask(Context context, Intent intent)
 	{
 		super();
@@ -75,10 +75,7 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 			// Get picture URL from parameters
 			String jsonParameters = _intent.getStringExtra("parameters");
 			String pictureUrl = null;
-			
-			_notifSender = _intent.getStringExtra("sender");
-			_notifTrackingType = _intent.getStringExtra("type");
-			
+
 			if (jsonParameters != null)
 			{
 				try
@@ -160,8 +157,6 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 			return;
 		}
 
-
-		
 		// Notification texts
 		CharSequence contentTitle = _intent.getStringExtra("contentTitle");
 		CharSequence contentText = _intent.getStringExtra("contentText");
@@ -181,7 +176,6 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 			catch (Exception e) {
 				Log.d("AirPushNotification", "Unable to retrieve default category id");
 			}
-
 		}
 
 		String categoryName = null;
@@ -324,43 +318,10 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 
 		}
 
-		trackNotification();
+		Extension.trackNotification(_context, _intent);
 
 	}
 
-	private void trackNotification()
-	{
-
-		// retrieve stored url
-		SharedPreferences settings = _context.getSharedPreferences(Extension.PREFS_NAME, Context.MODE_PRIVATE);
-		String trackingUrl = settings.getString(Extension.PREFS_KEY, null);
-		if (trackingUrl != null)
-		{
-			
-			String linkParam = "/?source_type=notif&source_ref="+_notifTrackingType;
-			if (_notifSender != null)
-			{
-				linkParam += "&source_userId="+_notifSender;
-			}
-			
-			try {
-				trackingUrl += "&link="+URLEncoder.encode(linkParam, "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-				return;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return;
-			}
-			
-			PingUrlTask task = new PingUrlTask();
-			task.execute(trackingUrl);
-			
-		} else
-		{
-			Extension.log("couldn't find stored tracking url");
-		}
-	}
 	
 	private Bitmap getCircleBitmap(Bitmap bitmap) 
 	{

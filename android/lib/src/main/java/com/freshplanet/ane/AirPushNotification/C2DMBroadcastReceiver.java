@@ -99,6 +99,7 @@ public class C2DMBroadcastReceiver extends BroadcastReceiver
 			else if (Extension.context != null)
 			{
 				Extension.context.dispatchStatusEventAsync("NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND", params);
+				Extension.trackNotification(context, intent);
 			}
 		}
 		catch (Exception e)

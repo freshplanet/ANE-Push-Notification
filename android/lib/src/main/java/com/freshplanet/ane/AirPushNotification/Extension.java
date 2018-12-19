@@ -27,6 +27,8 @@ import android.util.Log;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREExtension;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -147,5 +149,65 @@ public class Extension implements FREExtension {
 		}
 		
 		return paramsJson.toString();
+	}
+
+	public static void trackNotification(Context context, Intent notificationIntent)
+	{
+
+		boolean isLocal = notificationIntent.getBooleanExtra("isLocal", false);
+		if(isLocal) {
+			return;
+		}
+
+		// retrieve stored url
+		SharedPreferences settings = context.getSharedPreferences(Extension.PREFS_NAME, Context.MODE_PRIVATE);
+		String trackingUrl = settings.getString(Extension.PREFS_KEY, null);
+		if (trackingUrl != null)
+		{
+
+			String notifTrackingType = notificationIntent.getStringExtra("type");
+			String notifSender = notificationIntent.getStringExtra("sender");
+			String category = notificationIntent.getStringExtra("android_channel_id");
+			String trackingId = notificationIntent.getStringExtra("trackingId");
+
+			String linkParam = "/?source_type=notif&source_ref="+notifTrackingType;
+			if (notifSender != null)
+			{
+				linkParam += "&source_userId="+notifSender;
+			}
+
+			if(Extension.isInForeground) {
+				linkParam += "&appState=active";
+			}
+			else {
+				linkParam += "&appState=inactive";
+			}
+
+			if(category != null) {
+				linkParam += "&category="+category;
+			}
+
+			if(trackingId != null) {
+				linkParam += "&trackingId="+category;
+			}
+
+			try {
+				trackingUrl += "&link="+ URLEncoder.encode(linkParam, "UTF-8");
+
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
+
+			PingUrlTask task = new PingUrlTask();
+			task.execute(trackingUrl);
+
+		} else
+		{
+			Extension.log("couldn't find stored tracking url");
+		}
 	}
 }
