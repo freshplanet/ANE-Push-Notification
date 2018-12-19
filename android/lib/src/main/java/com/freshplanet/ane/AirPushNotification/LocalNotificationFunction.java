@@ -132,6 +132,7 @@ public class LocalNotificationFunction implements FREFunction {
 			}
 			
 			Intent intent = new Intent(appContext, LocalBroadcastReceiver.class);
+			intent.putExtra("isLocal", true);
 			
 			if (title != null)
 			{
