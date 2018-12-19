@@ -265,6 +265,23 @@ DEFINE_ANE_FUNCTION(registerPush) {
  
  */
 DEFINE_ANE_FUNCTION(setIsAppInForeground) {
+   
+    uint32_t boolean;
+    uint32_t string_length;
+    const uint8_t *utf8_appGroupId;
+    
+    if (FREGetObjectAsBool(argv[0], &boolean) != FRE_OK)
+        return nil;
+    
+    if (FREGetObjectAsUTF8(argv[1], &string_length, &utf8_appGroupId) != FRE_OK)
+        return nil;
+    
+    
+    NSString* appGroupId = [NSString stringWithUTF8String:(char*)utf8_appGroupId];
+    NSString* value = boolean ? @"active" : @"inactive";
+    NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:appGroupId];
+    [defaults setObject:value forKey:@"appState"];
+    [defaults synchronize];
     
     return NULL;
 }
@@ -492,15 +509,20 @@ DEFINE_ANE_FUNCTION(getNotificationsEnabled) {
 DEFINE_ANE_FUNCTION(storeNotifTrackingInfo) {
     
     uint32_t string_length;
-    const uint8_t *utf8_message;
-    if (FREGetObjectAsUTF8(argv[0], &string_length, &utf8_message) != FRE_OK)
+    const uint8_t *utf8_url;
+    const uint8_t *utf8_appGroupId;
+    if (FREGetObjectAsUTF8(argv[0], &string_length, &utf8_url) != FRE_OK)
+        return nil;
+    
+    if (FREGetObjectAsUTF8(argv[1], &string_length, &utf8_appGroupId) != FRE_OK)
         return nil;
 
-    NSString* url = [NSString stringWithUTF8String:(char*)utf8_message];
+    NSString* url = [NSString stringWithUTF8String:(char*)utf8_url];
+    NSString* appGroupId = [NSString stringWithUTF8String:(char*)utf8_appGroupId];
     
-    [[NSUserDefaults standardUserDefaults] setObject:url forKey:storedNotifTrackingUrl];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
+    NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:appGroupId];
+    [defaults setObject:url forKey:storedNotifTrackingUrl];
+    [defaults synchronize];
     return nil;
 }
 
