@@ -164,7 +164,6 @@ public class Extension implements FREExtension {
 		String trackingUrl = settings.getString(Extension.PREFS_KEY, null);
 		if (trackingUrl != null)
 		{
-
 			String notifTrackingType = notificationIntent.getStringExtra("type");
 			String notifSender = notificationIntent.getStringExtra("sender");
 			String category = notificationIntent.getStringExtra("android_channel_id");
@@ -188,7 +187,7 @@ public class Extension implements FREExtension {
 			}
 
 			if(trackingId != null) {
-				linkParam += "&trackingId="+category;
+				linkParam += "&trackingId="+trackingId;
 			}
 
 			try {
