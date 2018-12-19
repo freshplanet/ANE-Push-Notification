@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class PingUrlTask extends AsyncTask<String, Void, Boolean> {
 
@@ -30,19 +31,20 @@ public class PingUrlTask extends AsyncTask<String, Void, Boolean> {
 		
 		Extension.log("start tracking "+trackingUrl);
 
-		
-		HttpURLConnection connection = null;
 		try {
-			connection = (HttpURLConnection)(new URL(trackingUrl)).openConnection();
-			connection.setDoInput(true);
-			connection.connect();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			URL url = new URL(trackingUrl);
+
+			HttpURLConnection urlc = (HttpURLConnection) url.openConnection();
+			urlc.setRequestMethod("GET");
+			urlc.setRequestProperty("User-Agent", "Android");
+			urlc.setRequestProperty("Connection", "close");
+			urlc.setDoInput(true);
+			urlc.setConnectTimeout(1000 * 10);
+			urlc.connect();
+
+		} catch (MalformedURLException e1) {
+			e1.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -53,6 +55,7 @@ public class PingUrlTask extends AsyncTask<String, Void, Boolean> {
 	protected void onPostExecute(Boolean downloadSuccess)
 	{
 		Extension.log("tracking complete");
+
 	}
 
 }
