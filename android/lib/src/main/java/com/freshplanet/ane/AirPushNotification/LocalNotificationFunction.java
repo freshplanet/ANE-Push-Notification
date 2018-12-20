@@ -159,6 +159,9 @@ public class LocalNotificationFunction implements FREFunction {
 				intent.putExtra("android_channel_id", categoryId);
 			}
 
+			intent.putExtra("notifId", notificationId);
+
+
 			intent.putExtra("makeSquare", makeSquare);
 
 			PendingIntent sender = PendingIntent.getBroadcast(appContext, notificationId, intent, PendingIntent.FLAG_UPDATE_CURRENT);

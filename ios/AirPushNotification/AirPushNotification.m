@@ -340,21 +340,22 @@ DEFINE_ANE_FUNCTION(sendLocalNotification) {
     
     UNMutableNotificationContent *content = [UNMutableNotificationContent new];
     
+    NSMutableDictionary *userInfoDict = nil;
     uint32_t path_len;
     const uint8_t *path_utf8;
     if (FREGetObjectAsUTF8(argv[5], &path_len, &path_utf8) == FRE_OK) {
         
         NSString* pathString = [NSString stringWithUTF8String:(char*)path_utf8];
         if(pathString.length > 0){
-            content.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:localNotifIdNumber, @"notifId", pathString, @"path", nil];
+            userInfoDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:localNotifIdNumber, @"notifId", pathString, @"path", nil];
         }
         else {
-            content.userInfo = [NSDictionary dictionaryWithObject:localNotifIdNumber forKey:@"notifId"];
+            userInfoDict = [NSMutableDictionary dictionaryWithObject:localNotifIdNumber forKey:@"notifId"];
         }
         
     }
     else {
-        content.userInfo = [NSDictionary dictionaryWithObject:localNotifIdNumber forKey:@"notifId"];
+        userInfoDict = [NSMutableDictionary dictionaryWithObject:localNotifIdNumber forKey:@"notifId"];
     }
     
     unsigned units = NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;
@@ -436,6 +437,11 @@ DEFINE_ANE_FUNCTION(sendLocalNotification) {
         content.title = title;
     }
     
+    if(categoryId != nil) {
+        [userInfoDict setValue:categoryId forKey:@"type"];
+    }
+    
+    content.userInfo = userInfoDict;
     
     content.sound = [UNNotificationSound defaultSound];
     content.threadIdentifier = groupId;
