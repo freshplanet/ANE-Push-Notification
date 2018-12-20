@@ -19,6 +19,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.adobe.fre.FREContext;
@@ -34,11 +35,20 @@ public class C2DMRegisterFunction implements FREFunction {
 
 	public FREObject call(FREContext context, FREObject[] args)
 	{
+
+		Context appContext = context.getActivity().getApplicationContext();
+		if(NotificationManagerCompat.from(appContext).areNotificationsEnabled()) {
+			Extension.context.dispatchStatusEventAsync("NOTIFICATION_SETTINGS_ENABLED", "");
+		}
+		else {
+			Extension.context.dispatchStatusEventAsync("NOTIFICATION_SETTINGS_DISABLED", "");
+		}
+
 		if(Build.MANUFACTURER.equals("Amazon")) {
 			Log.d(TAG, "push notifications disabled on amzon devices, ignoring register");
 			return null;
 		}
-		
+
 		if (args == null || args.length == 0)
 		{
 			Log.e(TAG, "no email adress provided. Cannot register the device.");
@@ -58,7 +68,7 @@ public class C2DMRegisterFunction implements FREFunction {
 			return null;
 		}
 		
-		Context appContext = context.getActivity().getApplicationContext();
+
 		Log.d(TAG, "C2DMRegisterFunction.call " + emailAdress);
 		try {
 
