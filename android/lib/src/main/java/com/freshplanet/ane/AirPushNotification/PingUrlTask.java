@@ -43,6 +43,8 @@ public class PingUrlTask extends AsyncTask<String, Void, Boolean> {
 			urlc.setConnectTimeout(1000 * 10);
 			urlc.connect();
 
+		// DO NOT REMOVE THIS CODE BLOCK, IF YOU DO TRACKING WONT WORK
+		///////////////////////////////////////////////////////////////
 			switch (urlc.getResponseCode()) {
 				case 200:
 				case 201:
@@ -62,7 +64,7 @@ public class PingUrlTask extends AsyncTask<String, Void, Boolean> {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+		///////////////////////////////////////////////////////////////
 		return null;
 	}
 
