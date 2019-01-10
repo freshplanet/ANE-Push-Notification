@@ -14,13 +14,14 @@
  */
 package com.freshplanet.ane.AirPushNotification;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 public class PingUrlTask extends AsyncTask<String, Void, Boolean> {
 
@@ -42,6 +43,20 @@ public class PingUrlTask extends AsyncTask<String, Void, Boolean> {
 			urlc.setConnectTimeout(1000 * 10);
 			urlc.connect();
 
+			switch (urlc.getResponseCode()) {
+				case 200:
+				case 201:
+					BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream()));
+					StringBuilder sb = new StringBuilder();
+					String line;
+					while ((line = br.readLine()) != null) {
+						sb.append(line+"\n");
+					}
+					br.close();
+
+					Extension.log("Notification tracking response: " + sb.toString());
+			}
+
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
 		} catch (IOException e) {
@@ -50,7 +65,7 @@ public class PingUrlTask extends AsyncTask<String, Void, Boolean> {
 		
 		return null;
 	}
-	
+
 	@Override
 	protected void onPostExecute(Boolean downloadSuccess)
 	{
