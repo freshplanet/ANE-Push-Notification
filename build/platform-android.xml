@@ -30,6 +30,11 @@
         <!--<packagedDependency>common-1.0.3.jar</packagedDependency>-->
         <!--<packagedDependency>runtime-1.0.3.jar</packagedDependency>-->
         <!--<packagedDependency>support-annotations-27.0.2.jar</packagedDependency>-->
+        <packagedDependency>firebase-core-16.0.4.jar</packagedDependency>
+        <packagedDependency>firebase-common-16.0.4.jar</packagedDependency>
+        <packagedDependency>firebase-iid-17.0.4.jar</packagedDependency>
+        <packagedDependency>firebase-messaging-17.0.0.jar</packagedDependency>
+
 
     </packagedDependencies>
     <packagedResources>
