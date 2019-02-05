@@ -14,13 +14,25 @@
  */
 package com.freshplanet.ane.AirPushNotification;
 
-import java.util.HashMap;
-import java.util.Map;
+import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
+import com.adobe.fre.FREObject;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ExtensionContext extends FREContext {
+
+	public static FCMMessagingService messagingService;
 
 	public ExtensionContext() {
 
@@ -36,7 +48,7 @@ public class ExtensionContext extends FREContext {
 
 		Map<String, FREFunction> functionMap = new HashMap<String, FREFunction>();
 		
-		functionMap.put("registerPush", new C2DMRegisterFunction());
+		functionMap.put("registerPush", regPushFunc);
 		functionMap.put("setBadgeNb", new SetBadgeValueFunction());
 		functionMap.put("sendLocalNotification", new LocalNotificationFunction());
 		functionMap.put("setIsAppInForeground", new SetIsAppInForegroundFunction());
@@ -52,4 +64,34 @@ public class ExtensionContext extends FREContext {
 
 		return functionMap;
 	}
+
+	private final FREFunction regPushFunc = new FREFunction() {
+		@Override
+		public FREObject call(FREContext freContext, FREObject[] freObjects) {
+		try {
+				Log.i("firebase", "firebase will try");
+				Task<InstanceIdResult> task = FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+
+					@Override
+					public void onComplete(@NonNull Task<InstanceIdResult> task) {
+						if (!task.isSuccessful()) {
+							Log.w("firebase", "getInstanceId failed", task.getException());
+							return;
+						}
+						// Get new Instance ID token
+						String token = task.getResult().getToken();
+
+						Log.i("firebase", "got token: " + token);
+					}
+				});
+
+				Boolean complete = task.isComplete();
+				Boolean canceled = task.isCanceled();
+				Boolean successful = task.isSuccessful();
+			} catch (Exception e) {
+				Log.e("firebase", "error", e);
+			}
+			return null;
+		}
+	};
 }

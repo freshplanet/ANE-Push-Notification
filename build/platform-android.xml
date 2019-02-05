@@ -30,13 +30,17 @@
         <!--<packagedDependency>common-1.0.3.jar</packagedDependency>-->
         <!--<packagedDependency>runtime-1.0.3.jar</packagedDependency>-->
         <!--<packagedDependency>support-annotations-27.0.2.jar</packagedDependency>-->
-        <packagedDependency>firebase-core-16.0.4.jar</packagedDependency>
-        <packagedDependency>firebase-common-16.0.4.jar</packagedDependency>
+<!--         <packagedDependency>play-services-tasks-15.0.1.jar</packagedDependency> -->
+        <packagedDependency>firebase-core-16.0.6.jar</packagedDependency>
+        <packagedDependency>firebase-common-16.0.3.jar</packagedDependency>
         <packagedDependency>firebase-iid-17.0.4.jar</packagedDependency>
-        <packagedDependency>firebase-messaging-17.0.0.jar</packagedDependency>
-
-
+        <packagedDependency>firebase-iid-interop-16.0.1.jar</packagedDependency>
+        <packagedDependency>firebase-messaging-17.3.4.jar</packagedDependency>
     </packagedDependencies>
     <packagedResources>
+        <packagedResource>
+            <packageName>com.google.android.gms.common</packageName> 
+            <folderName>basement-res</folderName> 
+        </packagedResource>
     </packagedResources>
 </platform>
