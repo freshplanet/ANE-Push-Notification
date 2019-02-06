@@ -14,10 +14,6 @@
  */
 package com.freshplanet.ane.AirPushNotification;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,10 +23,12 @@ import android.util.Log;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREExtension;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Extension implements FREExtension {
@@ -48,6 +46,7 @@ public class Extension implements FREExtension {
 	public static ExtensionContext context;
 	
 	public static boolean isInForeground = false;
+
 
 	public static int getNotificationID(Context context) {
 
@@ -124,6 +123,30 @@ public class Extension implements FREExtension {
 			context.dispatchStatusEventAsync("LOGGING", message);
 		}
 	}
+
+	public static String getParametersFromMessage(Map<String, String> messageData)
+	{
+		JSONObject paramsJson = new JSONObject();
+		String parameters = messageData.get("parameters");
+		try
+		{
+			for (Map.Entry<String, String> entry: messageData.entrySet())
+			{
+				paramsJson.put(entry.getKey(), entry.getValue());
+			}
+
+			if(parameters != null)
+			{
+				paramsJson.put("parameters", new JSONObject(parameters));
+			}
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
+
+		return paramsJson.toString();
+	}
 	
 	public static String getParametersFromIntent(Intent intent)
 	{
@@ -151,23 +174,17 @@ public class Extension implements FREExtension {
 		return paramsJson.toString();
 	}
 
-	public static void trackNotification(Context context, Intent notificationIntent)
+	public static void trackNotification(Context context, Map<String, String> messageData)
 	{
-
-		boolean isLocal = notificationIntent.getBooleanExtra("isLocal", false);
-		if(isLocal) {
-			return;
-		}
-
 		// retrieve stored url
 		SharedPreferences settings = context.getSharedPreferences(Extension.PREFS_NAME, Context.MODE_PRIVATE);
 		String trackingUrl = settings.getString(Extension.PREFS_KEY, null);
 		if (trackingUrl != null)
 		{
-			String notifTrackingType = notificationIntent.getStringExtra("type");
-			String notifSender = notificationIntent.getStringExtra("sender");
-			String category = notificationIntent.getStringExtra("android_channel_id");
-			String trackingId = notificationIntent.getStringExtra("trackingId");
+			String notifTrackingType = messageData.get("type");
+			String notifSender = messageData.get("sender");
+			String category = messageData.get("android_channel_id");
+			String trackingId = messageData.get("trackingId");
 
 			String linkParam = "/?source_type=notif&source_ref="+notifTrackingType;
 			if (notifSender != null)

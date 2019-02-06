@@ -14,7 +14,9 @@
  */
 package com.freshplanet.ane.AirPushNotification;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.adobe.fre.FREContext;
@@ -22,10 +24,8 @@ import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,19 +69,30 @@ public class ExtensionContext extends FREContext {
 		@Override
 		public FREObject call(FREContext freContext, FREObject[] freObjects) {
 		try {
-				Log.i("firebase", "firebase will try");
+				Context appContext = freContext.getActivity().getApplicationContext();
+				if(NotificationManagerCompat.from(appContext).areNotificationsEnabled()) {
+					Extension.context.dispatchStatusEventAsync("NOTIFICATION_SETTINGS_ENABLED", "");
+				}
+				else {
+					Extension.context.dispatchStatusEventAsync("NOTIFICATION_SETTINGS_DISABLED", "");
+				}
 				Task<InstanceIdResult> task = FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
 
 					@Override
 					public void onComplete(@NonNull Task<InstanceIdResult> task) {
 						if (!task.isSuccessful()) {
-							Log.w("firebase", "getInstanceId failed", task.getException());
+							Exception e = task.getException();
+							Log.w("firebase", "getInstanceId failed", e);
+							Extension.context.dispatchStatusEventAsync("TOKEN_FAIL", e.getMessage());
 							return;
 						}
 						// Get new Instance ID token
 						String token = task.getResult().getToken();
-
-						Log.i("firebase", "got token: " + token);
+						if (token != null) {
+							Extension.context.dispatchStatusEventAsync("TOKEN_SUCCESS", token);
+						} else {
+							Extension.context.dispatchStatusEventAsync("TOKEN_FAIL", "NULL_TOKEN");
+						}
 					}
 				});
 
