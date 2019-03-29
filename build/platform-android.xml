@@ -18,23 +18,32 @@
 
 <platform xmlns="http://ns.adobe.com/air/extension/22.0">
     <packagedDependencies>
+<!-- uncomment these if you aren't already packaging them in some other ane -->
+<!--    
+        <packagedDependency>support-compat-27.1.1.jar</packagedDependency>
+        <packagedDependency>support-core-ui-27.1.1.jar</packagedDependency>
+        <packagedDependency>support-core-utils-27.1.1.jar</packagedDependency>
+        <packagedDependency>support-fragment-27.1.1.jar</packagedDependency>
+        <packagedDependency>support-media-compat-27.1.1.jar</packagedDependency>
+        <packagedDependency>support-v4-27.1.1.jar</packagedDependency>
+        <packagedDependency>support-annotations-27.1.1.jar</packagedDependency>
 
-		<!-- support -->
-        <!--<packagedDependency>support-compat-27.0.2.jar</packagedDependency>-->
-        <!--<packagedDependency>support-core-ui-27.0.2.jar</packagedDependency>-->
-        <!--<packagedDependency>support-core-utils-27.0.2.jar</packagedDependency>-->
-        <!--<packagedDependency>support-fragment-27.0.2.jar</packagedDependency>-->
-        <!--<packagedDependency>support-media-compat-27.0.2.jar</packagedDependency>-->
-        <!--<packagedDependency>support-v4-27.0.2.jar</packagedDependency>-->
-        <!--<packagedDependency>common-1.0.0.jar</packagedDependency>-->
-        <!--<packagedDependency>common-1.0.3.jar</packagedDependency>-->
-        <!--<packagedDependency>runtime-1.0.3.jar</packagedDependency>-->
-        <!--<packagedDependency>support-annotations-27.0.2.jar</packagedDependency>-->
-<!--         <packagedDependency>play-services-tasks-15.0.1.jar</packagedDependency> -->
+        <packagedDependency>play-services-ads-identifier-16.0.0.jar</packagedDependency>
+        <packagedDependency>play-services-basement-16.0.1.jar</packagedDependency>
+        <packagedDependency>play-services-base-16.0.1.jar</packagedDependency>
+        <packagedDependency>play-services-tasks-16.0.1.jar</packagedDependency>
+        <packagedDependency>play-services-stats-16.0.1.jar</packagedDependency> 
+-->
+        <packagedDependency>play-services-measurement-api-16.0.4.jar</packagedDependency>
+        <packagedDependency>play-services-measurement-base-16.0.5.jar</packagedDependency>
+        <packagedDependency>firebase-analytics-16.0.6.jar</packagedDependency>
+        <packagedDependency>firebase-analytics-impl-16.2.4.jar</packagedDependency>
         <packagedDependency>firebase-core-16.0.6.jar</packagedDependency>
         <packagedDependency>firebase-common-16.0.3.jar</packagedDependency>
         <packagedDependency>firebase-iid-17.0.4.jar</packagedDependency>
         <packagedDependency>firebase-iid-interop-16.0.1.jar</packagedDependency>
+        <packagedDependency>firebase-measurement-connector-17.0.1.jar</packagedDependency>
+        <packagedDependency>firebase-measurement-connector-impl-17.0.4.jar</packagedDependency>
         <packagedDependency>firebase-messaging-17.3.4.jar</packagedDependency>
     </packagedDependencies>
     <packagedResources>
