@@ -334,6 +334,6 @@ public class FCMMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(String s) {
-        Extension.context.dispatchStatusEventAsync("TOKEN_SUCCESS", s);
+        Extension.setToken(s);
     }
 }

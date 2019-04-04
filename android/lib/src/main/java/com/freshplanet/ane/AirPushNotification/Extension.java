@@ -41,7 +41,7 @@ public class Extension implements FREExtension {
 	public static final String PREFS_NOTIFICATION_NAME = "notifIdsFile";
 	public static final String PREFS_NOTIFICATION_ID = "notificationId";
 
-
+	private static String storedToken;
 	private static AtomicInteger atomicInt;
 	public static ExtensionContext context;
 	
@@ -102,6 +102,10 @@ public class Extension implements FREExtension {
 	public FREContext createContext(String extId)
 	{
 		context = new ExtensionContext();
+		if (storedToken != null) {
+			context.dispatchStatusEventAsync("TOKEN_SUCCESS", storedToken);
+			storedToken = null;
+		}
 		return context;
 	}
 
@@ -172,6 +176,16 @@ public class Extension implements FREExtension {
 		}
 		
 		return paramsJson.toString();
+	}
+
+	public static void setToken(String token)
+	{
+		// This can happen before the context is created
+		if (context != null) {
+			context.dispatchStatusEventAsync("TOKEN_SUCCESS", token);
+		} else {
+			storedToken = token;
+		}
 	}
 
 	public static void trackNotification(Context context, Map<String, String> messageData)
