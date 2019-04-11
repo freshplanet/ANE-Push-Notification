@@ -48,7 +48,7 @@
     </packagedDependencies>
     <packagedResources>
         <packagedResource>
-            <packageName>com.google.android.gms.common</packageName> 
+            <packageName>com.freshplanet.ane.AirPushNotification</packageName> 
             <folderName>basement-res</folderName> 
         </packagedResource>
     </packagedResources>
