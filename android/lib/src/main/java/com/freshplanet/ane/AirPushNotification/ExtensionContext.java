@@ -14,13 +14,25 @@
  */
 package com.freshplanet.ane.AirPushNotification;
 
-import java.util.HashMap;
-import java.util.Map;
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationManagerCompat;
+import android.util.Log;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
+import com.adobe.fre.FREObject;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ExtensionContext extends FREContext {
+
+	public static FCMMessagingService messagingService;
 
 	public ExtensionContext() {
 
@@ -36,7 +48,7 @@ public class ExtensionContext extends FREContext {
 
 		Map<String, FREFunction> functionMap = new HashMap<String, FREFunction>();
 		
-		functionMap.put("registerPush", new C2DMRegisterFunction());
+		functionMap.put("registerPush", regPushFunc);
 		functionMap.put("setBadgeNb", new SetBadgeValueFunction());
 		functionMap.put("sendLocalNotification", new LocalNotificationFunction());
 		functionMap.put("setIsAppInForeground", new SetIsAppInForegroundFunction());
@@ -52,4 +64,45 @@ public class ExtensionContext extends FREContext {
 
 		return functionMap;
 	}
+
+	private final FREFunction regPushFunc = new FREFunction() {
+		@Override
+		public FREObject call(FREContext freContext, FREObject[] freObjects) {
+		try {
+				Context appContext = freContext.getActivity().getApplicationContext();
+				if(NotificationManagerCompat.from(appContext).areNotificationsEnabled()) {
+					Extension.context.dispatchStatusEventAsync("NOTIFICATION_SETTINGS_ENABLED", "");
+				}
+				else {
+					Extension.context.dispatchStatusEventAsync("NOTIFICATION_SETTINGS_DISABLED", "");
+				}
+				Task<InstanceIdResult> task = FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+
+					@Override
+					public void onComplete(@NonNull Task<InstanceIdResult> task) {
+						if (!task.isSuccessful()) {
+							Exception e = task.getException();
+							Log.w("firebase", "getInstanceId failed", e);
+							Extension.context.dispatchStatusEventAsync("TOKEN_FAIL", e.getMessage());
+							return;
+						}
+						// Get new Instance ID token
+						String token = task.getResult().getToken();
+						if (token != null) {
+							Extension.context.dispatchStatusEventAsync("TOKEN_SUCCESS", token);
+						} else {
+							Extension.context.dispatchStatusEventAsync("TOKEN_FAIL", "NULL_TOKEN");
+						}
+					}
+				});
+
+				Boolean complete = task.isComplete();
+				Boolean canceled = task.isCanceled();
+				Boolean successful = task.isSuccessful();
+			} catch (Exception e) {
+				Log.e("firebase", "error", e);
+			}
+			return null;
+		}
+	};
 }

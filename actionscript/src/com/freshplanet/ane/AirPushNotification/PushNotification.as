@@ -57,6 +57,21 @@ package com.freshplanet.ane.AirPushNotification {
             return _instance ? _instance : new PushNotification();
         }
 
+        private function callContext(...args):*
+        {
+            var context: ExtensionContext = getContext();
+            if(!context) {
+                _log("ERROR", "Extension context is null. Please check if extension.xml is setup correctly.")
+                return null;
+            }
+            try {
+                return context.call.apply(context, args);
+            } catch (e: Error) {
+                _log("ERROR", "Error calling extension context: " + e.message + " : " + e.getStackTrace());
+            }
+            return null;
+        }
+
 		/**
 		 *  return true if notifs are enabled for this app in device settings
 		 *  If iOS < 8 or android < 4.1 this isn't available, so will always return true.
@@ -66,7 +81,7 @@ package com.freshplanet.ane.AirPushNotification {
 			if (!isSupported)
 				return;
 
-			_context.call("getNotificationsEnabled");
+			callContext("getNotificationsEnabled");
 		}
 
 		/**
@@ -83,7 +98,7 @@ package com.freshplanet.ane.AirPushNotification {
 				return true;
 
 
-			return _context.call("checkNotificationChannelEnabled", channelId);
+			return callContext("checkNotificationChannelEnabled", channelId);
 		}
 
 		/**
@@ -94,7 +109,7 @@ package com.freshplanet.ane.AirPushNotification {
 			if (!isSupported)
 				return false;
 
-			return _context.call("getCanSendUserToSettings");
+			return callContext("getCanSendUserToSettings");
 		}
 
         /**
@@ -106,7 +121,7 @@ package com.freshplanet.ane.AirPushNotification {
 				channelId = "";
 
 			if (isSupported)
-                _context.call("openDeviceNotificationSettings", channelId);
+                callContext("openDeviceNotificationSettings", channelId);
 		}
 
         /**
@@ -121,9 +136,9 @@ package com.freshplanet.ane.AirPushNotification {
 				return;
 
 			if (_isAndroid())
-                _context.call("registerPush", projectId);
+                callContext("registerPush", projectId);
 			else if(_isIOS())
-				_context.call("registerPush", iOSNotificationCategories != null ? JSON.stringify(iOSNotificationCategories) : null);
+				callContext("registerPush", iOSNotificationCategories != null ? JSON.stringify(iOSNotificationCategories) : null);
 		}
 
         /**
@@ -133,7 +148,7 @@ package com.freshplanet.ane.AirPushNotification {
 		public function setBadgeNumberValue(value:int):void {
 
 			if (isSupported)
-                _context.call("setBadgeNb", value);
+                callContext("setBadgeNb", value);
 		}
 		
 		/**
@@ -176,7 +191,7 @@ package com.freshplanet.ane.AirPushNotification {
 			if(!categoryId)
 				categoryId = "";
 
-			_context.call("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath, iconPath, groupId, categoryId, makeSquare);
+			callContext("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath, iconPath, groupId, categoryId, makeSquare);
 
 		}
 
@@ -189,9 +204,9 @@ package com.freshplanet.ane.AirPushNotification {
 	       	if (isSupported) {
 
 	         	if (notificationId == DEFAULT_LOCAL_NOTIFICATION_ID)
-                    _context.call("cancelLocalNotification");
+                    callContext("cancelLocalNotification");
 	         	else
-                    _context.call("cancelLocalNotification", notificationId);
+                    callContext("cancelLocalNotification", notificationId);
 	       	}
 	    }
 
@@ -201,7 +216,7 @@ package com.freshplanet.ane.AirPushNotification {
 		public function cancelAllLocalNotifications():void {
 
 			if (isSupported)
-                _context.call("cancelAllLocalNotifications");
+                callContext("cancelAllLocalNotifications");
 		}
 
         /**
@@ -211,7 +226,7 @@ package com.freshplanet.ane.AirPushNotification {
 		public function setIsAppInForeground(value:Boolean, appGroupId:String):void {
 
 			if (isSupported)
-                _context.call("setIsAppInForeground", value, appGroupId);
+                callContext("setIsAppInForeground", value, appGroupId);
 		}
 
         /**
@@ -223,14 +238,14 @@ package com.freshplanet.ane.AirPushNotification {
 			if (isSupported) {
 
 				this.addEventListener(PushNotificationEvent.APP_STARTING_FROM_NOTIFICATION_EVENT, listener);
-                _context.call("fetchStarterNotification");
+                callContext("fetchStarterNotification");
 			}
 		}
 
 		public function checkAppNotificationSettingsRequest():void {
 
 			if (_isIOS()) {
-				_context.call("checkAppNotificationSettingsRequest");
+				callContext("checkAppNotificationSettingsRequest");
 			}
 		}
 
@@ -239,7 +254,7 @@ package com.freshplanet.ane.AirPushNotification {
         public function storeTrackingNotifUrl(url:String, appGroupId:String):void {
 
             if (isSupported)
-                _context.call("storeNotifTrackingInfo", url, appGroupId);
+                callContext("storeNotifTrackingInfo", url, appGroupId);
         }
 
 		/**
@@ -253,7 +268,7 @@ package com.freshplanet.ane.AirPushNotification {
 		public function createAndroidNotificationChannel(channelId:String, channelName:String, importance:int, enableLights:Boolean, enableVibration:Boolean):void {
 
 			if (_isAndroid())
-				_context.call("createNotificationChannel", channelId, channelName, importance, enableLights, enableVibration);
+				callContext("createNotificationChannel", channelId, channelName, importance, enableLights, enableVibration);
 		}
 
 
@@ -267,7 +282,6 @@ package com.freshplanet.ane.AirPushNotification {
 
         private static const EXTENSION_ID:String = "com.freshplanet.ane.AirPushNotification";
         private static var _instance:PushNotification = null;
-        private var _context:ExtensionContext = null;
 
         /**
          * "private" singleton constructor
@@ -280,13 +294,20 @@ package com.freshplanet.ane.AirPushNotification {
                 throw Error("This is a singleton, use getInstance(), do not call the constructor directly.");
 
             _instance = this;
+        }
 
-            _context = ExtensionContext.createExtensionContext(EXTENSION_ID, null);
-
-            if (!_context)
-                _log("ERROR", "Extension context is null. Please check if extension.xml is setup correctly.");
-            else
-                _context.addEventListener(StatusEvent.STATUS, _onStatus);
+        private var __context:ExtensionContext;
+        private function getContext():ExtensionContext
+        {
+            if (!__context) {
+                __context = ExtensionContext.createExtensionContext(EXTENSION_ID, null);
+                if (!__context) {
+                    _log("ERROR", "Extension context is null. Please check if extension.xml is setup correctly.");
+                } else {
+                    __context.addEventListener(StatusEvent.STATUS, _onStatus);
+                }
+            }
+            return __context;
         }
 
         /**
