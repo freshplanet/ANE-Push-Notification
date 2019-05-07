@@ -47,13 +47,5 @@
         <packagedDependency>firebase-messaging-17.3.4.jar</packagedDependency>
     </packagedDependencies>
     <packagedResources>
-        <packagedResource>
-            <packageName>com.freshplanet.ane.AirPushNotification</packageName> 
-            <folderName>basement-res</folderName> 
-        </packagedResource>
-        <packagedResource>
-            <packageName>com.google.android.gms.common</packageName>
-            <folderName>basement-res</folderName>
-        </packagedResource>
     </packagedResources>
 </platform>
