@@ -143,7 +143,7 @@ public class FCMMessagingService extends FirebaseMessagingService {
     {
         if (context == null || messageData == null)
         {
-            Extension.log("Couldn't create push notification: _context or _intent was null (CreateNotificationTask.onPostExecute)");
+            Extension.logToAIR("Couldn't create push notification: _context or _intent was null (CreateNotificationTask.onPostExecute)");
             return;
         }
 

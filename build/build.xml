@@ -77,7 +77,7 @@
 
         <!-- paths -->
         <property name="build.intermediates" value="../android/lib/build/intermediates"/>
-        <property name="build.release" value="${build.intermediates}/bundles/release"/>
+        <property name="build.release" value="${build.intermediates}/packaged-classes/release"/>
         <property name="build.exploded-aar" value="${build.intermediates}/exploded-aar"/>
 
         <!-- make the build directory -->

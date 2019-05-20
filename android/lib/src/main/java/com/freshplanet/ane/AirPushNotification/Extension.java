@@ -118,13 +118,17 @@ public class Extension implements FREExtension {
 
 	}
 	
-	public static void log(String message)
+	public static void logToAIR(String message)
 	{
 		Log.d(TAG, message);
 		
 		if (context != null)
 		{
-			context.dispatchStatusEventAsync("LOGGING", message);
+			try {
+				context.dispatchStatusEventAsync("LOGGING", message);
+			} catch (IllegalStateException e) {
+				Log.e(TAG, "logToAIR: couldn't dispatch AS3 logging event", e);
+			}
 		}
 	}
 
@@ -237,7 +241,7 @@ public class Extension implements FREExtension {
 
 		} else
 		{
-			Extension.log("couldn't find stored tracking url");
+			Extension.logToAIR("couldn't find stored tracking url");
 		}
 	}
 }

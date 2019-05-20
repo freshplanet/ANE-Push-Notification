@@ -30,7 +30,7 @@ public class PingUrlTask extends AsyncTask<String, Void, Boolean> {
 				
 		String trackingUrl = urls[0];
 		
-		Extension.log("start tracking "+trackingUrl);
+		Extension.logToAIR("start tracking "+trackingUrl);
 
 		try {
 			URL url = new URL(trackingUrl);
@@ -56,7 +56,7 @@ public class PingUrlTask extends AsyncTask<String, Void, Boolean> {
 					}
 					br.close();
 
-					Extension.log("Notification tracking response: " + sb.toString());
+					Extension.logToAIR("Notification tracking response: " + sb.toString());
 			}
 
 		} catch (MalformedURLException e1) {
@@ -71,7 +71,7 @@ public class PingUrlTask extends AsyncTask<String, Void, Boolean> {
 	@Override
 	protected void onPostExecute(Boolean downloadSuccess)
 	{
-		Extension.log("tracking complete");
+		Extension.logToAIR("tracking complete");
 
 	}
 

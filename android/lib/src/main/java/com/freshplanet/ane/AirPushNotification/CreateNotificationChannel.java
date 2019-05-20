@@ -33,7 +33,7 @@ public class CreateNotificationChannel implements FREFunction {
 	@Override
 	public FREObject call(FREContext arg0, FREObject[] arg1) {
 		
-		Extension.log("start storing notif tracking");
+		Extension.logToAIR("start storing notif tracking");
 
 
 
@@ -55,7 +55,7 @@ public class CreateNotificationChannel implements FREFunction {
 				notifManager.createNotificationChannel(notificationChannel);
 			}
 			else {
-				Extension.log("Notification channels available only on Android API >= 26");
+				Extension.logToAIR("Notification channels available only on Android API >= 26");
 			}
 
 		} catch (IllegalStateException e) {

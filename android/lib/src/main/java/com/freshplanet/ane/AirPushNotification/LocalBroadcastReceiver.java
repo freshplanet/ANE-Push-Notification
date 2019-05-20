@@ -27,7 +27,7 @@ public class LocalBroadcastReceiver extends BroadcastReceiver
 		{
 			String params = Extension.getParametersFromIntent(intent);
 			
-			Extension.log("Received local notification with parameters: " + params);
+			Extension.logToAIR("Received local notification with parameters: " + params);
 			
 			// Build the notification if the app is not in foreground, otherwise just dispatch an event
 			if (!Extension.isInForeground)
