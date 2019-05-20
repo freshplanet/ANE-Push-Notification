@@ -124,7 +124,11 @@ public class Extension implements FREExtension {
 		
 		if (context != null)
 		{
-			context.dispatchStatusEventAsync("LOGGING", message);
+			try {
+				context.dispatchStatusEventAsync("LOGGING", message);
+			} catch (IllegalStateException e) {
+				Log.e(TAG, "logToAIR: couldn't dispatch AS3 logging event", e);
+			}
 		}
 	}
 
