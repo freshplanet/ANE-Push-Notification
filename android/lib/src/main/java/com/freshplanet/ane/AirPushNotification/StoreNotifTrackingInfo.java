@@ -30,7 +30,7 @@ public class StoreNotifTrackingInfo implements FREFunction {
 	@Override
 	public FREObject call(FREContext arg0, FREObject[] arg1) {
 		
-		Extension.log("start storing notif tracking");
+		Extension.logToAIR("start storing notif tracking");
 
 		if (arg1.length > 0)
 		{
@@ -53,12 +53,12 @@ public class StoreNotifTrackingInfo implements FREFunction {
 				storeUrl(arg0.getActivity(), url);
 			} else
 			{
-				Extension.log("url tracking is null");
+				Extension.logToAIR("url tracking is null");
 			}
 			
 		} else
 		{
-			Extension.log("no arguments providing to store tracking url");
+			Extension.logToAIR("no arguments providing to store tracking url");
 		}
 		
 		return null;

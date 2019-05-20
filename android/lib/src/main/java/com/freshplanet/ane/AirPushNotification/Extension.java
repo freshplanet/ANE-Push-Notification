@@ -118,7 +118,7 @@ public class Extension implements FREExtension {
 
 	}
 	
-	public static void log(String message)
+	public static void logToAIR(String message)
 	{
 		Log.d(TAG, message);
 		
@@ -237,7 +237,7 @@ public class Extension implements FREExtension {
 
 		} else
 		{
-			Extension.log("couldn't find stored tracking url");
+			Extension.logToAIR("couldn't find stored tracking url");
 		}
 	}
 }

@@ -20,7 +20,6 @@ import android.content.Context;
 import android.os.Build;
 import android.support.v4.app.NotificationManagerCompat;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
@@ -28,8 +27,6 @@ import com.adobe.fre.FREInvalidObjectException;
 import com.adobe.fre.FREObject;
 import com.adobe.fre.FRETypeMismatchException;
 import com.adobe.fre.FREWrongThreadException;
-
-import java.util.List;
 
 public class CheckNotificationChannelEnabled implements FREFunction {
 
@@ -75,7 +72,7 @@ public class CheckNotificationChannelEnabled implements FREFunction {
 				return FREObject.newObject(isEnabled);
 			}
 			catch (FREWrongThreadException e) {
-				Extension.log("unable to return value for channel enabled");
+				Extension.logToAIR("unable to return value for channel enabled");
 			}
 
 		}

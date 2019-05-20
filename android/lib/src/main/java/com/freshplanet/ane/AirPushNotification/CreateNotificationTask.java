@@ -60,7 +60,7 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 	{
 		if (_context == null || _messageData == null)
 		{
-			Extension.log("Couldn't create push notification: _context or _intent was null (CreateNotificationTask.onPostExecute)");
+			Extension.logToAIR("Couldn't create push notification: _context or _intent was null (CreateNotificationTask.onPostExecute)");
 			return;
 		}
 		FCMMessagingService.displayMessage(_context, _picture, _messageData);
