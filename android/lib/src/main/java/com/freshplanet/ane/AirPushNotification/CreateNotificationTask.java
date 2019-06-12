@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.os.Bundle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,9 +35,14 @@ public class CreateNotificationTask extends AsyncTask<Void, Void, Boolean>
 		super();
 		_context = context;
 		Map<String, String> messageData = new HashMap<>();
-		for (String key: intent.getExtras().keySet()) {
-			messageData.put(key, intent.getStringExtra(key));
+		Bundle bundle = intent.getExtras();
+		for (String key : bundle.keySet())
+		{
+			String convertedToString = "" + bundle.get(key);
+			messageData.put(key, convertedToString);
 		}
+
+		_messageData = messageData;
 	}
 
 	@Override

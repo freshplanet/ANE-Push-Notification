@@ -41,7 +41,12 @@ public class LocalBroadcastReceiver extends BroadcastReceiver
 		}
 		catch (Exception e)
 		{
+
 			e.printStackTrace();
+			if (Extension.context != null)
+			{
+				Extension.context.dispatchStatusEventAsync("LOG_ISSUE", "LocalBroadcastReceiver: Unable to process local notification data : "+ e.getLocalizedMessage());
+			}
 		}
 	}
 }
