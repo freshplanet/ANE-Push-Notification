@@ -450,10 +450,13 @@ package com.freshplanet.ane.AirPushNotification {
 				case "OPEN_APP_NOTIFICATION_SETTINGS":
 					event = new PushNotificationEvent(PushNotificationEvent.OPEN_APP_NOTIFICATION_SETTINGS);
 					break;
-
+				case "LOG_ISSUE":
+					event = new PushNotificationEvent(PushNotificationEvent.LOG_ISSUE, data);
+					break;
                 case "LOGGING":
                     trace(e, e.level);
                     break;
+
             }
 
             if (event != null)

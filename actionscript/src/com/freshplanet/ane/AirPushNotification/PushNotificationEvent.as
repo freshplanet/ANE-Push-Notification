@@ -63,7 +63,8 @@ package com.freshplanet.ane.AirPushNotification {
 		public static const GET_NOTIFICATIONS_ENABLED_RESULT: String = "getNotificationsEnabledResult";
 
 		public static const OPEN_APP_NOTIFICATION_SETTINGS : String = "openAppNotificationSettings";
-		
+		public static const LOG_ISSUE : String = "logIssue";
+
 		public var token:String = null;
         public var errorCode:String = null;
         public var errorMessage:String = null;
