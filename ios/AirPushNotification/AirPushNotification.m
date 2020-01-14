@@ -22,6 +22,7 @@
 #import "NotifCenterDelegate.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <FirebaseCore.h>
+#import <FirebaseAnalytics/FirebaseAnalytics.h>
 
 
 #define DEFINE_ANE_FUNCTION(fn) FREObject (fn)(FREContext context, void* functionData, uint32_t argc, FREObject argv[])
