@@ -120,7 +120,6 @@
 				165B626B1EB1468E00389DCB /* Sources */,
 				165B626C1EB1468E00389DCB /* Frameworks */,
 				165B626D1EB1468E00389DCB /* CopyFiles */,
-				BD3144224613AEE1BB3F46F2 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -164,21 +163,6 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		BD3144224613AEE1BB3F46F2 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AirPushNotification/Pods-AirPushNotification-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		F6BAC51C1F94994BF4F19946 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
