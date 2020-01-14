@@ -25,6 +25,9 @@
         <packagedDependency>libFirebaseInstanceID.a</packagedDependency>
         <packagedDependency>libGoogleDataTransport.a</packagedDependency>
         <packagedDependency>libGoogleDataTransportCCTSupport.a</packagedDependency>
+        <packagedDependency>FIRAnalyticsConnector.framework</packagedDependency>
+        <packagedDependency>FirebaseAnalytics.framework</packagedDependency>
+<!--        <packagedDependency>GoogleAppMeasurement.framework</packagedDependency>-->
 <!--        <packagedDependency>libGoogleUtilities.a</packagedDependency>-->
 <!--        <packagedDependency>libnanopb.a</packagedDependency>-->
     </packagedDependencies>
