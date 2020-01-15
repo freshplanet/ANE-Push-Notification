@@ -38,6 +38,8 @@
 		B3C35D121EE0BD810036F826 /* NotifCenterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotifCenterDelegate.h; sourceTree = "<group>"; };
 		B3C35D131EE0BD810036F826 /* NotifCenterDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotifCenterDelegate.m; sourceTree = "<group>"; };
 		B4A0BB4FFD8A25311C310619 /* Pods-AirPushNotification.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirPushNotification.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AirPushNotification/Pods-AirPushNotification.debug.xcconfig"; sourceTree = "<group>"; };
+		FA5EE2D523CE3D910090D9D9 /* FirebaseAnalytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseAnalytics.framework; path = Pods/FirebaseAnalytics/Frameworks/FirebaseAnalytics.framework; sourceTree = "<group>"; };
+		FA5EE2D623CE3D910090D9D9 /* FIRAnalyticsConnector.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FIRAnalyticsConnector.framework; path = Pods/FirebaseAnalytics/Frameworks/FIRAnalyticsConnector.framework; sourceTree = "<group>"; };
 		FA6FA7A920EC0F1B0059BC6B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		FA6FA7AB20EC0F3F0059BC6B /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
 		FA6FA7AC20EC0F3F0059BC6B /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
@@ -100,6 +102,8 @@
 		C8A2A6F413090BD1EB74CFC2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FA5EE2D623CE3D910090D9D9 /* FIRAnalyticsConnector.framework */,
+				FA5EE2D523CE3D910090D9D9 /* FirebaseAnalytics.framework */,
 				FA6FA7AF20EC0F6A0059BC6B /* MobileCoreServices.framework */,
 				FA6FA7AC20EC0F3F0059BC6B /* UserNotifications.framework */,
 				FA6FA7AB20EC0F3F0059BC6B /* UserNotificationsUI.framework */,
@@ -120,7 +124,6 @@
 				165B626B1EB1468E00389DCB /* Sources */,
 				165B626C1EB1468E00389DCB /* Frameworks */,
 				165B626D1EB1468E00389DCB /* CopyFiles */,
-				BD3144224613AEE1BB3F46F2 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -151,6 +154,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 165B62661EB1468E00389DCB;
@@ -164,21 +168,6 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		BD3144224613AEE1BB3F46F2 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AirPushNotification/Pods-AirPushNotification-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		F6BAC51C1F94994BF4F19946 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -306,6 +295,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B4A0BB4FFD8A25311C310619 /* Pods-AirPushNotification.debug.xcconfig */;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pods/FirebaseAnalytics/Frameworks",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -317,6 +310,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 06B8B79C5BACF57B805B463B /* Pods-AirPushNotification.release.xcconfig */;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pods/FirebaseAnalytics/Frameworks",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";

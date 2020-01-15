@@ -68,6 +68,20 @@
             <fileset dir="../ios/build/Release-iphoneos" includes="**/*.bundle/"/>
         </copy>
 
+        <for param="path">
+            <path>
+                <dirset dir="../ios/">
+                    <include name="**/*.framework"/>
+                </dirset>
+            </path>
+            <sequential>
+                <propertyregex property="folder.name" override="true" input="@{path}" regexp=".+\/(.+)" select="\1"/>
+                <copy todir="temp/ios/${folder.name}" overwrite="true" includeEmptyDirs="false" flatten="true">
+                    <fileset dir="@{path}"/>
+                </copy>
+            </sequential>
+        </for>
+
         <!-- remove the build directory -->
         <delete dir="../ios/build"/>
     </target>

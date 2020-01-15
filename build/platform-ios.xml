@@ -19,4 +19,16 @@
 <platform xmlns="http://ns.adobe.com/air/extension/22.0">
     <sdkVersion>10.0</sdkVersion>
     <linkerOptions></linkerOptions>
+    <packagedDependencies>
+        <packagedDependency>libFirebaseCore.a</packagedDependency>
+        <packagedDependency>libFirebaseCoreDiagnostics.a</packagedDependency>
+        <packagedDependency>libFirebaseInstanceID.a</packagedDependency>
+        <packagedDependency>libGoogleDataTransport.a</packagedDependency>
+        <packagedDependency>libGoogleDataTransportCCTSupport.a</packagedDependency>
+        <packagedDependency>FIRAnalyticsConnector.framework</packagedDependency>
+        <packagedDependency>FirebaseAnalytics.framework</packagedDependency>
+<!--        <packagedDependency>GoogleAppMeasurement.framework</packagedDependency>-->
+<!--        <packagedDependency>libGoogleUtilities.a</packagedDependency>-->
+<!--        <packagedDependency>libnanopb.a</packagedDependency>-->
+    </packagedDependencies>
 </platform>

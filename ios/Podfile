@@ -1,5 +1,5 @@
 platform :ios, '8.0'
 
 target 'AirPushNotification' do
-
+    pod 'Firebase/Analytics', '6.14.0'
 end
