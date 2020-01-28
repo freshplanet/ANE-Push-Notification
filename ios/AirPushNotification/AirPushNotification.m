@@ -150,7 +150,13 @@ static NotifCenterDelegate * _delegate = nil;
 
 void didRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIApplication* application, NSData* deviceToken) {
     
-    NSString* tokenString = [NSString stringWithFormat:@"%@", deviceToken];
+    NSUInteger len = deviceToken.length;
+    const unsigned char *buffer = deviceToken.bytes;
+    NSMutableString *tokenString  = [NSMutableString stringWithCapacity:(len * 2)];
+    for (int i = 0; i < len; ++i) {
+        [tokenString appendFormat:@"%02x", buffer[i]];
+    }
+    
     [[AirPushNotification instance] sendEvent:@"TOKEN_SUCCESS" level:tokenString];
 }
 
