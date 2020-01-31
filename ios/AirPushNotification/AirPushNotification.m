@@ -197,8 +197,9 @@ DEFINE_ANE_FUNCTION(setBadgeNb) {
     register the device for push notification.
  */
 DEFINE_ANE_FUNCTION(registerPush) {
-    
-    [FIRApp configure];
+    if(![FIRApp defaultApp]){
+        [FIRApp configure];
+    }
     
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     NSUInteger authOptions = UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge;
