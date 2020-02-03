@@ -61,7 +61,10 @@
 
         <!-- copy the ios lib to the base temp ios directory -->
         <copy todir="temp/ios" overwrite="true" includeEmptyDirs="false" flatten="true">
-            <fileset dir="../ios/build/Release-iphoneos" includes="**/*.a" excludes="*Pods-${name}*"/>
+            <fileset dir="../ios/build/Release-iphoneos" includes="**/*.a" excludes="*Pods-${name}*">
+                <exclude name="**/libGoogleUtilities.a"/>
+                <exclude name="**/libnanopb.a"/>
+            </fileset>
         </copy>
 
         <copy todir="temp/ios" overwrite="true" includeEmptyDirs="false">
@@ -72,6 +75,7 @@
             <path>
                 <dirset dir="../ios/">
                     <include name="**/*.framework"/>
+                    <exclude name="**/GoogleAppMeasurement.framework"/>
                 </dirset>
             </path>
             <sequential>
