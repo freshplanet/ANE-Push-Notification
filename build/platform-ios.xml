@@ -23,7 +23,9 @@
         <packagedDependency>libFirebaseCore.a</packagedDependency>
         <packagedDependency>libFirebaseCoreDiagnostics.a</packagedDependency>
         <packagedDependency>libFirebaseInstanceID.a</packagedDependency>
+        <packagedDependency>libFirebaseInstallations.a</packagedDependency>
         <packagedDependency>libGoogleDataTransport.a</packagedDependency>
+        <packagedDependency>libPromisesObjC.a</packagedDependency>
         <packagedDependency>libGoogleDataTransportCCTSupport.a</packagedDependency>
         <packagedDependency>FIRAnalyticsConnector.framework</packagedDependency>
         <packagedDependency>FirebaseAnalytics.framework</packagedDependency>
