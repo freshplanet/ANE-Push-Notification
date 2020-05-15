@@ -506,9 +506,15 @@ DEFINE_ANE_FUNCTION(getCanSendUserToSettings) {
  */
 DEFINE_ANE_FUNCTION(getNotificationsEnabled) {
     
+    
     [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
-        BOOL enabled = settings.alertStyle != UNAlertStyleNone;
-        [[AirPushNotification instance] sendEvent:@"GET_NOTIFICATIONS_ENABLED_RESULT" level:(enabled ? @"true" : @"false")];
+        BOOL disabled = settings.soundSetting == UNNotificationSettingDisabled
+        && settings.badgeSetting == UNNotificationSettingDisabled
+        && settings.lockScreenSetting == UNNotificationSettingDisabled
+        && settings.alertSetting == UNNotificationSettingDisabled
+        && settings.notificationCenterSetting == UNNotificationSettingDisabled;
+        
+        [[AirPushNotification instance] sendEvent:@"GET_NOTIFICATIONS_ENABLED_RESULT" level:(disabled ? @"false" : @"true")];
     }];
     return nil;
 }
