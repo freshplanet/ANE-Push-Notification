@@ -1,5 +1,6 @@
-platform :ios, '8.0'
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '10.0'
 
 target 'AirPushNotification' do
-    pod 'Firebase/Analytics', '6.16.0'
+    pod 'Firebase/Analytics', '6.31.0'
 end
