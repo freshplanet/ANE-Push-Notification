@@ -63,6 +63,7 @@
         <copy todir="temp/ios" overwrite="true" includeEmptyDirs="false" flatten="true">
             <fileset dir="../ios/build/Release-iphoneos" includes="**/*.a" excludes="*Pods-${name}*">
                 <exclude name="**/libGoogleUtilities.a"/>
+                <exclude name="**/libPromisesObjC.a"/>
                 <exclude name="**/libnanopb.a"/>
             </fileset>
         </copy>
