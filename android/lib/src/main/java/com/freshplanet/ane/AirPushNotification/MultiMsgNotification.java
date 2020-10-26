@@ -24,11 +24,12 @@ import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Vibrator;
-import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
+
+import androidx.core.app.NotificationCompat;
 
 import com.distriqt.extension.util.Resources;
 

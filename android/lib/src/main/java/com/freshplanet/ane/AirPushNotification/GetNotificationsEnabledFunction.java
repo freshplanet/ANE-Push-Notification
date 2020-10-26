@@ -15,7 +15,8 @@
 package com.freshplanet.ane.AirPushNotification;
 
 import android.content.Context;
-import android.support.v4.app.NotificationManagerCompat;
+
+import androidx.core.app.NotificationManagerCompat;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;

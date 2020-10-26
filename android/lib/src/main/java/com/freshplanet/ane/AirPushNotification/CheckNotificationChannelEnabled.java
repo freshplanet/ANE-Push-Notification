@@ -18,8 +18,9 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
-import android.support.v4.app.NotificationManagerCompat;
 import android.text.TextUtils;
+
+import androidx.core.app.NotificationManagerCompat;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;

@@ -15,9 +15,10 @@
 package com.freshplanet.ane.AirPushNotification;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
@@ -35,7 +36,6 @@ public class ExtensionContext extends FREContext {
 	public static FCMMessagingService messagingService;
 
 	public ExtensionContext() {
-
     }
 	
 	@Override
