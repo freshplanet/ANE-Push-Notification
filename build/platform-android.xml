@@ -19,33 +19,10 @@
 <platform xmlns="http://ns.adobe.com/air/extension/22.0">
     <packagedDependencies>
 
-        <packagedDependency>auto-value-annotations-1.6.5.jar</packagedDependency>
-        <packagedDependency>dagger-2.24.jar</packagedDependency>
-        <packagedDependency>firebase-analytics-17.1.0.jar</packagedDependency>
-        <packagedDependency>firebase-common-19.3.0.jar</packagedDependency>
-        <packagedDependency>firebase-components-16.0.0.jar</packagedDependency>
-        <packagedDependency>firebase-datatransport-17.0.3.jar</packagedDependency>
-        <packagedDependency>firebase-encoders-json-16.0.0.jar</packagedDependency>
-        <packagedDependency>firebase-iid-20.3.0.jar</packagedDependency>
-        <packagedDependency>firebase-iid-interop-17.0.0.jar</packagedDependency>
-        <packagedDependency>firebase-installations-16.3.3.jar</packagedDependency>
-        <packagedDependency>firebase-installations-interop-16.0.0.jar</packagedDependency>
-        <packagedDependency>firebase-measurement-connector-18.0.0.jar</packagedDependency>
-        <packagedDependency>firebase-messaging-20.3.0.jar</packagedDependency>
-        <packagedDependency>javax.inject-1.jar</packagedDependency>
-        <packagedDependency>play-services-base-17.0.0.jar</packagedDependency>
-        <packagedDependency>play-services-cloud-messaging-16.0.0.jar</packagedDependency>
-        <packagedDependency>play-services-measurement-17.1.0.jar</packagedDependency>
-        <packagedDependency>play-services-measurement-api-17.1.0.jar</packagedDependency>
-        <packagedDependency>play-services-measurement-impl-17.1.0.jar</packagedDependency>
-        <packagedDependency>play-services-measurement-sdk-17.1.0.jar</packagedDependency>
-        <packagedDependency>play-services-stats-17.0.0.jar</packagedDependency>
-        <packagedDependency>play-services-tasks-17.0.0.jar</packagedDependency>
-        <packagedDependency>transport-api-2.2.0.jar</packagedDependency>
-        <packagedDependency>transport-backend-cct-2.2.0.jar</packagedDependency>
-        <packagedDependency>transport-runtime-2.2.0.jar</packagedDependency>
-<!--        <packagedDependency>annotation-1.1.0.jar</packagedDependency>-->
+
 <!--        <packagedDependency>asynclayoutinflater-1.0.0.jar</packagedDependency>-->
+<!--        <packagedDependency>annotation-1.1.0.jar</packagedDependency>-->
+<!--        <packagedDependency>auto-value-annotations-1.6.5.jar</packagedDependency>-->
 <!--        <packagedDependency>collection-1.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>coordinatorlayout-1.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>core-1.0.0.jar</packagedDependency>-->
@@ -53,10 +30,23 @@
 <!--        <packagedDependency>core-runtime-2.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>cursoradapter-1.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>customview-1.0.0.jar</packagedDependency>-->
+<!--        <packagedDependency>dagger-2.24.jar</packagedDependency>-->
 <!--        <packagedDependency>documentfile-1.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>drawerlayout-1.0.0.jar</packagedDependency>-->
+<!--        <packagedDependency>firebase-analytics-17.1.0.jar</packagedDependency>-->
+<!--        <packagedDependency>firebase-common-19.3.0.jar</packagedDependency>-->
+<!--        <packagedDependency>firebase-components-16.0.0.jar</packagedDependency>-->
+<!--        <packagedDependency>firebase-datatransport-17.0.3.jar</packagedDependency>-->
+<!--        <packagedDependency>firebase-encoders-json-16.0.0.jar</packagedDependency>-->
+<!--        <packagedDependency>firebase-iid-20.1.5.jar</packagedDependency>-->
+<!--        <packagedDependency>firebase-iid-interop-17.0.0.jar</packagedDependency>-->
+<!--        <packagedDependency>firebase-installations-16.2.1.jar</packagedDependency>-->
+<!--        <packagedDependency>firebase-installations-interop-16.0.0.jar</packagedDependency>-->
+<!--        <packagedDependency>firebase-measurement-connector-18.0.0.jar</packagedDependency>-->
+        <packagedDependency>firebase-messaging-20.1.5.jar</packagedDependency>
 <!--        <packagedDependency>fragment-1.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>interpolator-1.0.0.jar</packagedDependency>-->
+<!--        <packagedDependency>javax.inject-1.jar</packagedDependency>-->
 <!--        <packagedDependency>legacy-support-core-ui-1.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>legacy-support-core-utils-1.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>lifecycle-common-2.0.0.jar</packagedDependency>-->
@@ -67,16 +57,30 @@
 <!--        <packagedDependency>loader-1.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>localbroadcastmanager-1.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>play-services-ads-identifier-17.0.0.jar</packagedDependency>-->
+<!--        <packagedDependency>play-services-base-17.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>play-services-basement-17.0.0.jar</packagedDependency>-->
+<!--        <packagedDependency>play-services-measurement-17.1.0.jar</packagedDependency>-->
+<!--        <packagedDependency>play-services-measurement-api-17.1.0.jar</packagedDependency>-->
 <!--        <packagedDependency>play-services-measurement-base-17.1.0.jar</packagedDependency>-->
+<!--        <packagedDependency>play-services-measurement-impl-17.1.0.jar</packagedDependency>-->
+<!--        <packagedDependency>play-services-measurement-sdk-17.1.0.jar</packagedDependency>-->
 <!--        <packagedDependency>play-services-measurement-sdk-api-17.1.0.jar</packagedDependency>-->
+<!--        <packagedDependency>play-services-stats-17.0.0.jar</packagedDependency>-->
+<!--        <packagedDependency>play-services-tasks-17.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>print-1.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>slidingpanelayout-1.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>swiperefreshlayout-1.0.0.jar</packagedDependency>-->
+<!--        <packagedDependency>transport-api-2.2.0.jar</packagedDependency>-->
+<!--        <packagedDependency>transport-backend-cct-2.2.0.jar</packagedDependency>-->
+<!--        <packagedDependency>transport-runtime-2.2.0.jar</packagedDependency>-->
 <!--        <packagedDependency>versionedparcelable-1.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>viewpager-1.0.0.jar</packagedDependency>-->
 
     </packagedDependencies>
     <packagedResources>
+<!--        <packagedResource>-->
+<!--            <packageName>com.freshplanet.ane.AirPushNotification</packageName>-->
+<!--            <folderName>res</folderName>-->
+<!--        </packagedResource>-->
     </packagedResources>
 </platform>

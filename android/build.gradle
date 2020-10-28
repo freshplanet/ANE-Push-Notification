@@ -12,12 +12,11 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.0'
-        classpath 'com.google.gms:google-services:4.1.0'
+        classpath 'com.android.tools.build:gradle:3.5.3'
+
 
         classpath 'com.google.firebase:firebase-messaging:17.3.4'
         classpath 'com.google.firebase:firebase-iid:17.0.4'
-        classpath 'com.google.firebase:firebase-messaging:17.3.4'
     }
 
 

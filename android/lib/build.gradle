@@ -4,9 +4,7 @@ apply plugin: 'com.android.library'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.google.firebase:firebase-analytics:17.1.0'
-
-    implementation 'com.google.firebase:firebase-messaging:20.3.0'
+    implementation 'com.google.firebase:firebase-messaging:20.1.5'
 }
 
 android {
