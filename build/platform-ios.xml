@@ -20,16 +20,5 @@
     <sdkVersion>10.0</sdkVersion>
     <linkerOptions></linkerOptions>
     <packagedDependencies>
-        <packagedDependency>libFirebaseCore.a</packagedDependency>
-        <packagedDependency>libFirebaseCoreDiagnostics.a</packagedDependency>
-        <packagedDependency>libFirebaseInstallations.a</packagedDependency>
-        <packagedDependency>libGoogleDataTransport.a</packagedDependency>
-        <packagedDependency>FIRAnalyticsConnector.framework</packagedDependency>
-        <packagedDependency>FirebaseAnalytics.framework</packagedDependency>
-
-<!--        <packagedDependency>libPromisesObjC.a</packagedDependency>-->
-<!--        <packagedDependency>GoogleAppMeasurement.framework</packagedDependency>-->
-<!--        <packagedDependency>libGoogleUtilities.a</packagedDependency>-->
-<!--        <packagedDependency>libnanopb.a</packagedDependency>-->
     </packagedDependencies>
 </platform>
