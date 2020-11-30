@@ -37,7 +37,7 @@ public class NotificationActivity extends Activity {
 		
 		Bundle values = this.getIntent().getExtras();
 
-		if (values.getString("params") != null)
+		if (values != null && values.getString("params") != null)
 		{
 			Log.d(TAG, "notif has params: " + values.getString("params"));
 			
