@@ -29,6 +29,14 @@
             </applicationDeployment>
         </platform>
 
+        <platform name="MacOS-x86-64">
+            <applicationDeployment>
+                <nativeLibrary>AirPushNotificationMac.framework</nativeLibrary>
+                <initializer>AirPushNotificationInitializer</initializer>
+                <finalizer>AirPushNotificationFinalizer</finalizer>
+            </applicationDeployment>
+        </platform>
+
         <platform name="Android-ARM"> 
             <applicationDeployment> 
                 <nativeLibrary>libAirPushNotification.jar</nativeLibrary> 
