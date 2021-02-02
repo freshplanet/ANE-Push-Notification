@@ -13,8 +13,13 @@
  * limitations under the License.
  */
 
-
-#import <UIKit/UIKit.h>
+#include <TargetConditionals.h>
+#if TARGET_OS_IPHONE
+    #import <UIKit/UIKit.h>
+#elif TARGET_OS_OSX
+    #import <AppKit/AppKit.h>
+    #import <Cocoa/Cocoa.h>
+#endif
 #import <UserNotifications/UserNotifications.h>
 
 @interface NotifCenterDelegate : NSObject<UNUserNotificationCenterDelegate>
@@ -28,6 +33,5 @@
 
 -(void)userNotificationCenter:(UNUserNotificationCenter *)center openSettingsForNotification:(UNNotification *)notification;
 
-- (void) performTracking:(UNNotificationContent *)notificationContent withCompletionHander:(void (^)(void))completionHandler;
 
 @end

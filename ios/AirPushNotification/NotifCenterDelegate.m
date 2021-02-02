@@ -25,15 +25,29 @@
          withCompletionHandler:(void (^)(void))completionHandler {
     NSDictionary * notifDict = response.notification.request.content.userInfo;
     
+    NSLog(@"MATEO userNotificationCenter didReceiveNotificationResponse");
     if ([[AirPushNotification instance] isInitialized]) {
         // we can dispatch an event
-        [[AirPushNotification instance] trackRemoteNofiticationFromApp:[UIApplication sharedApplication] andUserInfo:notifDict];
+        #if TARGET_OS_IPHONE
+            [[AirPushNotification instance] trackRemoteNofiticationFromApp:[UIApplication sharedApplication] andUserInfo:notifDict];
+        #elif TARGET_OS_OSX
+            [[AirPushNotification instance] trackRemoteNofiticationFromApp:[NSApplication sharedApplication] andUserInfo:notifDict];
+        #endif
+
     } else {
         // wait for it to be fetched
         self.starterNotif = notifDict;
     }
 
+   
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//         // handle the UNNotificationResponse
+//        NSLog(@"MATEO userNotificationCenter didReceiveNotificationResponse completing after delay");
+//          completionHandler();
+//      });
     completionHandler();
+   
+    
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
@@ -41,8 +55,14 @@
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
 {
     
+    NSLog(@"MATEO userNotificationCenter willPresentNotification");
     if ([[AirPushNotification instance] isInitialized]) {
-        [[AirPushNotification instance] trackRemoteNofiticationFromApp:[UIApplication sharedApplication] andUserInfo:notification.request.content.userInfo];
+        #if TARGET_OS_IPHONE
+            [[AirPushNotification instance] trackRemoteNofiticationFromApp:[UIApplication sharedApplication] andUserInfo:notification.request.content.userInfo];
+        #elif TARGET_OS_OSX
+            [[AirPushNotification instance] trackRemoteNofiticationFromApp:[NSApplication sharedApplication] andUserInfo:notification.request.content.userInfo];
+        #endif
+        
     }
     
     completionHandler(UNNotificationPresentationOptionNone);
