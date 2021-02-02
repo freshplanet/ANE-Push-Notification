@@ -47,7 +47,7 @@ package com.freshplanet.ane.AirPushNotification {
          *
          */
         public static function get isSupported():Boolean {
-            return _isIOS() || _isAndroid();
+            return _isIOS() || _isAndroid() || _isMacOS();
         }
 
         /**
@@ -137,7 +137,7 @@ package com.freshplanet.ane.AirPushNotification {
 
 			if (_isAndroid())
                 callContext("registerPush", projectId);
-			else if(_isIOS())
+			else if(_isIOS() || _isMacOS())
 				callContext("registerPush", iOSNotificationCategories != null ? JSON.stringify(iOSNotificationCategories) : null);
 		}
 
@@ -244,7 +244,7 @@ package com.freshplanet.ane.AirPushNotification {
 
 		public function checkAppNotificationSettingsRequest():void {
 
-			if (_isIOS()) {
+			if (_isIOS() || _isMacOS()) {
 				callContext("checkAppNotificationSettingsRequest");
 			}
 		}
@@ -337,6 +337,14 @@ package com.freshplanet.ane.AirPushNotification {
          */
         private static function _isAndroid():Boolean {
             return Capabilities.manufacturer.indexOf("Android") > -1;
+        }
+
+        /**
+         *
+         * @return  true if MacOS
+         */
+        private static function _isMacOS():Boolean {
+			return Capabilities.os.indexOf("Mac OS") > -1;
         }
 
         /**
