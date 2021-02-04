@@ -41,27 +41,6 @@ static NotifCenterDelegate * _delegate = nil;
     NSLog(@"[AirPushNotification] load in AirPushNotification");
     _delegate = [[NotifCenterDelegate alloc] init];
     [[UNUserNotificationCenter currentNotificationCenter] setDelegate:_delegate];
-
-    #if TARGET_OS_IPHONE
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didLaunchNotifIOS:)
-                   name:UIApplicationDidFinishLaunchingNotification object:nil];
-    #elif TARGET_OS_OSX
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didLaunchNotifMac:)
-                   name:NSApplicationDidFinishLaunchingNotification object:nil];
-    #endif
-    
-    
-    [[UNUserNotificationCenter currentNotificationCenter] setDelegate:_delegate];
-}
-
-+ (void)didLaunchNotifIOS:(NSNotification *)notification
-{
-    NSLog(@"[AirPushNotification] UIApplicationDidFinishLaunchingNotification");
-}
-
-+ (void)didLaunchNotifMac:(NSNotification *)notification
-{
-    NSLog(@"[AirPushNotification] NSApplicationDidFinishLaunchingNotificationMAC");
 }
 
 + (NSDictionary *) getAndClearDelegateStarterNotif {
@@ -112,11 +91,6 @@ static NotifCenterDelegate * _delegate = nil;
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {}
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {}
 - (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo {}
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(nullable NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions {
-    // Override point for customization after application launch.
-    NSLog(@"[AirPushNotification] did finnish launch iOS");
-    return YES;
-}
 #elif TARGET_OS_OSX
 - (void)application:(NSApplication *)application
 didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {}
@@ -124,7 +98,6 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {}
 didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {}
 - (void)application:(NSApplication *)application
 didReceiveRemoteNotification:(NSDictionary<NSString *,id> *)userInfo {}
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification { NSLog(@"MATEO applicationDidFinishLaunching");}
 #endif
 #pragma mark - helpers
 
@@ -173,24 +146,13 @@ didReceiveRemoteNotification:(NSDictionary<NSString *,id> *)userInfo {}
 }
 #elif TARGET_OS_OSX
 - (void)trackRemoteNofiticationFromApp:(NSApplication*)app andUserInfo:(NSDictionary*)userInfo {
-    // TODO MATEO
-    
     NSString* stringInfo = [AirPushNotification convertToJSonString:userInfo];
-    
-    if(app.occlusionState == NSApplicationOcclusionStateVisible) {
-        NSLog(@"[AirPushNotification] occlussion state visible");
+    if(app.isActive) {
         [self sendEvent:@"NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND" level:stringInfo];
     }
     else {
-        NSLog(@"[AirPushNotification] occlussion state NOT visible");
         [self sendEvent:@"APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION" level:stringInfo];
     }
-//    if (app.applicationState == UIApplicationStateActive)
-//        [self sendEvent:@"NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND" level:stringInfo];
-//    else if (app.applicationState == UIApplicationStateInactive)
-//        [self sendEvent:@"APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION" level:stringInfo];
-//    else if (app.applicationState == UIApplicationStateBackground)
-//        [self sendEvent:@"APP_STARTED_IN_BACKGROUND_FROM_NOTIFICATION" level:stringInfo];
 }
 #endif
 
@@ -260,11 +222,12 @@ void didFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, NSAppli
 }
 void didReceiveRemoteNotification(id self, SEL _cmd, NSApplication* application, NSDictionary *userInfo) {
     NSString* stringInfo = [AirPushNotification convertToJSonString:userInfo];
-    NSLog(@"[AirPushNotification] did receive remote notf");
-    // TODO MATEO
-//    if (application.applicationState == UIApplicationStateActive) {
-         [[AirPushNotification instance] sendEvent:@"NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND" level:stringInfo];
-//    }
+    if([NSApplication sharedApplication].isActive) {
+        [[AirPushNotification instance] sendEvent:@"NOTIFICATION_RECEIVED_WHEN_IN_FOREGROUND" level:stringInfo];
+    }
+    else {
+        [[AirPushNotification instance] sendEvent:@"APP_BROUGHT_TO_FOREGROUND_FROM_NOTIFICATION" level:stringInfo];
+    }
 }
 
 void applicationDidFinishLaunch(id self, SEL _cmd, NSNotification* notification){
@@ -333,50 +296,52 @@ DEFINE_ANE_FUNCTION(registerPush) {
                               }
                           }];
 
-    
+    // TODO categories only on iOS for now, implement this later on macOS too with XCode extension
+    #if TARGET_OS_IPHONE
     uint32_t string_length;
     const uint8_t* utf8_categories;
-//    if(argc > 0) {
-//        if (FREGetObjectAsUTF8(argv[0], &string_length, &utf8_categories) == FRE_OK) {
-//
-//            NSString* categoriesJSONString = [NSString stringWithUTF8String:(char*)utf8_categories];
-//            NSData *data = [categoriesJSONString dataUsingEncoding:NSUTF8StringEncoding];
-//            NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-//            NSMutableArray *categories = [[NSMutableArray alloc] init];
-//            for (NSDictionary *catElement in array) {
-//
-//                NSString *categoryId = [catElement objectForKey:@"id"];
-//                NSString *hiddenSummaryKey = [catElement objectForKey:@"hiddenSummaryKey"];
-//                NSString *hiddenSummaryKeyFile = [catElement objectForKey:@"hiddenSummaryKeyFile"];
-//                NSString *summaryKey = [catElement objectForKey:@"summaryKey"];
-//                NSString *summaryKeyFile = [catElement objectForKey:@"summaryKeyFile"];
-//                NSDictionary *action = [catElement objectForKey:@"action"];
-//                NSString *actionId = [action objectForKey:@"id"];
-//                NSString *actionTitleKey = [action objectForKey:@"titleKey"];
-//
-//                if ([hiddenSummaryKey isEqualToString:@""]) {
-//                    hiddenSummaryKey = nil;
-//                }
-//                if ([summaryKey isEqualToString:@""]) {
-//                    summaryKey = nil;
-//                }
-//
-//                UNNotificationAction *notificationAction = [UNNotificationAction actionWithIdentifier:actionId title:NSLocalizedString(actionTitleKey, nil) options:UNNotificationActionOptionForeground];
-//                UNNotificationCategory *notificationCategory;
-//                if (@available(iOS 12.0, *)) {
-//                    notificationCategory = [UNNotificationCategory categoryWithIdentifier:categoryId actions:@[notificationAction] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:hiddenSummaryKey != nil ? NSLocalizedStringFromTable(hiddenSummaryKey,hiddenSummaryKeyFile, @"") : nil categorySummaryFormat:summaryKey != nil ?  NSLocalizedStringFromTable(summaryKey,summaryKeyFile, @"") : nil options:UNNotificationCategoryOptionNone];
-//                }
-//                else {
-//                    notificationCategory = [UNNotificationCategory categoryWithIdentifier:categoryId actions:@[notificationAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
-//                }
-//
-//                if(notificationCategory != nil) {
-//                    [categories addObject:notificationCategory];
-//                }
-//            }
-//            [center setNotificationCategories:[NSSet setWithArray:categories]];
-//        }
-//    }
+    if(argc > 0) {
+        if (FREGetObjectAsUTF8(argv[0], &string_length, &utf8_categories) == FRE_OK) {
+
+            NSString* categoriesJSONString = [NSString stringWithUTF8String:(char*)utf8_categories];
+            NSData *data = [categoriesJSONString dataUsingEncoding:NSUTF8StringEncoding];
+            NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+            NSMutableArray *categories = [[NSMutableArray alloc] init];
+            for (NSDictionary *catElement in array) {
+
+                NSString *categoryId = [catElement objectForKey:@"id"];
+                NSString *hiddenSummaryKey = [catElement objectForKey:@"hiddenSummaryKey"];
+                NSString *hiddenSummaryKeyFile = [catElement objectForKey:@"hiddenSummaryKeyFile"];
+                NSString *summaryKey = [catElement objectForKey:@"summaryKey"];
+                NSString *summaryKeyFile = [catElement objectForKey:@"summaryKeyFile"];
+                NSDictionary *action = [catElement objectForKey:@"action"];
+                NSString *actionId = [action objectForKey:@"id"];
+                NSString *actionTitleKey = [action objectForKey:@"titleKey"];
+
+                if ([hiddenSummaryKey isEqualToString:@""]) {
+                    hiddenSummaryKey = nil;
+                }
+                if ([summaryKey isEqualToString:@""]) {
+                    summaryKey = nil;
+                }
+
+                UNNotificationAction *notificationAction = [UNNotificationAction actionWithIdentifier:actionId title:NSLocalizedString(actionTitleKey, nil) options:UNNotificationActionOptionForeground];
+                UNNotificationCategory *notificationCategory;
+                if (@available(iOS 12.0, *)) {
+                    notificationCategory = [UNNotificationCategory categoryWithIdentifier:categoryId actions:@[notificationAction] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:hiddenSummaryKey != nil ? NSLocalizedStringFromTable(hiddenSummaryKey,hiddenSummaryKeyFile, @"") : nil categorySummaryFormat:summaryKey != nil ?  NSLocalizedStringFromTable(summaryKey,summaryKeyFile, @"") : nil options:UNNotificationCategoryOptionNone];
+                }
+                else {
+                    notificationCategory = [UNNotificationCategory categoryWithIdentifier:categoryId actions:@[notificationAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+                }
+
+                if(notificationCategory != nil) {
+                    [categories addObject:notificationCategory];
+                }
+            }
+            [center setNotificationCategories:[NSSet setWithArray:categories]];
+        }
+    }
+    #endif
     
     return NULL;
 }
@@ -503,66 +468,59 @@ DEFINE_ANE_FUNCTION(sendLocalNotification) {
     NSDateComponents *components = [calendar components:units fromDate:itemDate];
     UNCalendarNotificationTrigger *trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:components repeats:repeat];
 
-//    uint32_t iconURL_len;
-//    const uint8_t *iconURL_utf8;
-//    if (FREGetObjectAsUTF8(argv[6], &iconURL_len, &iconURL_utf8) == FRE_OK) {
-//
-//        NSString* iconPath = [NSString stringWithUTF8String:(char*)iconURL_utf8];
-//        NSURL *url = [NSURL URLWithString:iconPath];
-//        NSURL *temporaryFileLocation = [[NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES] URLByAppendingPathComponent:@"notification_icon"];
-//        NSError *error;
-//        #if TARGET_OS_IPHONE
-//            UIImage *img = nil;
-//            if (url && url.scheme && url.host)
-//            {
-//                NSData * imageData = [[NSData alloc] initWithContentsOfURL: url];
-//                img = [UIImage imageWithData: imageData];
-//
-//            }
-//            else {
-//                img = [UIImage imageNamed:iconPath];
-//            }
-//
-//
-//            [UIImagePNGRepresentation(img) writeToFile:temporaryFileLocation.path options:0 error:&error];
-//            if (error)
-//            {
-//                NSLog(@"Error while creating temp file: %@", error);
-//            }
-//        #elif TARGET_OS_OSX
-//            NSImage *image = nil;
-//            if (url && url.scheme && url.host)
-//            {
-//                NSData * imageData = [[NSData alloc] initWithContentsOfURL: url];
-//                image = [[NSImage alloc] initWithData:(NSData *)imageData];
-//
-//            }
-//            else {
-//                image = [NSImage imageNamed:iconPath];
-//            }
-//
-////            NSRect pRect = NSMakeRect( 0, 0, [image size].width, [image size].height);
-////            CGImageRef cgRef = [image CGImageForProposedRect:&pRect
-////                                                        context:nil
-////                                                          hints:nil];
-////
-//            NSBitmapImageRep *newRep = [[NSBitmapImageRep alloc] initWithData:image.TIFFRepresentation];
-////               NSBitmapImageRep *newRep = [[NSBitmapImageRep alloc] initWithCGImage:cgRef];
-//               [newRep setSize:[image size]];
-//            NSDictionary *imageProps = [NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:1.0] forKey:NSImageCompressionFactor];
-//            NSData *pngData = [newRep representationUsingType:NSBitmapImageFileTypePNG properties:imageProps];
-//               [pngData writeToFile:temporaryFileLocation.path atomically:YES];
-//        #endif
-//
-//
-//        UNNotificationAttachment *icon = [UNNotificationAttachment attachmentWithIdentifier:@"thumbnail" URL:temporaryFileLocation
-//                                                                                    options:@{UNNotificationAttachmentOptionsTypeHintKey: (NSString*)kUTTypePNG }
-//                                                                                      error:&error];
-//        if (icon)
-//        {
-//            content.attachments = @[icon];
-//        }
-//    }
+    uint32_t iconURL_len;
+    const uint8_t *iconURL_utf8;
+    if (FREGetObjectAsUTF8(argv[6], &iconURL_len, &iconURL_utf8) == FRE_OK) {
+
+        NSString* iconPath = [NSString stringWithUTF8String:(char*)iconURL_utf8];
+        NSURL *url = [NSURL URLWithString:iconPath];
+        NSURL *temporaryFileLocation = [[NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES] URLByAppendingPathComponent:@"notification_icon"];
+        NSError *error;
+        #if TARGET_OS_IPHONE
+            UIImage *img = nil;
+            if (url && url.scheme && url.host)
+            {
+                NSData * imageData = [[NSData alloc] initWithContentsOfURL: url];
+                img = [UIImage imageWithData: imageData];
+
+            }
+            else {
+                img = [UIImage imageNamed:iconPath];
+            }
+
+
+            [UIImagePNGRepresentation(img) writeToFile:temporaryFileLocation.path options:0 error:&error];
+            if (error)
+            {
+                NSLog(@"Error while creating temp file: %@", error);
+            }
+        #elif TARGET_OS_OSX
+            NSImage *image = nil;
+            if (url && url.scheme && url.host)
+            {
+                NSData * imageData = [[NSData alloc] initWithContentsOfURL: url];
+                image = [[NSImage alloc] initWithData:(NSData *)imageData];
+
+            }
+            else {
+                image = [NSImage imageNamed:iconPath];
+            }
+            NSBitmapImageRep *newRep = [[NSBitmapImageRep alloc] initWithData:image.TIFFRepresentation];
+               [newRep setSize:[image size]];
+            NSDictionary *imageProps = [NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:1.0] forKey:NSImageCompressionFactor];
+            NSData *pngData = [newRep representationUsingType:NSBitmapImageFileTypePNG properties:imageProps];
+               [pngData writeToFile:temporaryFileLocation.path atomically:YES];
+        #endif
+
+        
+        UNNotificationAttachment *icon = [UNNotificationAttachment attachmentWithIdentifier:@"thumbnail" URL:temporaryFileLocation
+                                                                                    options:@{UNNotificationAttachmentOptionsTypeHintKey: (NSString*)kUTTypePNG }
+                                                                                      error:&error];
+        if (icon)
+        {
+            content.attachments = @[icon];
+        }
+    }
 
     uint32_t groupId_len;
     const uint8_t *groupId_utf8;
@@ -724,7 +682,6 @@ void AirPushNotificationContextInitializer(void* extData,
     
     Class objectClass = object_getClass(delegate);
     NSString *oldClassName = NSStringFromClass(objectClass);
-    NSLog(@"[AirPushNotification] class name is %@", oldClassName);
     
     NSString* newClassName = [NSString stringWithFormat:@"Custom_%@", NSStringFromClass(objectClass)];
     Class modDelegate = NSClassFromString(newClassName);
@@ -752,17 +709,6 @@ void AirPushNotificationContextInitializer(void* extData,
         class_addMethod(modDelegate, selectorToOverride1, (IMP)didRegisterForRemoteNotificationsWithDeviceToken, method_getTypeEncoding(m1));
         class_addMethod(modDelegate, selectorToOverride2, (IMP)didFailToRegisterForRemoteNotificationsWithError, method_getTypeEncoding(m2));
         class_addMethod(modDelegate, selectorToOverride3, (IMP)didReceiveRemoteNotification, method_getTypeEncoding(m3));
-        #if TARGET_OS_IPHONE
-        SEL selectorToOverride4 = @selector(application:didFinishLaunchingWithOptions:);
-        Method m4 = class_getInstanceMethod(objectClass, selectorToOverride4);
-        class_addMethod(modDelegate, selectorToOverride4, (IMP)didFinishLaunching, method_getTypeEncoding(m4));
-        #elif TARGET_OS_OSX
-        SEL selectorToOverride4 = @selector(applicationDidFinishLaunching:);
-        Method m4 = class_getInstanceMethod(objectClass, selectorToOverride4);
-        class_addMethod(modDelegate, selectorToOverride4, (IMP)applicationDidFinishLaunch, method_getTypeEncoding(m4));
-        #endif
-       
-        
         
         // register the new class with the runtime
         objc_registerClassPair(modDelegate);
