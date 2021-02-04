@@ -12,7 +12,7 @@
     </taskdef>
 
     <!-- All -->
-    <target name="all" depends="ios, android, swc, package" description="Full build of extension"/>
+    <target name="all" depends="ios, macos, android, swc, package" description="Full build of extension"/>
 
     <!-- iOS -->
     <target name="ios" description="Build iOS Library">
@@ -89,6 +89,57 @@
 
         <!-- remove the build directory -->
         <delete dir="../ios/build"/>
+    </target>
+
+    <!-- Mac OS -->
+    <target name="macos" description="Build MacOS Framework">
+
+        <!-- make the build directory for the objc code -->
+        <mkdir dir="temp/macos"/>
+
+        <!-- clean the build -->
+        <exec executable="xcodebuild" failonerror="true" dir="../ios">
+            <arg line="-workspace ${name}.xcworkspace"/>
+            <arg line="-scheme ${name}Mac"/>
+            <arg line="clean"/>
+        </exec>
+
+        <!-- compile the ios lib -->
+        <exec executable="xcodebuild" failonerror="true" dir="../ios">
+            <arg line="-workspace ${name}.xcworkspace"/>
+            <arg line="-scheme ${name}Mac"/>
+            <arg line="-sdk macosx"/>
+            <arg line="-configuration Release"/>
+            <arg line="SYMROOT=$(PWD)/../macos/build"/>
+        </exec>
+
+        <!-- copy the libs and resources to the base temp ios directory -->
+        <copy todir="temp/macos" overwrite="true" includeEmptyDirs="false" flatten="false">
+            <fileset dir="../macos/build/Release/">
+                <exclude name="**/*Pods-${name}*"/>
+                <exclude name="**/*.framework/**"/>
+            </fileset>
+        </copy>
+
+        <!-- copy over necessary frameworks, bundles, etc -->
+        <for param="path">
+            <path>
+                <dirset dir="../macos/">
+                    <include name="**/*.framework"/>
+                </dirset>
+            </path>
+            <sequential>
+                <propertyregex property="folder.name" override="true" input="@{path}" regexp=".+\/(.+)" select="\1"/>
+                <exec executable="cp">
+                    <arg value="-a"/>
+                    <arg value="@{path}"/>
+                    <arg value="temp/macos/${folder.name}"/>
+                </exec>
+            </sequential>
+        </for>
+
+        <!-- remove the build directory -->
+        <delete dir="../macos/"/>
     </target>
 
     <!-- Android -->
@@ -187,6 +238,7 @@
         <unzip src="temp/swc/${name}.swc" dest="temp/swc/content" overwrite="true"/>
 
         <copy file="temp/swc/content/library.swf" todir="temp/ios" overwrite="true"/>
+        <copy file="temp/swc/content/library.swf" todir="temp/macos" overwrite="true"/>
         <copy file="temp/swc/content/library.swf" todir="temp/ios-simulator" overwrite="true"/>
         <copy file="temp/swc/content/library.swf" todir="temp/android" overwrite="true"/>
         <copy file="temp/swc/content/library.swf" todir="temp/default" overwrite="true"/>
@@ -203,6 +255,7 @@
             <arg value="../extension.xml"/>
             <arg line="-swc swc/${name}.swc"/>
             <arg line="-platform iPhone-ARM -platformoptions ../platform-ios.xml -C ios/ ."/>
+            <arg line="-platform MacOS-x86-64 -C macos/ . "/>
             <arg line="-platform Android-ARM -platformoptions ../platform-android.xml -C android/ ."/>
             <arg line="-platform Android-ARM64 -platformoptions ../platform-android.xml -C android/ ."/>
             <arg line="-platform Android-x86 -platformoptions ../platform-android.xml -C android/ ."/>
