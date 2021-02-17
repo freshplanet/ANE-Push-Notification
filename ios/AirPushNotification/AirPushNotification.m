@@ -470,7 +470,7 @@ DEFINE_ANE_FUNCTION(sendLocalNotification) {
 
     uint32_t iconURL_len;
     const uint8_t *iconURL_utf8;
-    if (FREGetObjectAsUTF8(argv[6], &iconURL_len, &iconURL_utf8) == FRE_OK) {
+    if (FREGetObjectAsUTF8(argv[6], &iconURL_len, &iconURL_utf8) == FRE_OK && iconURL_len > 0) {
 
         NSString* iconPath = [NSString stringWithUTF8String:(char*)iconURL_utf8];
         NSURL *url = [NSURL URLWithString:iconPath];
