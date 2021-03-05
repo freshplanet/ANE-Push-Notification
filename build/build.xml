@@ -118,6 +118,7 @@
             <fileset dir="../macos/build/Release/">
                 <exclude name="**/*Pods-${name}*"/>
                 <exclude name="**/*.framework/**"/>
+                <exclude name="**/*.dSYM/"/>
             </fileset>
         </copy>
 
