@@ -552,8 +552,10 @@ DEFINE_ANE_FUNCTION(sendLocalNotification) {
     content.userInfo = userInfoDict;
 
     content.sound = [UNNotificationSound defaultSound];
-//    content.threadIdentifier = groupId;
-//    content.categoryIdentifier = categoryId;
+#if TARGET_OS_IPHONE
+    content.threadIdentifier = groupId;
+    content.categoryIdentifier = categoryId;
+#endif
 
     UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:[[NSString alloc] initWithFormat:@"%@", localNotifIdNumber] content:content trigger:trigger];
     [UNUserNotificationCenter.currentNotificationCenter addNotificationRequest:request withCompletionHandler:nil];
