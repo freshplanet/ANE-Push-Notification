@@ -35,12 +35,28 @@
 //static NotifCenterDelegate * _delegate = nil;
 static NotifCenterDelegate * _delegate = nil;
 
++ (BOOL)isAtleastMacOS1014 {
+    if (@available(macOS 10.14, *)) {
+        return YES;
+    }
+    
+    return NO;
+}
 
++ (BOOL)isIOS {
+#if TARGET_OS_IPHONE
+    return YES;
+#endif
+    return NO;
+}
 
 + (void)load {
     NSLog(@"[AirPushNotification] load in AirPushNotification");
     _delegate = [[NotifCenterDelegate alloc] init];
-    [[UNUserNotificationCenter currentNotificationCenter] setDelegate:_delegate];
+    if([AirPushNotification isIOS] || [AirPushNotification isAtleastMacOS1014]) {
+        [[UNUserNotificationCenter currentNotificationCenter] setDelegate:_delegate];
+    }
+    
 }
 
 + (NSDictionary *) getAndClearDelegateStarterNotif {
@@ -158,7 +174,9 @@ didReceiveRemoteNotification:(NSDictionary<NSString *,id> *)userInfo {}
 
 + (void)cancelAllLocalNotificationsWithId:(NSNumber*) notifId {
     
-    [[UNUserNotificationCenter currentNotificationCenter] removePendingNotificationRequestsWithIdentifiers:@[[[NSString alloc] initWithFormat:@"%@", notifId]]];
+    if([AirPushNotification isIOS] || [AirPushNotification isAtleastMacOS1014]) {
+        [[UNUserNotificationCenter currentNotificationCenter] removePendingNotificationRequestsWithIdentifiers:@[[[NSString alloc] initWithFormat:@"%@", notifId]]];
+    }
 }
 
 @end
@@ -268,6 +286,11 @@ DEFINE_ANE_FUNCTION(setBadgeNb) {
     register the device for push notification.
  */
 DEFINE_ANE_FUNCTION(registerPush) {
+    
+    if(![AirPushNotification isIOS] && ![AirPushNotification isAtleastMacOS1014]) {
+        return NULL;
+    }
+    
     
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     NSUInteger authOptions = UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge;
@@ -389,6 +412,10 @@ DEFINE_ANE_FUNCTION(fetchStarterNotification) {
     sends local notification to the device.
  */
 DEFINE_ANE_FUNCTION(sendLocalNotification) {
+    
+    if(![AirPushNotification isIOS] && ![AirPushNotification isAtleastMacOS1014]) {
+        return NULL;
+    }
     
     // message
     uint32_t string_length;
@@ -568,6 +595,10 @@ DEFINE_ANE_FUNCTION(sendLocalNotification) {
  */
 DEFINE_ANE_FUNCTION(cancelLocalNotification) {
     
+    if(![AirPushNotification isIOS] && ![AirPushNotification isAtleastMacOS1014]) {
+        return NULL;
+    }
+    
     uint32_t localNotificationId;
     
     if (argc != 1)
@@ -584,6 +615,9 @@ DEFINE_ANE_FUNCTION(cancelLocalNotification) {
  
  */
 DEFINE_ANE_FUNCTION(cancelAllLocalNotifications) {
+    if(![AirPushNotification isIOS] && ![AirPushNotification isAtleastMacOS1014]) {
+        return NULL;
+    }
     
     [[UNUserNotificationCenter currentNotificationCenter] removeAllPendingNotificationRequests];
 
@@ -605,6 +639,10 @@ DEFINE_ANE_FUNCTION(getCanSendUserToSettings) {
  */
 DEFINE_ANE_FUNCTION(getNotificationsEnabled) {
     
+    if(![AirPushNotification isIOS] && ![AirPushNotification isAtleastMacOS1014]) {
+        [[AirPushNotification instance] sendEvent:@"GET_NOTIFICATIONS_ENABLED_RESULT" level:@"false"];
+        return NULL;
+    }
     
     [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
         BOOL disabled = settings.soundSetting == UNNotificationSettingDisabled
