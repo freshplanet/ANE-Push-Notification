@@ -69,6 +69,8 @@ public class LocalNotificationFunction implements FREFunction {
 		String categoryId = null;
 		String deepLinkPath = null;
 		boolean makeSquare = false;
+		boolean isBannerNotification = false;
+
 		try {
 			message = arg1[0].getAsString();
 			timestamp = (long) arg1[1].getAsInt();
@@ -107,6 +109,11 @@ public class LocalNotificationFunction implements FREFunction {
 			if (arg1.length >= 10 && arg1[9] != null)
 			{
 				makeSquare = arg1[9].getAsBool();
+			}
+
+			if (arg1.length >= 11 && arg1[10] != null)
+			{
+				isBannerNotification = arg1[10].getAsBool();
 			}
 			
 		} catch (IllegalStateException e) {
@@ -149,10 +156,20 @@ public class LocalNotificationFunction implements FREFunction {
 			if (largeIconResourceId != null)
 			{
 				if(URLUtil.isHttpUrl(largeIconResourceId) || URLUtil.isHttpsUrl(largeIconResourceId)) {
-					intent.putExtra("pictureUrl", largeIconResourceId);
+					if(isBannerNotification) {
+						intent.putExtra("bannerUrl", largeIconResourceId);
+					}
+					else {
+						intent.putExtra("pictureUrl", largeIconResourceId);
+					}
 				}
 				else {
-					intent.putExtra("largeIconResourceId", largeIconResourceId);
+					if(isBannerNotification) {
+						intent.putExtra("largeBannerResourceId", largeIconResourceId);
+					}
+					else {
+						intent.putExtra("largeIconResourceId", largeIconResourceId);
+					}
 				}
 			}
 			if (groupId != null)

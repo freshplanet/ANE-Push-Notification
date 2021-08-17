@@ -100,7 +100,10 @@ public class FCMMessagingService extends FirebaseMessagingService {
             if (pictureUrl == null) {
                 pictureUrl = messageData.get("pictureUrl");
                 if(pictureUrl == null) {
-                    return null;
+                    pictureUrl = messageData.get("bannerUrl");
+                    if (pictureUrl == null) {
+                        return null;
+                    }
                 }
             }
 
@@ -111,7 +114,7 @@ public class FCMMessagingService extends FirebaseMessagingService {
             connection.connect();
             InputStream input = connection.getInputStream();
             Bitmap rawPicture = BitmapFactory.decodeStream(input);
-            if (parameters != null && parameters.has("bannerUrl")) {
+            if (parameters != null && parameters.has("bannerUrl") || messageData.get("bannerUrl") != null) {
                 return rawPicture;
             }
             Bitmap picture;
@@ -165,9 +168,12 @@ public class FCMMessagingService extends FirebaseMessagingService {
         CharSequence tickerText = messageData.get("tickerText");
 
         String largeIconResourceId = messageData.get("largeIconResourceId");
+        if(largeIconResourceId == null)
+            largeIconResourceId = messageData.get("largeBannerResourceId");
+
         String groupId = messageData.get("groupId");
 
-        boolean isBannerNotification = messageData.get("bannerUrl") != null;
+        boolean isBannerNotification = messageData.get("bannerUrl") != null || messageData.get("largeBannerResourceId") != null;
 
         if(groupId != null && groupId.equals("")) {
             groupId = null;

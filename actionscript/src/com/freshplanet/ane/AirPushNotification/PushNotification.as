@@ -163,6 +163,7 @@ package com.freshplanet.ane.AirPushNotification {
          * @param groupId  used to group notifications together
          * @param categoryId  used to display custom summaries on iOS
          * @param makeSquare  used to display square icons on Android, will default to round
+         * @param isBannerAndroidNotification  only on Android, you need to set 'iconPath' as well
 		 */
 		public function sendLocalNotification(message:String,
                                               timestamp:int,
@@ -173,11 +174,16 @@ package com.freshplanet.ane.AirPushNotification {
                                               iconPath:String = null,
                                               groupId:String = null,
 											  categoryId:String = null,
-											  makeSquare:Boolean = false
+											  makeSquare:Boolean = false,
+											  isBannerAndroidNotification:Boolean = false
 		):void {
 
 			if (!isSupported)
 				return;
+
+			if(_isAndroid() && isBannerAndroidNotification && !iconPath) {
+				throw new Error("PushNotification: isBannerAndroidNotification is true, but no iconPath provided");
+			}
 
 			if(!iconPath)
 				iconPath = "";
@@ -191,7 +197,9 @@ package com.freshplanet.ane.AirPushNotification {
 			if(!categoryId)
 				categoryId = "";
 
-			callContext("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath, iconPath, groupId, categoryId, makeSquare);
+
+
+			callContext("sendLocalNotification", message, timestamp, title, recurrenceType, notificationId, deepLinkPath, iconPath, groupId, categoryId, makeSquare, isBannerAndroidNotification);
 
 		}
 
