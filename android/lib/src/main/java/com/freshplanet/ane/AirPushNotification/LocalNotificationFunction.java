@@ -67,6 +67,7 @@ public class LocalNotificationFunction implements FREFunction {
 		String largeIconResourceId = null;
 		String groupId = null;
 		String categoryId = null;
+		String deepLinkPath = null;
 		boolean makeSquare = false;
 		try {
 			message = arg1[0].getAsString();
@@ -81,6 +82,11 @@ public class LocalNotificationFunction implements FREFunction {
 			if (arg1.length >= 5)
 			{
 				notificationId = arg1[4].getAsInt();
+			}
+
+			if (arg1.length >= 6)
+			{
+				deepLinkPath = arg1[5].getAsString();
 			}
 			
 			if (arg1.length >= 7 && arg1[6] != null)
@@ -157,6 +163,11 @@ public class LocalNotificationFunction implements FREFunction {
 			if (categoryId != null)
 			{
 				intent.putExtra("android_channel_id", categoryId);
+			}
+
+			if (deepLinkPath != null)
+			{
+				intent.putExtra("path", deepLinkPath);
 			}
 
 			intent.putExtra("notifId", notificationId);
