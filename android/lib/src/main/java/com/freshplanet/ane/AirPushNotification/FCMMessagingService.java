@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
 
@@ -66,17 +67,24 @@ public class FCMMessagingService extends FirebaseMessagingService {
             // Get picture URL from parameters
             String jsonParameters = messageData.get("parameters");
             String pictureUrl = null;
+            JSONObject parameters = null;
 
             if (jsonParameters != null)
             {
                 try
                 {
-                    JSONObject parameters = (JSONObject)new JSONTokener(jsonParameters).nextValue();
+
+                    parameters = (JSONObject)new JSONTokener(jsonParameters).nextValue();
                     if (parameters != null)
                     {
                         if (parameters.has("pictureUrl"))
                         {
                             pictureUrl = parameters.getString("pictureUrl");
+                        }
+                        else if (parameters.has("bannerUrl"))
+                        {
+                            pictureUrl = parameters.getString("bannerUrl");
+                            messageData.put("bannerUrl", pictureUrl);// put it here for easy access
                         }
                         else if (parameters.has("facebookId"))
                         {
@@ -103,6 +111,9 @@ public class FCMMessagingService extends FirebaseMessagingService {
             connection.connect();
             InputStream input = connection.getInputStream();
             Bitmap rawPicture = BitmapFactory.decodeStream(input);
+            if (parameters != null && parameters.has("bannerUrl")) {
+                return rawPicture;
+            }
             Bitmap picture;
 
             // Center-crop the picture as a square
@@ -155,6 +166,9 @@ public class FCMMessagingService extends FirebaseMessagingService {
 
         String largeIconResourceId = messageData.get("largeIconResourceId");
         String groupId = messageData.get("groupId");
+
+        boolean isBannerNotification = messageData.get("bannerUrl") != null;
+
         if(groupId != null && groupId.equals("")) {
             groupId = null;
         }
@@ -247,21 +261,40 @@ public class FCMMessagingService extends FirebaseMessagingService {
 
         }
 
-        // Create notification
-        builder.setContentTitle(contentTitle)
-                .setContentText(contentText)
-                .setTicker(tickerText)
-                .setSmallIcon(smallIconId)
-                .setLargeIcon(largeIcon)
+
+        builder
                 .setSound(soundUri)
+                .setSmallIcon(smallIconId)
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true)
                 .setColor(0xFF2DA9F9)
                 .setGroup(groupId)
                 .setContentIntent(contentIntent)
-                .setGroupSummary(false)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
+                .setGroupSummary(false);
 
+
+
+        if(isBannerNotification) {
+            int resourceId = Resources.getResourseIdByName(context.getPackageName(),
+                    "layout", "bannernotificationcontentview");
+            RemoteViews bgImageContentView = new RemoteViews(context.getPackageName(), resourceId);
+            int bigImageResource = Resources.getResourseIdByName(context.getPackageName(),
+                    "id", "contentviewimage");
+            bgImageContentView.setImageViewBitmap(bigImageResource, largeIcon);
+
+            builder
+                    .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                    .setCustomContentView(bgImageContentView);
+        }
+        else {
+
+            builder.setContentTitle(contentTitle)
+                    .setContentText(contentText)
+                    .setTicker(tickerText)
+                    .setLargeIcon(largeIcon)
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
+
+        }
 
         int notificationId = Extension.getNotificationID(context);
 
