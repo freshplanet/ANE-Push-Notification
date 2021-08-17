@@ -214,13 +214,7 @@ public class FCMMessagingService extends FirebaseMessagingService {
         }
 
 
-        boolean makeSquare = false;//_intent.getBooleanExtra("makeSquare", false);
 
-        // rounded picture for lollipop
-        if (!makeSquare && largeIcon != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-        {
-            largeIcon = getCircleBitmap(largeIcon);
-        }
 
         // Notification sound
         Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -230,6 +224,13 @@ public class FCMMessagingService extends FirebaseMessagingService {
         notificationIntent.putExtra("params", Extension.getParametersFromMessage(messageData));
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        boolean makeSquare = notificationIntent.getBooleanExtra("makeSquare", false);
+
+        // rounded picture for lollipop
+        if (!isBannerNotification && !makeSquare && largeIcon != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        {
+            largeIcon = getCircleBitmap(largeIcon);
+        }
         // Dispatch notification
         NotificationManager notifManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder;
