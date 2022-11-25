@@ -228,7 +228,7 @@ public class FCMMessagingService extends FirebaseMessagingService {
 
         Intent notificationIntent = new Intent(context, NotificationActivity.class);;
         notificationIntent.putExtra("params", Extension.getParametersFromMessage(messageData));
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         boolean makeSquare = notificationIntent.getBooleanExtra("makeSquare", false);
 
