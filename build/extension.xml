@@ -21,7 +21,7 @@
     <versionNumber>2.0.0</versionNumber>
     <platforms>
 
-        <platform name="iPhone-ARM">
+<!--         <platform name="iPhone-ARM">
             <applicationDeployment>
                 <nativeLibrary>libAirPushNotification.a</nativeLibrary>
                 <initializer>AirPushNotificationInitializer</initializer>
@@ -36,7 +36,7 @@
                 <finalizer>AirPushNotificationFinalizer</finalizer>
             </applicationDeployment>
         </platform>
-
+ -->
         <platform name="Android-ARM"> 
             <applicationDeployment> 
                 <nativeLibrary>libAirPushNotification.jar</nativeLibrary> 
