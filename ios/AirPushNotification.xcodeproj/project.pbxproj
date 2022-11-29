@@ -11,6 +11,8 @@
 		165B62751EB1468E00389DCB /* AirPushNotification.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 165B62721EB1468E00389DCB /* AirPushNotification.h */; };
 		6CAF42813F4C031CA9A08F7B /* libPods-AirPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 13B533587955FEB6587B30EF /* libPods-AirPushNotification.a */; };
 		B3C35D141EE0BD810036F826 /* NotifCenterDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B3C35D131EE0BD810036F826 /* NotifCenterDelegate.m */; };
+		FA1338292936487800F542C9 /* Adobe AIR in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1338272936487800F542C9 /* Adobe AIR */; };
+		FA13382A2936487800F542C9 /* Adobe AIR_64 in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1338282936487800F542C9 /* Adobe AIR_64 */; };
 		FA6FA7B020EC0F6A0059BC6B /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA6FA7AF20EC0F6A0059BC6B /* MobileCoreServices.framework */; };
 		FAA43FBF25C872F60069FAD0 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAA43FBE25C872F50069FAD0 /* AppKit.framework */; };
 		FAA43FC125C872FB0069FAD0 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAA43FC025C872FB0069FAD0 /* Cocoa.framework */; };
@@ -20,8 +22,6 @@
 		FAD5DC9425C1F793000EA717 /* FlashRuntimeExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 165B627B1EB146D100389DCB /* FlashRuntimeExtensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FAD5DC9525C1F793000EA717 /* NotifCenterDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C35D121EE0BD810036F826 /* NotifCenterDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FAD5DC9825C1F79A000EA717 /* AirPushNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 165B62731EB1468E00389DCB /* AirPushNotification.m */; };
-		FAD5DC9E25C1F7AF000EA717 /* Adobe AIR in Frameworks */ = {isa = PBXBuildFile; fileRef = FAD5DC9C25C1F7AF000EA717 /* Adobe AIR */; };
-		FAD5DC9F25C1F7AF000EA717 /* Adobe AIR_64 in Frameworks */ = {isa = PBXBuildFile; fileRef = FAD5DC9D25C1F7AF000EA717 /* Adobe AIR_64 */; };
 		FAE485A521ADF4C100D8F939 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA6FA7AC20EC0F3F0059BC6B /* UserNotifications.framework */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +48,8 @@
 		B3C35D121EE0BD810036F826 /* NotifCenterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotifCenterDelegate.h; sourceTree = "<group>"; };
 		B3C35D131EE0BD810036F826 /* NotifCenterDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotifCenterDelegate.m; sourceTree = "<group>"; };
 		B4A0BB4FFD8A25311C310619 /* Pods-AirPushNotification.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirPushNotification.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AirPushNotification/Pods-AirPushNotification.debug.xcconfig"; sourceTree = "<group>"; };
+		FA1338272936487800F542C9 /* Adobe AIR */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "Adobe AIR"; path = "../../../SDKs/AIRSDK_33.1.1.259/runtimes/air/mac/Adobe AIR.framework/Versions/1.0/Adobe AIR"; sourceTree = "<group>"; };
+		FA1338282936487800F542C9 /* Adobe AIR_64 */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "Adobe AIR_64"; path = "../../../SDKs/AIRSDK_33.1.1.259/runtimes/air/mac/Adobe AIR.framework/Versions/1.0/Adobe AIR_64"; sourceTree = "<group>"; };
 		FA5EE2D523CE3D910090D9D9 /* FirebaseAnalytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseAnalytics.framework; path = Pods/FirebaseAnalytics/Frameworks/FirebaseAnalytics.framework; sourceTree = "<group>"; };
 		FA5EE2D623CE3D910090D9D9 /* FIRAnalyticsConnector.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FIRAnalyticsConnector.framework; path = Pods/FirebaseAnalytics/Frameworks/FIRAnalyticsConnector.framework; sourceTree = "<group>"; };
 		FA6FA7A920EC0F1B0059BC6B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -78,11 +80,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA1338292936487800F542C9 /* Adobe AIR in Frameworks */,
+				FA13382A2936487800F542C9 /* Adobe AIR_64 in Frameworks */,
 				FAA43FC325C873010069FAD0 /* Foundation.framework in Frameworks */,
 				FAA43FC125C872FB0069FAD0 /* Cocoa.framework in Frameworks */,
 				FAA43FBF25C872F60069FAD0 /* AppKit.framework in Frameworks */,
-				FAD5DC9E25C1F7AF000EA717 /* Adobe AIR in Frameworks */,
-				FAD5DC9F25C1F7AF000EA717 /* Adobe AIR_64 in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,6 +135,8 @@
 		C8A2A6F413090BD1EB74CFC2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FA1338272936487800F542C9 /* Adobe AIR */,
+				FA1338282936487800F542C9 /* Adobe AIR_64 */,
 				FAA43FC225C873010069FAD0 /* Foundation.framework */,
 				FAA43FC025C872FB0069FAD0 /* Cocoa.framework */,
 				FAA43FBE25C872F50069FAD0 /* AppKit.framework */,
