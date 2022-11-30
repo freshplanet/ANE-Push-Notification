@@ -71,5 +71,9 @@
 <!--            <packageName>com.freshplanet.ane.AirPushNotification</packageName>-->
 <!--            <folderName>res</folderName>-->
 <!--        </packagedResource>-->
+        <packagedResource>
+            <packageName>com.google.android.gms.common</packageName>
+            <folderName>basement-res</folderName>
+        </packagedResource>
     </packagedResources>
 </platform>
