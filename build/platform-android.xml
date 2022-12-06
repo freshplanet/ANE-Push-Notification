@@ -67,17 +67,9 @@
 
     </packagedDependencies>
     <packagedResources>
-<!--        <packagedResource>-->
-<!--            <packageName>com.freshplanet.ane.AirPushNotification</packageName>-->
-<!--            <folderName>res</folderName>-->
-<!--        </packagedResource>-->
         <packagedResource>
-            <packageName>com.google.android.gms.common</packageName>
-            <folderName>basement-res</folderName>
-        </packagedResource>
-        <packagedResource>
-            <packageName>androidx.core</packageName>
-            <folderName>androidxcore-res</folderName>
+            <packageName>com.freshplanet.ane.AirPushNotification</packageName>
+            <folderName>airpushnotif-res</folderName>
         </packagedResource>
     </packagedResources>
 </platform>

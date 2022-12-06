@@ -195,12 +195,11 @@
             </fileset>
         </copy>
 
-        <copy todir="temp/android/basement-res" overwrite="true" failonerror="true">
-            <fileset dir="../android/basement-res"/>
+        <copy todir="temp/android/airpushnotif-res">
+            <fileset dir="../android/lib/src/main/res">
+            </fileset>
         </copy>
-        <copy todir="temp/android/androidxcore-res" overwrite="true" failonerror="true">
-            <fileset dir="../android/androidxcore-res"/>
-        </copy>
+
         <delete dir="../android/lib/dependencies"/>
         <delete dir="../android/lib/build"/>
 
