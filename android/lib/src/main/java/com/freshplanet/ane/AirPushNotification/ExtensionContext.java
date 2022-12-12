@@ -23,6 +23,7 @@ import androidx.core.app.NotificationManagerCompat;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
+import com.amazon.device.messaging.ADM;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -67,8 +68,17 @@ public class ExtensionContext extends FREContext {
 	private final FREFunction regPushFunc = new FREFunction() {
 		@Override
 		public FREObject call(FREContext freContext, FREObject[] freObjects) {
-		try {
-				Context appContext = freContext.getActivity().getApplicationContext();
+
+			if(true) { // TODO MATEO
+				return callAmazon(freContext, freObjects);
+			}
+			return callAndroid(freContext, freObjects);
+		}
+
+		private FREObject callAndroid(FREContext context, FREObject[] args) {
+			try {
+
+				Context appContext = context.getActivity().getApplicationContext();
 				if(NotificationManagerCompat.from(appContext).areNotificationsEnabled()) {
 					Extension.context.dispatchStatusEventAsync("NOTIFICATION_SETTINGS_ENABLED", "");
 				}
@@ -76,30 +86,90 @@ public class ExtensionContext extends FREContext {
 					Extension.context.dispatchStatusEventAsync("NOTIFICATION_SETTINGS_DISABLED", "");
 				}
 
-			FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-				@Override
-				public void onComplete(@NonNull Task<String> task) {
-					if (!task.isSuccessful()) {
-						Exception e = task.getException();
-						Log.w("firebase", "getToken failed", e);
-						Extension.context.dispatchStatusEventAsync("TOKEN_FAIL", e.getMessage());
-						return;
-					}
-					// Get new Instance ID token
+				FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+					@Override
+					public void onComplete(@NonNull Task<String> task) {
+						if (!task.isSuccessful()) {
+							Exception e = task.getException();
+							Log.w("firebase", "getToken failed", e);
+							Extension.context.dispatchStatusEventAsync("TOKEN_FAIL", e.getMessage());
+							return;
+						}
+						// Get new Instance ID token
 
 
-					String token = task.getResult();
-					if (token != null) {
-						Extension.context.dispatchStatusEventAsync("TOKEN_SUCCESS", token);
-					} else {
-						Extension.context.dispatchStatusEventAsync("TOKEN_FAIL", "NULL_TOKEN");
+						String token = task.getResult();
+						if (token != null) {
+							Extension.context.dispatchStatusEventAsync("TOKEN_SUCCESS", token);
+						} else {
+							Extension.context.dispatchStatusEventAsync("TOKEN_FAIL", "NULL_TOKEN");
+						}
 					}
-				}
-			});
+				});
 
 			} catch (Exception e) {
 				Log.e("firebase", "error", e);
 			}
+			return null;
+		}
+
+		private FREObject callAmazon(FREContext context, FREObject[] args) {
+			Boolean ADMAvailable = false ;
+
+			Extension.logToAIR("callAmazon");
+
+			try {
+
+				Class.forName( "com.amazon.device.messaging.ADM" );
+				ADMAvailable = true ;
+			}
+			catch (ClassNotFoundException e) {
+
+				e.printStackTrace();
+			} catch (Exception e) {
+
+				e.printStackTrace();
+			}
+
+			Extension.logToAIR("adm capabilities computed");
+			Extension.logToAIR("adm capabilities computed 2" + ADMAvailable.toString());
+
+			if (ADMAvailable) {
+
+				Extension.logToAIR("ADMAvailable");
+
+				try {
+					Extension.adm = new ADM(context.getActivity());
+				} catch (Exception e) {
+
+					Extension.logToAIR( "error creating ADM");
+					e.printStackTrace();
+					return null;
+				}
+
+				Extension.logToAIR( "ADM created");
+
+				String token = Extension.adm.getRegistrationId();
+
+				Extension.logToAIR( "Got token registration");
+
+				if (token == null)
+				{
+					Extension.logToAIR( "ADM start registering");
+					Extension.adm.startRegister();
+				} else
+				{
+					Extension.logToAIR( "ADM token already there: "+token);
+					Extension.context.dispatchStatusEventAsync("TOKEN_SUCCESS", token);
+				}
+
+			} else {
+				Extension.logToAIR( "ADM not available");
+			}
+
+			Extension.logToAIR( "return");
+
+
 			return null;
 		}
 	};

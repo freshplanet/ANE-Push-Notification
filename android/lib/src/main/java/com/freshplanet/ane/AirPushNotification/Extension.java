@@ -22,6 +22,7 @@ import android.util.Log;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREExtension;
+import com.amazon.device.messaging.ADM;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,6 +44,7 @@ public class Extension implements FREExtension {
 
 	private static AtomicInteger atomicInt;
 	public static ExtensionContext context;
+	public static ADM adm = null;
 	
 	public static boolean isInForeground = false;
 
