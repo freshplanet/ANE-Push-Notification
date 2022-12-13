@@ -24,7 +24,6 @@ import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
 import com.amazon.device.messaging.ADM;
-import com.amazon.device.messaging.development.ADMManifest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -69,19 +68,7 @@ public class ExtensionContext extends FREContext {
 	private final FREFunction regPushFunc = new FREFunction() {
 		@Override
 		public FREObject call(FREContext freContext, FREObject[] freObjects) {
-
-			Boolean ADMAvailable = false;
-			try {
-				Class.forName( "com.amazon.device.messaging.ADM" );
-				ADMAvailable = true ;
-			}
-			catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			if(ADMAvailable) {
+			if(ADMHelper.IS_ADM_AVAILABLE) {
 				return callAmazon(freContext, freObjects);
 			}
 			return callAndroid(freContext, freObjects);
@@ -126,22 +113,10 @@ public class ExtensionContext extends FREContext {
 		}
 
 		private FREObject callAmazon(FREContext context, FREObject[] args) {
-			Boolean ADMAvailable = false;
 
-			Extension.logToAIR("callAmazon");
-			try {
-				Class.forName( "com.amazon.device.messaging.ADM" );
-				ADMAvailable = true ;
-			}
-			catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			Extension.logToAIR("ADM is available computed " + ADMHelper.IS_ADM_AVAILABLE);
 
-			Extension.logToAIR("adm capabilities computed " + ADMAvailable);
-
-			if (ADMAvailable) {
+			if (ADMHelper.IS_ADM_AVAILABLE) {
 
 				Extension.logToAIR("ADMAvailable");
 

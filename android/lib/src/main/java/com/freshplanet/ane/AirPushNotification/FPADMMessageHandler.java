@@ -4,23 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.amazon.device.messaging.ADMMessageHandlerBase;
-import com.amazon.device.messaging.ADMMessageReceiver;
 
-public class ADMBroadcastReceiver extends ADMMessageHandlerBase {
+public class FPADMMessageHandler extends ADMMessageHandlerBase {
 
-	public static class Receiver extends ADMMessageReceiver
-	{
-		public Receiver()
-		{
-			super(ADMBroadcastReceiver.class);
-		}
-	}
-	
-    public ADMBroadcastReceiver() {
-        super(ADMBroadcastReceiver.class.getName());
+    public FPADMMessageHandler() {
+        super(FPADMMessageHandler.class.getName());
     }
 
-    public ADMBroadcastReceiver(final String className) {
+    public FPADMMessageHandler(final String className) {
         super(className);
     }
 	
