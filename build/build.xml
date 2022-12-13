@@ -190,7 +190,7 @@
 
         <!-- Copy to build folder -->
         <copy todir="temp/android">
-            <fileset dir="../android/lib/dependencies" excludes="FlashRuntimeExtensions.jar, runtimeClasses.jar">
+            <fileset dir="../android/lib/dependencies" excludes="FlashRuntimeExtensions.jar, runtimeClasses.jar, amazon-device-messaging-1.1.0.jar">
                 <include name="*.jar"/>
             </fileset>
         </copy>
