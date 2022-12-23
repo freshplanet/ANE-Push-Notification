@@ -53,11 +53,6 @@ public class LocalNotificationFunction implements FREFunction {
 	 *
 	 */
 	public FREObject call(FREContext arg0, FREObject[] arg1) {
-
-		if(Build.MANUFACTURER.equals("Amazon")) {
-			Log.d(TAG, "push notifications disabled on amazon devices, ignoring local notification");
-			return null;
-		}
 		
 		String message = null;
 		long timestamp = 0;
