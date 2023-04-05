@@ -14,13 +14,11 @@
  */
 package com.freshplanet.ane.AirPushNotification;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.util.Log;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
@@ -57,30 +55,6 @@ public class GoToNotifSettingsFunction implements FREFunction
 
         Context appContext = freContext.getActivity().getApplicationContext();
         goToNotificationSettings(channelId, appContext);
-
-//        Context appContext = freContext.getActivity().getApplicationContext();
-//        Intent intent = new Intent();
-//        if(android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1){
-//            if(channelId != null) {
-//                intent.setAction(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
-//                intent.putExtra(Settings.EXTRA_APP_PACKAGE, appContext.getPackageName());
-//                intent.putExtra(Settings.EXTRA_CHANNEL_ID, channelId);
-//            }
-//            else {
-//                intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-//                intent.putExtra(Settings.EXTRA_APP_PACKAGE, appContext.getPackageName());
-//            }
-//        }else if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-//            intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
-//            intent.putExtra("app_package", appContext.getPackageName());
-//            intent.putExtra("app_uid", appContext.getApplicationInfo().uid);
-//        }else {
-//            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-//            intent.addCategory(Intent.CATEGORY_DEFAULT);
-//            intent.setData(Uri.parse("package:" + appContext.getPackageName()));
-//        }
-//
-//        appContext.startActivity(intent);
 
         return null;
     }
