@@ -56,29 +56,66 @@ public class GoToNotifSettingsFunction implements FREFunction
         }
 
         Context appContext = freContext.getActivity().getApplicationContext();
-        Intent intent = new Intent();
-        if(android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1){
-            if(channelId != null) {
-                intent.setAction(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
-                intent.putExtra(Settings.EXTRA_APP_PACKAGE, appContext.getPackageName());
-                intent.putExtra(Settings.EXTRA_CHANNEL_ID, channelId);
-            }
-            else {
-                intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-                intent.putExtra(Settings.EXTRA_APP_PACKAGE, appContext.getPackageName());
-            }
-        }else if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
-            intent.putExtra("app_package", appContext.getPackageName());
-            intent.putExtra("app_uid", appContext.getApplicationInfo().uid);
-        }else {
-            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-            intent.addCategory(Intent.CATEGORY_DEFAULT);
-            intent.setData(Uri.parse("package:" + appContext.getPackageName()));
-        }
+        goToNotificationSettings(channelId, appContext);
 
-        appContext.startActivity(intent);
+//        Context appContext = freContext.getActivity().getApplicationContext();
+//        Intent intent = new Intent();
+//        if(android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1){
+//            if(channelId != null) {
+//                intent.setAction(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+//                intent.putExtra(Settings.EXTRA_APP_PACKAGE, appContext.getPackageName());
+//                intent.putExtra(Settings.EXTRA_CHANNEL_ID, channelId);
+//            }
+//            else {
+//                intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+//                intent.putExtra(Settings.EXTRA_APP_PACKAGE, appContext.getPackageName());
+//            }
+//        }else if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+//            intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+//            intent.putExtra("app_package", appContext.getPackageName());
+//            intent.putExtra("app_uid", appContext.getApplicationInfo().uid);
+//        }else {
+//            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+//            intent.addCategory(Intent.CATEGORY_DEFAULT);
+//            intent.setData(Uri.parse("package:" + appContext.getPackageName()));
+//        }
+//
+//        appContext.startActivity(intent);
 
         return null;
+    }
+
+    public void goToNotificationSettings(String channel, Context context) {
+        Intent intent = new Intent();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (channel != null) {
+                intent.setAction(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_CHANNEL_ID, channel);
+            } else {
+                intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+            }
+            intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (channel != null) {
+                intent.setAction(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_CHANNEL_ID, channel);
+            } else {
+                intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+            }
+            intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
+        } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+            intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
+        } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+            intent.putExtra("app_package", context.getPackageName());
+            intent.putExtra("app_uid", context.getApplicationInfo().uid);
+        } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.addCategory(Intent.CATEGORY_DEFAULT);
+            intent.setData(Uri.parse("package:" + context.getPackageName()));
+        }
+        context.startActivity(intent);
     }
 }
