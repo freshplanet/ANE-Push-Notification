@@ -261,7 +261,12 @@ public class MultiMsgNotification //extends Activity
 		notificationIntent = new Intent(context, NotificationActivity.class);
 		notificationIntent.putExtra("params", Extension.getParametersFromIntent(intent));
 		notificationIntent.putExtra("allclean", "true");
-		contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+			contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+		}
+		else {
+			contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		}
 
 		int nbTotalChat = getNbTotalChat();
 		int nbTotalMsg = getNbTotalMsg();

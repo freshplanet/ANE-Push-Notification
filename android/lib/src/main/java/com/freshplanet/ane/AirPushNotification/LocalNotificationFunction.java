@@ -187,8 +187,14 @@ public class LocalNotificationFunction implements FREFunction {
 
 			intent.putExtra("makeSquare", makeSquare);
 
-			PendingIntent sender = PendingIntent.getBroadcast(appContext, notificationId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-			
+			PendingIntent sender;
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+				sender = PendingIntent.getBroadcast(appContext, notificationId, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+			}
+			else {
+				sender = PendingIntent.getBroadcast(appContext, notificationId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+			}
+
 			// Get the AlarmManager service
 			AlarmManager am = (AlarmManager) appContext.getSystemService(Context.ALARM_SERVICE);
 			
