@@ -73,7 +73,7 @@ public class StoreNotifTrackingInfo implements FREFunction {
 		editor.putString(Extension.PREFS_KEY, url);
 	
 	    // Commit the edits!
-		editor.commit();
+		editor.apply();
 
 	}
 	
