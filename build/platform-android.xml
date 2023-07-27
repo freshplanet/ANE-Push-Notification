@@ -39,8 +39,8 @@
 <!--        <packagedDependency>firebase-installations-17.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>firebase-installations-interop-17.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>firebase-measurement-connector-19.0.0.jar</packagedDependency>-->
-        <packagedDependency>firebase-messaging-22.0.0.jar</packagedDependency>
-        <packagedDependency>play-services-cloud-messaging-16.0.0.jar</packagedDependency>
+        <packagedDependency>firebase-messaging-23.1.2.jar</packagedDependency>
+        <packagedDependency>play-services-cloud-messaging-17.0.1.jar</packagedDependency>
 <!--        <packagedDependency>fragment-1.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>interpolator-1.0.0.jar</packagedDependency>-->
 <!--        <packagedDependency>javax.inject-1.jar</packagedDependency>-->
