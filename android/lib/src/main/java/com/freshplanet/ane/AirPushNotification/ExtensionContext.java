@@ -15,7 +15,9 @@
 package com.freshplanet.ane.AirPushNotification;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationManagerCompat;
@@ -78,6 +80,10 @@ public class ExtensionContext extends FREContext {
 			try {
 
 				Context appContext = context.getActivity().getApplicationContext();
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+					Intent intent = new Intent(appContext, NotificationPermissionActivity.class);
+					context.getActivity().startActivity(intent);
+				}
 				if(NotificationManagerCompat.from(appContext).areNotificationsEnabled()) {
 					Extension.context.dispatchStatusEventAsync("NOTIFICATION_SETTINGS_ENABLED", "");
 				}
