@@ -54,16 +54,26 @@ public class NotificationActivity extends Activity {
 			
 		}
 		
-		Intent intent;
-		try {
-			intent = new Intent(this, Class.forName(this.getPackageName() + ".AppEntry"));
-			startActivity(intent);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+		boolean appStarted = tryStartApp("AIRAppEntry");
+		if (!appStarted) {
+			Log.d(TAG, "Failed to start activity, falling back to legacy activity name");
+			tryStartApp("AppEntry");
 		}
+
 		Log.d(TAG, "destroying activity");
 		finish();
 	}
-	
+
+	private boolean tryStartApp(String mainClass) {
+		Intent intent;
+		try {
+			intent = new Intent(this, Class.forName(this.getPackageName() + "." + mainClass));
+			startActivity(intent);
+			return true;
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 	
 }
